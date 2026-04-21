@@ -162,20 +162,18 @@ function AboutPage() {
       </section>
 
       {/* Stats */}
-      <section className="py-20 md:py-24 bg-gradient-hero text-white relative overflow-hidden">
+      <section className="py-24 bg-gradient-hero text-white relative overflow-hidden">
         <Doodle kind="spark" color="oklch(1 0 0 / 0.3)" className="absolute top-10 left-1/4 w-12 h-12" spin />
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { n: 70, suf: "+", l: "Familles accompagnées", isInfinity: false },
-            { n: 6, suf: "", l: "Années d'expérience", isInfinity: false },
-            { n: 13, suf: "", l: "Pédagogues experts", isInfinity: false },
-            { n: 98, suf: "%", l: "Parents satisfaits", isInfinity: true },
+            { n: 500, suf: "+", l: "Familles accompagnées" },
+            { n: 8, suf: "", l: "Années d'expérience" },
+            { n: 15, suf: "+", l: "Professionnels" },
+            { n: 98, suf: "%", l: "Parents satisfaits" },
           ].map((s, i) => (
             <motion.div key={s.l} {...fadeUp} transition={{ ...fadeUp.transition, delay: i * 0.08 }}>
-              <p className="font-display font-bold text-5xl md:text-7xl">
-                {s.isInfinity ? <span>98</span> : <CountUp to={s.n} suffix={s.suf} />}
-              </p>
-              <p className="font-handwritten text-xl md:text-2xl text-white/80 mt-2">{s.l}</p>
+              <p className="font-display font-bold text-5xl md:text-7xl"><CountUp to={s.n} suffix={s.suf} /></p>
+              <p className="font-handwritten text-2xl text-white/80 mt-2">{s.l}</p>
             </motion.div>
           ))}
         </div>

@@ -191,7 +191,7 @@ function Hero() {
               <div className="rounded-xl bg-magenta-bg p-2.5"><Heart className="h-5 w-5 text-magenta" /></div>
               <div>
                 <p className="text-xs font-label text-magenta">Bienveillance</p>
-                <p className="text-sm font-display font-bold text-ink">+500 familles</p>
+                <p className="text-sm font-display font-bold text-ink">+70 familles</p>
               </div>
             </motion.div>
             <motion.div
