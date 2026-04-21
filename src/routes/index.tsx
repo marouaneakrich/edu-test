@@ -730,17 +730,17 @@ function InscriptionModal({ open, onClose }: { open: boolean; onClose: () => voi
           <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-label text-[10px] text-ink-light mb-1.5">Prénom du parent *</label>
+                <label className="block font-label text-[10px] text-ink-light mb-1.5">Nom Du Tuteur *</label>
                 <input required type="text" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
               <div>
-                <label className="block font-label text-[10px] text-ink-light mb-1.5">Nom *</label>
+                <label className="block font-label text-[10px] text-ink-light mb-1.5">Prénom *</label>
                 <input required type="text" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-label text-[10px] text-ink-light mb-1.5">Téléphone *</label>
+                <label className="block font-label text-[10px] text-ink-light mb-1.5">Tél WhatsApp *</label>
                 <input required type="tel" placeholder="06 ..." className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
               <div>
@@ -764,7 +764,7 @@ function InscriptionModal({ open, onClose }: { open: boolean; onClose: () => voi
               </div>
             </div>
             <div>
-              <label className="block font-label text-[10px] text-ink-light mb-1.5">Message (optionnel)</label>
+              <label className="block font-label text-[10px] text-ink-light mb-1.5">Informations à connaitre sur l’enfant (optionnel)</label>
               <textarea rows={3} placeholder="Particularités, questions..." className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition resize-none" />
             </div>
             <button
