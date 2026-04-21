@@ -97,7 +97,7 @@ export function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="lg:hidden fixed inset-0 top-[72px] bg-gradient-to-br from-magenta-bg via-lavender to-teal-bg overflow-hidden"
+            className="lg:hidden fixed inset-0 top-[72px] z-[9999] bg-gradient-to-br from-magenta-bg via-lavender to-teal-bg overflow-hidden"
           >
             <Doodle kind="star" color="oklch(0.52 0.21 357)" className="absolute top-10 right-8 w-12 h-12 opacity-40" />
             <Doodle kind="heart" color="oklch(0.45 0.21 312)" className="absolute bottom-20 left-8 w-10 h-10 opacity-40" />
