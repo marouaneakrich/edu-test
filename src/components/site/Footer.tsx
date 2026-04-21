@@ -44,7 +44,7 @@ export function Footer() {
           <div>
             <h4 className="font-label text-xs text-magenta-light mb-5">Contact</h4>
             <ul className="space-y-3 text-sm text-white/70">
-              <li className="flex items-start gap-3"><Phone className="h-4 w-4 mt-1 text-magenta-light" /><span>٠٦ ٦٠ ٦٨ ٦٩ ٩٣<br/>07 66 68 27 25</span></li>
+              <li className="flex items-start gap-3"><Phone className="h-4 w-4 mt-1 text-magenta-light" /><span>(AR) 06 60 68 69 93<br/>(FR) 07 66 68 27 25</span></li>
               <li className="flex items-start gap-3"><Mail className="h-4 w-4 mt-0.5 text-magenta-light" /><span>contact@educazenkids.ma</span></li>
               <li className="flex items-start gap-3"><MapPin className="h-4 w-4 mt-0.5 text-magenta-light" /><span>Agadir, Maroc</span></li>
             </ul>

@@ -166,9 +166,9 @@ function AboutPage() {
         <Doodle kind="spark" color="oklch(1 0 0 / 0.3)" className="absolute top-10 left-1/4 w-12 h-12" spin />
         <div className="mx-auto max-w-7xl px-6 lg:px-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { n: 500, suf: "+", l: "Familles accompagnées" },
-            { n: 8, suf: "", l: "Années d'expérience" },
-            { n: 15, suf: "+", l: "Professionnels" },
+            { n: 70, suf: "+", l: "Familles accompagnées" },
+            { n: 6, suf: "", l: "Années d'expérience" },
+            { n: 13, suf: "+", l: "Pédagogues experts" },
             { n: 98, suf: "%", l: "Parents satisfaits" },
           ].map((s, i) => (
             <motion.div key={s.l} {...fadeUp} transition={{ ...fadeUp.transition, delay: i * 0.08 }}>
