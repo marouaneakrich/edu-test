@@ -734,7 +734,7 @@ function InscriptionModal({ open, onClose }: { open: boolean; onClose: () => voi
                 <input required type="text" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
               <div>
-                <label className="block font-label text-[10px] text-ink-light mb-1.5">Prénom *</label>
+                <label className="block font-label text-[10px] text-ink-light mb-1.5">Prénom Du Tuteur *</label>
                 <input required type="text" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
             </div>
@@ -754,17 +754,17 @@ function InscriptionModal({ open, onClose }: { open: boolean; onClose: () => voi
                 <input required type="number" min={2} max={15} className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
               <div>
-                <label className="block font-label text-[10px] text-ink-light mb-1.5">Niveau souhaité</label>
+                <label className="block font-label text-[10px] text-ink-light mb-1.5">Profil de l’enfant</label>
                 <select className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition">
-                  <option>Maternelle</option>
-                  <option>Primaire</option>
-                  <option>Soutien scolaire</option>
-                  <option>Autre</option>
+                  <option>Enfant typique</option>
+                  <option>Enfant Dys</option>
+                  <option>Enfant Autiste</option>
+                  <option>Enfant TDAH</option>
                 </select>
               </div>
             </div>
             <div>
-              <label className="block font-label text-[10px] text-ink-light mb-1.5">Informations à connaitre sur l’enfant (optionnel)</label>
+              <label className="block font-label text-[10px] text-ink-light mb-1.5">Informations à connaitre sur l’enfant</label>
               <textarea rows={3} placeholder="Particularités, questions..." className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition resize-none" />
             </div>
             <button
