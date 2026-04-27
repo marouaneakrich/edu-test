@@ -2,9 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { PageShell, PageHero } from "@/components/site/PageShell";
-import { ShoppingBag, Search, Heart } from "lucide-react";
+import { ShoppingBag, Search, Heart, Plus } from "lucide-react";
 import { MagneticButton } from "@/components/site/motion/MagneticButton";
 import { Doodle } from "@/components/site/motion/Doodle";
+import { useCart } from "@/hooks/useCart";
+import { toast } from "sonner";
 import blocks from "@/assets/product-blocks.jpg";
 import books from "@/assets/product-books.jpg";
 import artSet from "@/assets/product-art.jpg";
@@ -50,6 +52,19 @@ function ShopPage() {
   const [active, setActive] = useState<string>("Tous");
   const [query, setQuery] = useState("");
   const [favs, setFavs] = useState<Set<string>>(new Set());
+  const { addItem } = useCart();
+
+  const handleAddToCart = (product: (typeof PRODUCTS)[number]) => {
+    const priceNum = parseInt(product.price.replace(/\D/g, ""), 10);
+    addItem({
+      id: product.name,
+      name: product.name,
+      price: priceNum,
+      image: product.img,
+      category: product.cat,
+    });
+    toast.success(`${product.name} ajouté au panier`);
+  };
 
   const toggleFav = (name: string) => {
     setFavs((f) => {
@@ -146,8 +161,14 @@ function ShopPage() {
                     <div className="p-5">
                       <span className={`inline-block font-label text-[10px] px-2.5 py-1 rounded-full bg-${p.color}-bg text-${p.color} mb-3`}>{p.cat}</span>
                       <h3 className="font-display font-bold leading-snug group-hover:text-magenta transition-colors">{p.name}</h3>
-                      <button className="mt-4 w-full rounded-full bg-ink text-white py-2.5 font-display font-bold text-sm flex items-center justify-center gap-2 hover:bg-magenta transition-colors group/btn">
-                        <ShoppingBag className="h-4 w-4 transition-transform group-hover/btn:-rotate-12" />
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(p);
+                        }}
+                        className="mt-4 w-full rounded-full bg-ink text-white py-2.5 font-display font-bold text-sm flex items-center justify-center gap-2 hover:bg-magenta transition-colors group/btn"
+                      >
+                        <Plus className="h-4 w-4 transition-transform group-hover/btn:rotate-90" />
                         Ajouter
                       </button>
                     </div>

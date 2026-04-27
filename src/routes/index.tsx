@@ -3,8 +3,10 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring } from "fram
 import { useEffect, useRef, useState } from "react";
 import {
   Sparkles, Heart, Target, Brain, ArrowRight,
-  Star, Quote, Phone, Calendar, X, Send, CheckCircle2,
+  Star, Quote, Phone, Calendar, X, Send, CheckCircle2, Loader2,
 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 import { PageShell } from "@/components/site/PageShell";
 import { TiltCard } from "@/components/site/motion/TiltCard";
 import { MagneticButton } from "@/components/site/motion/MagneticButton";
@@ -659,6 +661,7 @@ function InscriptionsCTA() {
 /* ---------- Inscription Modal ---------- */
 function InscriptionModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [sent, setSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -673,13 +676,66 @@ function InscriptionModal({ open, onClose }: { open: boolean; onClose: () => voi
 
   if (!open) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => {
-      setSent(false);
-      onClose();
-    }, 2200);
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      form_type: "appointment" as const,
+      first_name: formData.get("lastName") as string,
+      last_name: formData.get("firstName") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      child_age: parseInt(formData.get("childAge") as string, 10),
+      child_profile: formData.get("childProfile") as string,
+      message: formData.get("notes") as string,
+    };
+
+    try {
+      // Insert into ez_submissions
+      const { data: submission, error } = await supabase
+        .from("ez_submissions")
+        .insert(data)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Trigger email notification via Supabase Edge Function
+      try {
+        console.log("Sending submission email via Supabase...", submission);
+        const emailResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-submission-email`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify(submission),
+        });
+        const emailResult = await emailResponse.json();
+        console.log("Email response:", emailResult);
+        if (!emailResponse.ok) {
+          console.error("Email sending failed:", emailResult);
+        }
+      } catch (emailError) {
+        console.error("Email notification failed:", emailError);
+      }
+
+      setSent(true);
+      toast.success("Demande envoyée avec succès ! Nous vous recontactons sous 24h.");
+      setTimeout(() => {
+        setSent(false);
+        onClose();
+      }, 2200);
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast.error("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -731,47 +787,52 @@ function InscriptionModal({ open, onClose }: { open: boolean; onClose: () => voi
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <label className="block font-label text-[10px] text-ink-light mb-1.5">Nom Du Tuteur *</label>
-                <input required type="text" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
+                <input name="lastName" required type="text" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
               <div>
                 <label className="block font-label text-[10px] text-ink-light mb-1.5">Prénom Du Tuteur *</label>
-                <input required type="text" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
+                <input name="firstName" required type="text" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <label className="block font-label text-[10px] text-ink-light mb-1.5">Tél WhatsApp *</label>
-                <input required type="tel" placeholder="06 ..." className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
+                <input name="phone" required type="tel" placeholder="06 ..." className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
               <div>
                 <label className="block font-label text-[10px] text-ink-light mb-1.5">Email *</label>
-                <input required type="email" placeholder="vous@email.com" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
+                <input name="email" required type="email" placeholder="vous@email.com" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <label className="block font-label text-[10px] text-ink-light mb-1.5">Âge de l'enfant *</label>
-                <input required type="number" min={2} max={15} className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
+                <input name="childAge" required type="number" min={2} max={15} className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition" />
               </div>
               <div>
-                <label className="block font-label text-[10px] text-ink-light mb-1.5">Profil de l’enfant</label>
-                <select className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition">
-                  <option>Enfant typique</option>
-                  <option>Enfant Dys</option>
-                  <option>Enfant Autiste</option>
-                  <option>Enfant TDAH</option>
+                <label className="block font-label text-[10px] text-ink-light mb-1.5">Profil de l'enfant</label>
+                <select name="childProfile" className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition">
+                  <option value="Enfant typique">Enfant typique</option>
+                  <option value="Enfant Dys">Enfant Dys</option>
+                  <option value="Enfant Autiste">Enfant Autiste</option>
+                  <option value="Enfant TDAH">Enfant TDAH</option>
                 </select>
               </div>
             </div>
             <div>
-              <label className="block font-label text-[10px] text-ink-light mb-1.5">Informations à connaitre sur l’enfant</label>
-              <textarea rows={3} placeholder="Particularités, questions..." className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition resize-none" />
+              <label className="block font-label text-[10px] text-ink-light mb-1.5">Informations à connaitre sur l'enfant</label>
+              <textarea name="notes" rows={3} placeholder="Particularités, questions..." className="w-full rounded-xl border-2 border-canvas bg-canvas focus:bg-white focus:border-magenta px-4 py-3 outline-none transition resize-none" />
             </div>
             <button
               type="submit"
-              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-hero px-6 py-3.5 font-display font-bold text-white shadow-glow hover:scale-[1.02] transition-transform"
+              disabled={isSubmitting}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-hero px-6 py-3.5 font-display font-bold text-white shadow-glow hover:scale-[1.02] transition-transform disabled:opacity-50"
             >
-              <Send className="h-4 w-4" /> Envoyer ma demande
+              {isSubmitting ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Envoi en cours...</>
+              ) : (
+                <><Send className="h-4 w-4" /> Envoyer ma demande</>
+              )}
             </button>
             <p className="text-xs text-ink-light text-center">
               En envoyant ce formulaire, vous acceptez d'être recontacté par EducazenKids.

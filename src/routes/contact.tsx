@@ -2,9 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { PageShell, PageHero } from "@/components/site/PageShell";
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle2 } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle2, Loader2 } from "lucide-react";
 import { MagneticButton } from "@/components/site/motion/MagneticButton";
 import { Doodle } from "@/components/site/motion/Doodle";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -27,10 +29,65 @@ const fadeUp = {
 
 function ContactPage() {
   const [sent, setSent] = useState(false);
-  const onSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      form_type: "contact" as const,
+      first_name: formData.get("firstName") as string,
+      last_name: formData.get("lastName") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      subject: formData.get("subject") as string,
+      message: formData.get("message") as string,
+    };
+
+    try {
+      // Insert into ez_submissions
+      const { data: submission, error } = await supabase
+        .from("ez_submissions")
+        .insert(data)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Trigger email notification via Supabase Edge Function
+      try {
+        console.log("Sending submission email via Supabase...", submission);
+        const emailResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-submission-email`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify(submission),
+        });
+        const emailResult = await emailResponse.json();
+        console.log("Email response:", emailResult);
+        if (!emailResponse.ok) {
+          console.error("Email sending failed:", emailResult);
+        }
+      } catch (emailError) {
+        console.error("Email notification failed:", emailError);
+      }
+
+      setSent(true);
+      toast.success("Message envoyé avec succès ! Nous vous répondrons bientôt.");
+      e.currentTarget.reset();
+      setTimeout(() => setSent(false), 4000);
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast.error("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -98,8 +155,18 @@ function ContactPage() {
                 <textarea name="message" rows={5} required className="w-full rounded-2xl bg-canvas border-2 border-transparent focus:border-magenta outline-none px-5 py-4 text-ink resize-none font-body" />
               </div>
             </div>
-            <MagneticButton type="submit" className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-hero px-8 py-4 font-display font-bold text-white shadow-glow hover:scale-105 transition-transform">
-              {sent ? <><CheckCircle2 className="h-5 w-5" /> Message envoyé !</> : <>Envoyer <Send className="h-5 w-5" /></>}
+            <MagneticButton
+              type="submit"
+              disabled={isSubmitting}
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-hero px-8 py-4 font-display font-bold text-white shadow-glow hover:scale-105 transition-transform disabled:opacity-50"
+            >
+              {isSubmitting ? (
+                <><Loader2 className="h-5 w-5 animate-spin" /> Envoi en cours...</>
+              ) : sent ? (
+                <><CheckCircle2 className="h-5 w-5" /> Message envoyé !</>
+              ) : (
+                <>Envoyer <Send className="h-5 w-5" /></>
+              )}
             </MagneticButton>
           </motion.form>
 

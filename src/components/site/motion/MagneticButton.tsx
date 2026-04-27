@@ -9,9 +9,19 @@ interface Props {
   href?: string;
   onClick?: () => void;
   type?: "button" | "submit";
+  disabled?: boolean;
 }
 
-export function MagneticButton({ children, className, strength = 0.35, as = "button", href, onClick, type = "button" }: Props) {
+export function MagneticButton({ 
+  children, 
+  className, 
+  strength = 0.35, 
+  as = "button", 
+  href, 
+  onClick, 
+  type = "button", 
+  disabled = false 
+}: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -28,15 +38,21 @@ export function MagneticButton({ children, className, strength = 0.35, as = "but
   };
   const onLeave = () => { x.set(0); y.set(0); };
 
-  const Tag: any = as;
+  const Tag = as;
   return (
     <motion.div
       ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
+      onMouseMove={disabled ? undefined : onMove}
+      onMouseLeave={disabled ? undefined : onLeave}
       style={{ x: sx, y: sy, display: "inline-block" }}
     >
-      <Tag href={href} onClick={onClick} type={as === "button" ? type : undefined} className={className}>
+      <Tag 
+        href={href} 
+        onClick={onClick} 
+        type={as === "button" ? type : undefined} 
+        className={className}
+        disabled={as === "button" ? disabled : undefined}
+      >
         {children}
       </Tag>
     </motion.div>

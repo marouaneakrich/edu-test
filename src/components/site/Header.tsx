@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import { Menu, X, ShoppingCart } from "lucide-react";
 import { Doodle } from "./motion/Doodle";
+import { useCart } from "@/hooks/useCart";
+import { CartModal } from "./CartModal";
 
 const NAV = [
   { to: "/", label: "Accueil" },
@@ -16,8 +18,11 @@ const NAV = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const { scrollY } = useScroll();
   const sparkRotate = useTransform(scrollY, [0, 1500], [0, 360]);
+  const { getCartCount } = useCart();
+  const cartCount = getCartCount();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -74,13 +79,18 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            to="/boutique"
-            className="hidden sm:inline-flex items-center gap-2 rounded-full bg-gradient-hero px-5 py-2.5 text-sm font-bold text-white shadow-soft transition-transform hover:scale-105 hover:-rotate-2"
+          <button
+            onClick={() => setCartOpen(true)}
+            className="relative inline-flex items-center gap-2 rounded-full bg-gradient-hero px-4 py-2.5 text-sm font-bold text-white shadow-soft transition-transform hover:scale-105"
           >
-            <ShoppingBag className="h-4 w-4" />
-            Boutique
-          </Link>
+            <ShoppingCart className="h-4 w-4" />
+            <span className="hidden sm:inline">Panier</span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-gold text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                {cartCount > 9 ? '9+' : cartCount}
+              </span>
+            )}
+          </button>
           <button
             onClick={() => setOpen(!open)}
             className="lg:hidden rounded-full bg-magenta-bg p-2.5 text-magenta hover:scale-110 transition-transform"
@@ -123,6 +133,7 @@ export function Header() {
           </motion.div>
         )}
       </AnimatePresence>
+      <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </motion.header>
   );
 }
