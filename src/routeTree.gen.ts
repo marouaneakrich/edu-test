@@ -9,13 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BoutiqueRouteImport } from './routes/boutique'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ActivitesRouteImport } from './routes/activites'
 import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
+import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -29,6 +39,11 @@ const BoutiqueRoute = BoutiqueRouteImport.update({
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ActivitesRoute = ActivitesRouteImport.update({
@@ -46,31 +61,61 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/activites': typeof ActivitesRoute
+  '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
   '/contact': typeof ContactRoute
+  '/login': typeof LoginRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/activites': typeof ActivitesRoute
+  '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
   '/contact': typeof ContactRoute
+  '/login': typeof LoginRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/activites': typeof ActivitesRoute
+  '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
   '/contact': typeof ContactRoute
+  '/login': typeof LoginRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -78,32 +123,62 @@ export interface FileRouteTypes {
     | '/'
     | '/a-propos'
     | '/activites'
+    | '/admin'
     | '/blog'
     | '/boutique'
     | '/contact'
+    | '/login'
+    | '/admin/dashboard'
+    | '/admin/orders'
+    | '/admin/submissions'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/a-propos' | '/activites' | '/blog' | '/boutique' | '/contact'
+  to:
+    | '/'
+    | '/a-propos'
+    | '/activites'
+    | '/admin'
+    | '/blog'
+    | '/boutique'
+    | '/contact'
+    | '/login'
+    | '/admin/dashboard'
+    | '/admin/orders'
+    | '/admin/submissions'
   id:
     | '__root__'
     | '/'
     | '/a-propos'
     | '/activites'
+    | '/admin'
     | '/blog'
     | '/boutique'
     | '/contact'
+    | '/login'
+    | '/admin/dashboard'
+    | '/admin/orders'
+    | '/admin/submissions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AProposRoute: typeof AProposRoute
   ActivitesRoute: typeof ActivitesRoute
+  AdminRoute: typeof AdminRouteWithChildren
   BlogRoute: typeof BlogRoute
   BoutiqueRoute: typeof BoutiqueRoute
   ContactRoute: typeof ContactRoute
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -123,6 +198,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog'
       preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/activites': {
@@ -146,16 +228,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/submissions': {
+      id: '/admin/submissions'
+      path: '/submissions'
+      fullPath: '/admin/submissions'
+      preLoaderRoute: typeof AdminSubmissionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminOrdersRoute: typeof AdminOrdersRoute
+  AdminSubmissionsRoute: typeof AdminSubmissionsRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminOrdersRoute: AdminOrdersRoute,
+  AdminSubmissionsRoute: AdminSubmissionsRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AProposRoute: AProposRoute,
   ActivitesRoute: ActivitesRoute,
+  AdminRoute: AdminRouteWithChildren,
   BlogRoute: BlogRoute,
   BoutiqueRoute: BoutiqueRoute,
   ContactRoute: ContactRoute,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

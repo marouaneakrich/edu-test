@@ -583,7 +583,7 @@ function Testimonials() {
           <blockquote className="mt-6 font-handwritten text-3xl md:text-4xl text-ink leading-snug max-w-xl">
             "Depuis qu'il est ici, mon fils m'attend chaque matin avec son sac sur le dos. C'est le plus beau cadeau."
           </blockquote>
-          <p className="mt-6 font-display font-bold text-ink">Mounia  Maman de Rayan, 8 ans</p>
+          <p className="mt-6 font-display font-bold text-ink">Mounia  Maman de Rayan, 6 ans</p>
         </motion.div>
 
         <div className="relative h-[480px] overflow-hidden rounded-3xl bg-gradient-soft">
