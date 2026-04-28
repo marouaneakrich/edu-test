@@ -48,7 +48,7 @@ export const Route = createRootRoute({
       },
           {
       rel: "icon",
-      href: "/icon.png", 
+      href: "https://eiden-group.com/wp-content/uploads/2026/04/icon.png",
       type: "image/x-icon",
     },
     ],

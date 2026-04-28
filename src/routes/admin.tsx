@@ -118,7 +118,7 @@ function AdminLayout() {
           <SidebarHeader className="border-b-2 border-border bg-gradient-soft">
             <div className="flex items-center gap-2 px-2 py-2">
               <div className="flex h-10 w-10 items-center justify-center shadow-glow">
-                <img src="/icon.png" alt="EducazenKids Icon" className="h-8 w-8" />
+                <img src="https://eiden-group.com/wp-content/uploads/2026/04/icon.png" alt="EducazenKids Icon" className="h-8 w-8" />
               </div>
               <div>
                 <h1 className="font-display text-lg font-bold text-foreground">
