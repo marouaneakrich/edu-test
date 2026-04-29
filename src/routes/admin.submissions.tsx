@@ -184,7 +184,7 @@ function AdminSubmissions() {
             parent_name: `${conversionSubmission.first_name} ${conversionSubmission.last_name}`,
             email: conversionSubmission.email?.toLowerCase(),
             phone: conversionSubmission.phone?.toLowerCase(),
-            child_name: conversionSubmission.child_name || "Enfant",
+            child_name: `Enfant de ${conversionSubmission.child_age || "X"} ans`,
             child_profile: conversionSubmission.child_profile || "Enfant typique",
             crm_stage: "converti",
             enrollment_date: enrollmentDate,
