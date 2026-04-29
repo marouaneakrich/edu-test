@@ -2,7 +2,6 @@ import * as React from "react";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useUserRole } from "@/hooks/useUserRole";
-import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import {
   Sidebar,
@@ -18,16 +17,16 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import { LayoutDashboard, ShoppingCart, MessageSquare, LogOut, Menu, Settings } from "lucide-react";
+import { LayoutDashboard, Users, CreditCard, Settings, LogOut, Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/admin")({
-  component: AdminLayout,
+export const Route = createFileRoute("/crm")({
+  component: CrmLayout,
 });
 
-function AdminLayout() {
+function CrmLayout() {
   const { isAuthenticated, loading, logout, user } = useAdminAuth();
-  const { isAdmin } = useUserRole();
+  const { role, hasPermission, loading: roleLoading } = useUserRole();
 
   React.useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -35,70 +34,13 @@ function AdminLayout() {
     }
   }, [isAuthenticated, loading]);
 
-  React.useEffect(() => {
-    if (!isAuthenticated) return;
-
-    const ordersSubscription = supabase
-      .channel("orders")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "ez_orders",
-        },
-        (payload) => {
-          const newOrder = payload.new as { customer_name: string; total_amount: number };
-          toast.success("Nouvelle commande reçue!", {
-            description: `De ${newOrder.customer_name} - ${newOrder.total_amount} MAD`,
-            action: {
-              label: "Voir",
-              onClick: () => {
-                window.location.href = "/admin/orders";
-              },
-            },
-          });
-        }
-      )
-      .subscribe();
-
-    const submissionsSubscription = supabase
-      .channel("submissions")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "ez_submissions",
-        },
-        (payload) => {
-          const newSubmission = payload.new as { first_name: string; last_name: string };
-          toast.success("Nouveau message reçu!", {
-            description: `De ${newSubmission.first_name} ${newSubmission.last_name}`,
-            action: {
-              label: "Voir",
-              onClick: () => {
-                window.location.href = "/admin/submissions";
-              },
-            },
-          });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      ordersSubscription.unsubscribe();
-      submissionsSubscription.unsubscribe();
-    };
-  }, [isAuthenticated]);
-
   const handleLogout = async () => {
     await logout();
     toast.success("Déconnexion réussie");
     window.location.href = "/login";
   };
 
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
@@ -126,7 +68,7 @@ function AdminLayout() {
                 <h1 className="font-display text-lg font-bold text-foreground">
                   EducazenKids
                 </h1>
-                <p className="font-body text-xs text-muted-foreground">Admin</p>
+                <p className="font-body text-xs text-muted-foreground">CRM</p>
               </div>
             </div>
           </SidebarHeader>
@@ -134,34 +76,51 @@ function AdminLayout() {
           <SidebarContent>
             <SidebarGroup>
               <SidebarGroupLabel className="font-label text-xs text-muted-foreground">
-                Menu
+                Menu CRM
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="/admin/dashboard">
+                      <a href="/crm/dashboard">
                         <LayoutDashboard className="h-4 w-4" />
                         <span>Tableau de bord</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="/admin/orders">
-                        <ShoppingCart className="h-4 w-4" />
-                        <span>Commandes</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="/admin/submissions">
-                        <MessageSquare className="h-4 w-4" />
-                        <span>Rendez-vous</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  
+                  {hasPermission("view_customers") && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <a href="/crm/customers">
+                          <Users className="h-4 w-4" />
+                          <span>Clients</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
+                  
+                  {hasPermission("view_payments") && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <a href="/crm/payments">
+                          <CreditCard className="h-4 w-4" />
+                          <span>Paiements</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
+
+                  {role === "admin" && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <a href="/crm/settings">
+                          <Settings className="h-4 w-4" />
+                          <span>Paramètres</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -193,7 +152,7 @@ function AdminLayout() {
               <Menu className="h-5 w-5" />
             </Button>
             <h2 className="font-display text-xl font-bold text-foreground">
-              Administration
+              CRM - Gestion de la Relation Client
             </h2>
           </header>
           <main className="flex-1 p-6">

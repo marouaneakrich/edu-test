@@ -10,20 +10,32 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as CrmRouteImport } from './routes/crm'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BoutiqueRouteImport } from './routes/boutique'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AdminChoiceRouteImport } from './routes/admin-choice'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ActivitesRouteImport } from './routes/activites'
 import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CrmSettingsRouteImport } from './routes/crm.settings'
+import { Route as CrmPaymentsRouteImport } from './routes/crm.payments'
+import { Route as CrmDashboardRouteImport } from './routes/crm.dashboard'
+import { Route as CrmCustomersRouteImport } from './routes/crm.customers'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as CrmCustomersIdRouteImport } from './routes/crm.customers.$id'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -39,6 +51,11 @@ const BoutiqueRoute = BoutiqueRouteImport.update({
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminChoiceRoute = AdminChoiceRouteImport.update({
+  id: '/admin-choice',
+  path: '/admin-choice',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -61,6 +78,26 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CrmSettingsRoute = CrmSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmPaymentsRoute = CrmPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmDashboardRoute = CrmDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmCustomersRoute = CrmCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => CrmRoute,
+} as any)
 const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
   id: '/submissions',
   path: '/submissions',
@@ -76,32 +113,51 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminRoute,
 } as any)
+const CrmCustomersIdRoute = CrmCustomersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CrmCustomersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/activites': typeof ActivitesRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin-choice': typeof AdminChoiceRoute
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
   '/contact': typeof ContactRoute
+  '/crm': typeof CrmRouteWithChildren
   '/login': typeof LoginRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/crm/customers': typeof CrmCustomersRouteWithChildren
+  '/crm/dashboard': typeof CrmDashboardRoute
+  '/crm/payments': typeof CrmPaymentsRoute
+  '/crm/settings': typeof CrmSettingsRoute
+  '/crm/customers/$id': typeof CrmCustomersIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/activites': typeof ActivitesRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin-choice': typeof AdminChoiceRoute
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
   '/contact': typeof ContactRoute
+  '/crm': typeof CrmRouteWithChildren
   '/login': typeof LoginRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/crm/customers': typeof CrmCustomersRouteWithChildren
+  '/crm/dashboard': typeof CrmDashboardRoute
+  '/crm/payments': typeof CrmPaymentsRoute
+  '/crm/settings': typeof CrmSettingsRoute
+  '/crm/customers/$id': typeof CrmCustomersIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -109,13 +165,20 @@ export interface FileRoutesById {
   '/a-propos': typeof AProposRoute
   '/activites': typeof ActivitesRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin-choice': typeof AdminChoiceRoute
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
   '/contact': typeof ContactRoute
+  '/crm': typeof CrmRouteWithChildren
   '/login': typeof LoginRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/crm/customers': typeof CrmCustomersRouteWithChildren
+  '/crm/dashboard': typeof CrmDashboardRoute
+  '/crm/payments': typeof CrmPaymentsRoute
+  '/crm/settings': typeof CrmSettingsRoute
+  '/crm/customers/$id': typeof CrmCustomersIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -124,39 +187,60 @@ export interface FileRouteTypes {
     | '/a-propos'
     | '/activites'
     | '/admin'
+    | '/admin-choice'
     | '/blog'
     | '/boutique'
     | '/contact'
+    | '/crm'
     | '/login'
     | '/admin/dashboard'
     | '/admin/orders'
     | '/admin/submissions'
+    | '/crm/customers'
+    | '/crm/dashboard'
+    | '/crm/payments'
+    | '/crm/settings'
+    | '/crm/customers/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/a-propos'
     | '/activites'
     | '/admin'
+    | '/admin-choice'
     | '/blog'
     | '/boutique'
     | '/contact'
+    | '/crm'
     | '/login'
     | '/admin/dashboard'
     | '/admin/orders'
     | '/admin/submissions'
+    | '/crm/customers'
+    | '/crm/dashboard'
+    | '/crm/payments'
+    | '/crm/settings'
+    | '/crm/customers/$id'
   id:
     | '__root__'
     | '/'
     | '/a-propos'
     | '/activites'
     | '/admin'
+    | '/admin-choice'
     | '/blog'
     | '/boutique'
     | '/contact'
+    | '/crm'
     | '/login'
     | '/admin/dashboard'
     | '/admin/orders'
     | '/admin/submissions'
+    | '/crm/customers'
+    | '/crm/dashboard'
+    | '/crm/payments'
+    | '/crm/settings'
+    | '/crm/customers/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -164,9 +248,11 @@ export interface RootRouteChildren {
   AProposRoute: typeof AProposRoute
   ActivitesRoute: typeof ActivitesRoute
   AdminRoute: typeof AdminRouteWithChildren
+  AdminChoiceRoute: typeof AdminChoiceRoute
   BlogRoute: typeof BlogRoute
   BoutiqueRoute: typeof BoutiqueRoute
   ContactRoute: typeof ContactRoute
+  CrmRoute: typeof CrmRouteWithChildren
   LoginRoute: typeof LoginRoute
 }
 
@@ -177,6 +263,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -198,6 +291,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog'
       preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-choice': {
+      id: '/admin-choice'
+      path: '/admin-choice'
+      fullPath: '/admin-choice'
+      preLoaderRoute: typeof AdminChoiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -228,6 +328,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/crm/settings': {
+      id: '/crm/settings'
+      path: '/settings'
+      fullPath: '/crm/settings'
+      preLoaderRoute: typeof CrmSettingsRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/payments': {
+      id: '/crm/payments'
+      path: '/payments'
+      fullPath: '/crm/payments'
+      preLoaderRoute: typeof CrmPaymentsRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/dashboard': {
+      id: '/crm/dashboard'
+      path: '/dashboard'
+      fullPath: '/crm/dashboard'
+      preLoaderRoute: typeof CrmDashboardRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/customers': {
+      id: '/crm/customers'
+      path: '/customers'
+      fullPath: '/crm/customers'
+      preLoaderRoute: typeof CrmCustomersRouteImport
+      parentRoute: typeof CrmRoute
+    }
     '/admin/submissions': {
       id: '/admin/submissions'
       path: '/submissions'
@@ -249,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/crm/customers/$id': {
+      id: '/crm/customers/$id'
+      path: '/$id'
+      fullPath: '/crm/customers/$id'
+      preLoaderRoute: typeof CrmCustomersIdRouteImport
+      parentRoute: typeof CrmCustomersRoute
+    }
   }
 }
 
@@ -266,14 +401,44 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface CrmCustomersRouteChildren {
+  CrmCustomersIdRoute: typeof CrmCustomersIdRoute
+}
+
+const CrmCustomersRouteChildren: CrmCustomersRouteChildren = {
+  CrmCustomersIdRoute: CrmCustomersIdRoute,
+}
+
+const CrmCustomersRouteWithChildren = CrmCustomersRoute._addFileChildren(
+  CrmCustomersRouteChildren,
+)
+
+interface CrmRouteChildren {
+  CrmCustomersRoute: typeof CrmCustomersRouteWithChildren
+  CrmDashboardRoute: typeof CrmDashboardRoute
+  CrmPaymentsRoute: typeof CrmPaymentsRoute
+  CrmSettingsRoute: typeof CrmSettingsRoute
+}
+
+const CrmRouteChildren: CrmRouteChildren = {
+  CrmCustomersRoute: CrmCustomersRouteWithChildren,
+  CrmDashboardRoute: CrmDashboardRoute,
+  CrmPaymentsRoute: CrmPaymentsRoute,
+  CrmSettingsRoute: CrmSettingsRoute,
+}
+
+const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AProposRoute: AProposRoute,
   ActivitesRoute: ActivitesRoute,
   AdminRoute: AdminRouteWithChildren,
+  AdminChoiceRoute: AdminChoiceRoute,
   BlogRoute: BlogRoute,
   BoutiqueRoute: BoutiqueRoute,
   ContactRoute: ContactRoute,
+  CrmRoute: CrmRouteWithChildren,
   LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport

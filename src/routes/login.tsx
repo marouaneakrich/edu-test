@@ -13,13 +13,13 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const { login, isAuthenticated, loading } = useAdminAuth();
-  const [email, setEmail] = React.useState("");
+  const [identifier, setIdentifier] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     if (isAuthenticated && !loading) {
-      window.location.href = "/admin/dashboard";
+      window.location.href = "/admin-choice";
     }
   }, [isAuthenticated, loading]);
 
@@ -28,11 +28,11 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(identifier, password);
       toast.success("Connexion réussie!", {
         description: "Bienvenue sur le tableau de bord admin",
       });
-      window.location.href = "/admin/dashboard";
+      window.location.href = "/admin-choice";
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Email ou mot de passe incorrect";
       toast.error("Erreur de connexion", {
@@ -62,13 +62,13 @@ function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="identifier">Email ou nom d'utilisateur</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="admin@educazen.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="identifier"
+                type="text"
+                placeholder="admin@educazenkids.com ou admin"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 required
                 disabled={isLoading}
                 className="font-body"

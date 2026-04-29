@@ -50,14 +50,38 @@ export function useAdminAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (identifier: string, password: string) => {
+    const trimmed = identifier.trim();
+
+    let emailToUse = trimmed;
+    const looksLikeEmail = trimmed.includes("@");
+
+    if (!looksLikeEmail) {
+      const { data, error } = await supabase.rpc("get_email_by_username", {
+        p_username: trimmed,
+      });
+
+      if (error) throw error;
+
+      const resolvedEmail = typeof data === "string" ? data : null;
+      if (!resolvedEmail) {
+        throw new Error("Nom d'utilisateur inconnu");
+      }
+
+      emailToUse = resolvedEmail;
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
-      email,
+      email: emailToUse,
       password,
     });
 
     if (error) {
-      throw error;
+      const anyErr = error as unknown as { message?: string; status?: number; code?: string; name?: string };
+      const message = anyErr?.message || "Erreur de connexion";
+      const status = typeof anyErr?.status === "number" ? anyErr.status : undefined;
+      const code = typeof anyErr?.code === "string" ? anyErr.code : undefined;
+      throw new Error([message, status ? `status=${status}` : null, code ? `code=${code}` : null].filter(Boolean).join(" "));
     }
 
     return data;

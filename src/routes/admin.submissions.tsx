@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Search, Download, Eye, Reply } from "lucide-react";
+import { Search, Download, Eye, Reply, CheckCircle } from "lucide-react";
 
 export const Route = createFileRoute("/admin/submissions")({
   component: AdminSubmissions,
@@ -26,6 +26,11 @@ function AdminSubmissions() {
   const [replyMessage, setReplyMessage] = React.useState("");
   const [replySubject, setReplySubject] = React.useState("");
   const [isSendingReply, setIsSendingReply] = React.useState(false);
+  const [showConversionDialog, setShowConversionDialog] = React.useState(false);
+  const [conversionSubmission, setConversionSubmission] = React.useState<EzSubmission | null>(null);
+  const [addToCrm, setAddToCrm] = React.useState(false);
+  const [customerPaid, setCustomerPaid] = React.useState(false);
+  const [isConverting, setIsConverting] = React.useState(false);
 
   React.useEffect(() => {
     fetchSubmissions();
@@ -90,6 +95,141 @@ function AdminSubmissions() {
     } catch (error) {
       console.error("Error updating submission status:", error);
       toast.error("Erreur lors de la mise à jour du statut");
+    }
+  };
+
+  const handleConversionClick = (submission: EzSubmission) => {
+    setConversionSubmission(submission);
+    setAddToCrm(false);
+    setCustomerPaid(false);
+    setShowConversionDialog(true);
+  };
+
+  const handleConfirmConversion = async () => {
+    if (!conversionSubmission || !addToCrm) {
+      toast.error("Veuillez cocher 'Ajouter ce client au CRM'");
+      return;
+    }
+
+    setIsConverting(true);
+
+    try {
+      // Fetch monthly fee from settings based on child profile
+      const { data: settingsData } = await supabase
+        .from("ez_settings")
+        .select("value")
+        .eq("key", `monthly_fee_${conversionSubmission.child_profile?.toLowerCase().replace("enfant ", "").replace(" ", "_")}`)
+        .single();
+
+      const monthlyFee = settingsData ? Number(settingsData.value) : 800;
+
+      // Identity resolution
+      let existingCustomer = null;
+      
+      // 1. Check by submission_id
+      const { data: bySubmissionId } = await supabase
+        .from("ez_crm_customers")
+        .select("*")
+        .eq("submission_id", conversionSubmission.id)
+        .single();
+
+      if (bySubmissionId) {
+        existingCustomer = bySubmissionId;
+      } else {
+        // 2. Check by lowercase phone
+        const { data: byPhone } = await supabase
+          .from("ez_crm_customers")
+          .select("*")
+          .eq("phone", conversionSubmission.phone?.toLowerCase())
+          .single();
+
+        if (byPhone) {
+          existingCustomer = byPhone;
+        } else {
+          // 3. Check by lowercase email
+          const { data: byEmail } = await supabase
+            .from("ez_crm_customers")
+            .select("*")
+            .eq("email", conversionSubmission.email?.toLowerCase())
+            .single();
+
+          if (byEmail) {
+            existingCustomer = byEmail;
+          }
+        }
+      }
+
+      const enrollmentDate = new Date().toISOString().split("T")[0];
+      const paymentDay = new Date().getDate();
+
+      if (existingCustomer) {
+        // Update existing customer
+        const { error: updateError } = await supabase
+          .from("ez_crm_customers")
+          .update({
+            crm_stage: "converti",
+            monthly_fee: monthlyFee,
+            enrollment_date: enrollmentDate,
+            payment_day: paymentDay,
+          })
+          .eq("id", existingCustomer.id);
+
+        if (updateError) throw updateError;
+      } else {
+        // Create new customer
+        const { error: createError } = await supabase
+          .from("ez_crm_customers")
+          .insert({
+            submission_id: conversionSubmission.id,
+            parent_name: `${conversionSubmission.first_name} ${conversionSubmission.last_name}`,
+            email: conversionSubmission.email?.toLowerCase(),
+            phone: conversionSubmission.phone?.toLowerCase(),
+            child_name: conversionSubmission.child_name || "Enfant",
+            child_profile: conversionSubmission.child_profile || "Enfant typique",
+            crm_stage: "converti",
+            enrollment_date: enrollmentDate,
+            monthly_fee: monthlyFee,
+            payment_day: paymentDay,
+          });
+
+        if (createError) throw createError;
+      }
+
+      // If customer paid, create payment record
+      if (customerPaid) {
+        const customerId = existingCustomer?.id || (await supabase.from("ez_crm_customers").select("id").eq("submission_id", conversionSubmission.id).single()).data?.id;
+        
+        if (customerId) {
+          const receiptNumber = `EDU-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.floor(Math.random() * 1000).toString().padStart(3, "0")}`;
+          const periodCovered = new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+
+          const { error: paymentError } = await supabase
+            .from("ez_crm_payments")
+            .insert({
+              customer_id: customerId,
+              amount: monthlyFee,
+              payment_date: enrollmentDate,
+              payment_method: "cash",
+              period_covered: periodCovered,
+              receipt_number: receiptNumber,
+              certificate_sent: false,
+            });
+
+          if (paymentError) throw paymentError;
+
+          toast.success("Client ajouté au CRM et paiement enregistré");
+        }
+      } else {
+        toast.success("Client ajouté au CRM");
+      }
+
+      setShowConversionDialog(false);
+      fetchSubmissions();
+    } catch (error) {
+      console.error("Error during conversion:", error);
+      toast.error("Erreur lors de la conversion");
+    } finally {
+      setIsConverting(false);
     }
   };
 
@@ -420,6 +560,17 @@ function AdminSubmissions() {
                                       <p className="font-body">{selectedSubmission.child_profile}</p>
                                     </div>
                                   )}
+                                  {selectedSubmission.status === "converted" && (
+                                    <div className="pt-4 border-t">
+                                      <Button
+                                        onClick={() => handleConversionClick(selectedSubmission)}
+                                        className="w-full bg-gradient-hero hover:opacity-90"
+                                      >
+                                        <CheckCircle className="h-4 w-4 mr-2" />
+                                        Confirmer la conversion CRM
+                                      </Button>
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </DialogContent>
@@ -476,6 +627,59 @@ function AdminSubmissions() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Conversion Dialog */}
+      <Dialog open={showConversionDialog} onOpenChange={setShowConversionDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="font-display text-xl font-bold">
+              Confirmer la conversion CRM
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="addToCrm"
+                checked={addToCrm}
+                onChange={(e) => setAddToCrm(e.target.checked)}
+                className="h-4 w-4"
+              />
+              <label htmlFor="addToCrm" className="font-body text-sm">
+                Ajouter ce client au CRM
+              </label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="customerPaid"
+                checked={customerPaid}
+                onChange={(e) => setCustomerPaid(e.target.checked)}
+                className="h-4 w-4"
+              />
+              <label htmlFor="customerPaid" className="font-body text-sm">
+                Le client a payé
+              </label>
+            </div>
+            <div className="flex gap-2 pt-4">
+              <Button
+                onClick={handleConfirmConversion}
+                disabled={isConverting || !addToCrm}
+                className="flex-1 bg-gradient-hero hover:opacity-90"
+              >
+                {isConverting ? "Conversion en cours..." : "Confirmer"}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowConversionDialog(false)}
+                className="flex-1"
+              >
+                Annuler
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
