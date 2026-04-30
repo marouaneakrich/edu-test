@@ -67,6 +67,25 @@
 :root {
   --radius: 1.25rem;
 
+  /* EducazenKids brand tokens */
+
+  --ek-mg: oklch(0.55 0.22 5);          /* magenta #C2185B */
+  --ek-mg-lt: oklch(0.62 0.24 4);       /* lighter magenta */
+  --ek-mg-bg: oklch(0.97 0.025 5);      /* magenta tint */
+  --ek-pp: oklch(0.45 0.22 320);        /* purple #7B1FA2 */
+  --ek-pp-bg: oklch(0.97 0.025 320);
+  --ek-tl: oklch(0.58 0.11 180);        /* teal #00897B */
+  --ek-tl-bg: oklch(0.96 0.03 180);
+  --ek-gd: oklch(0.78 0.15 80);         /* gold #F9A825 */
+  --ek-cream: oklch(0.98 0.02 85);
+  --ek-ink: oklch(0.27 0.02 280);
+  --ek-ink-lt: oklch(0.45 0.02 280);
+  --ek-canvas: oklch(0.99 0.005 85);
+  --ek-rose: oklch(0.97 0.018 10);
+  --ek-lav: oklch(0.96 0.022 310);
+  --ek-mint: oklch(0.97 0.025 175);
+
+
   /* Brand palette (oklch — calibrated to brand book hex) */
   --magenta: oklch(0.52 0.21 357);          /* #C2185B */
   --magenta-light: oklch(0.62 0.24 358);    /* #E91E7B */
