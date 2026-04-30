@@ -607,78 +607,200 @@ function AdminSubmissions() {
         </motion.div>
 
         {/* ─── Table ─── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          style={{ background: "white", borderRadius: 4, border: "1px solid rgba(45,45,58,0.1)", boxShadow: "3px 3px 0 rgba(45,45,58,0.06)", overflow: "hidden" }}
+        {/* ─── Table ─── */}
+<div className="w-full overflow-x-auto">
+  <motion.div
+    className="min-w-[720px]"
+    initial={{ opacity: 0, y: 16 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.28, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+    style={{
+      background: "white",
+      borderRadius: 4,
+      border: "1px solid rgba(45,45,58,0.1)",
+      boxShadow: "3px 3px 0 rgba(45,45,58,0.06)",
+      overflow: "hidden"
+    }}
+  >
+    {/* Header */}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr 110px 130px 90px 80px",
+        padding: "10px 20px",
+        background: "#F7F6FC",
+        borderBottom: "1px solid rgba(45,45,58,0.08)"
+      }}
+    >
+      {["Nom", "Email", "Type", "Statut", "Date", "Actions"].map((h, i) => (
+        <div
+          key={i}
+          style={{
+            fontFamily: "var(--font-label)",
+            fontSize: 9,
+            letterSpacing: 2.5,
+            textTransform: "uppercase",
+            color: "rgba(45,45,58,0.4)",
+            fontWeight: 700,
+            padding: "0 4px"
+          }}
         >
-          {/* Header */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 110px 130px 90px 80px", padding: "10px 20px", background: "#F7F6FC", borderBottom: "1px solid rgba(45,45,58,0.08)" }}>
-            {["Nom", "Email", "Type", "Statut", "Date", "Actions"].map((h, i) => (
-              <div key={i} style={{ fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.4)", fontWeight: 700, padding: "0 4px" }}>{h}</div>
-            ))}
+          {h}
+        </div>
+      ))}
+    </div>
+
+    {/* Rows */}
+    {filteredSubmissions.length === 0 ? (
+      <div style={{ padding: "48px 20px", textAlign: "center" }}>
+        <div style={{
+          fontFamily: "var(--font-display)",
+          fontWeight: 900,
+          fontSize: 32,
+          color: "rgba(45,45,58,0.08)",
+          letterSpacing: "-1px"
+        }}>
+          —
+        </div>
+        <div style={{
+          fontFamily: "var(--font-serif)",
+          fontStyle: "italic",
+          fontSize: 13.5,
+          color: "var(--ek-ink-lt)",
+          marginTop: 8
+        }}>
+          Aucune demande trouvée
+        </div>
+      </div>
+    ) : filteredSubmissions.map((sub, i) => {
+      const ft = FORM_TYPE[sub.form_type as keyof typeof FORM_TYPE] ?? FORM_TYPE.contact;
+
+      return (
+        <motion.div
+          key={sub.id}
+          initial={{ opacity: 0, x: -8 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.04 * i, duration: 0.35 }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 110px 130px 90px 80px",
+            padding: "13px 20px",
+            borderBottom: "1px solid rgba(45,45,58,0.06)",
+            alignItems: "center",
+            transition: "background 0.15s"
+          }}
+          whileHover={{ backgroundColor: "rgba(123,31,162,0.02)" }}
+        >
+          {/* Name */}
+          <div style={{
+            padding: "0 4px",
+            fontFamily: "var(--font-display)",
+            fontWeight: 700,
+            fontSize: 13.5,
+            color: "var(--ek-ink)",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap"
+          }}>
+            {sub.first_name} {sub.last_name}
           </div>
 
-          {/* Rows */}
-          {filteredSubmissions.length === 0 ? (
-            <div style={{ padding: "48px 20px", textAlign: "center" }}>
-              <div style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 32, color: "rgba(45,45,58,0.08)", letterSpacing: "-1px" }}>—</div>
-              <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 13.5, color: "var(--ek-ink-lt)", marginTop: 8 }}>Aucune demande trouvée</div>
-            </div>
-          ) : filteredSubmissions.map((sub, i) => {
-            const ft = FORM_TYPE[sub.form_type as keyof typeof FORM_TYPE] ?? FORM_TYPE.contact;
-            return (
-              <motion.div
-                key={sub.id}
-                initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.04 * i, duration: 0.35 }}
-                style={{ display: "grid", gridTemplateColumns: "1fr 1fr 110px 130px 90px 80px", padding: "13px 20px", borderBottom: "1px solid rgba(45,45,58,0.06)", alignItems: "center", transition: "background 0.15s" }}
-                whileHover={{ backgroundColor: "rgba(123,31,162,0.02)" }}
-              >
-                <div style={{ padding: "0 4px", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13.5, color: "var(--ek-ink)", letterSpacing: "-0.2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {sub.first_name} {sub.last_name}
-                </div>
-                <div style={{ padding: "0 4px", fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--ek-ink-lt)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {sub.email}
-                </div>
-                <div style={{ padding: "0 4px" }}>
-                  <Chip label={ft.label} color={ft.color} bg={ft.bg} rgb={ft.rgb} />
-                </div>
-                <div style={{ padding: "0 4px" }}>
-                  <StatusSelect value={sub.status} onChange={v => updateStatus(sub.id, v)} />
-                </div>
-                <div style={{ padding: "0 4px", fontFamily: "var(--font-body)", fontSize: 12, color: "var(--ek-ink-lt)" }}>
-                  {new Date(sub.created_at).toLocaleDateString("fr-FR")}
-                </div>
-                <div style={{ padding: "0 4px", display: "flex", gap: 6 }}>
-                  <IconBtn onClick={() => setDetailSub(sub)} title="Voir les détails">
-                    <Eye size={13} strokeWidth={2} />
-                  </IconBtn>
-                  <IconBtn onClick={() => setReplySub(sub)} title="Répondre" hoverAccent="#7B1FA2" hoverBg="#F8F0FF">
-                    <Reply size={13} strokeWidth={2} />
-                  </IconBtn>
-                  {sub.status === "converted" && (
-                    <IconBtn onClick={() => setConvSub(sub)} title="Convertir CRM" hoverAccent="#00897B" hoverBg="#E8F8F5">
-                      <CheckCircle size={13} strokeWidth={2} />
-                    </IconBtn>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
+          {/* Email */}
+          <div style={{
+            padding: "0 4px",
+            fontFamily: "var(--font-body)",
+            fontSize: 12.5,
+            color: "var(--ek-ink-lt)",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap"
+          }}>
+            {sub.email}
+          </div>
 
-          {/* Footer */}
-          {filteredSubmissions.length > 0 && (
-            <div style={{ padding: "12px 20px", background: "#F7F6FC", borderTop: "1px solid rgba(45,45,58,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: 2, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 700 }}>
-                {filteredSubmissions.length} résultat{filteredSubmissions.length !== 1 ? "s" : ""}
-              </span>
-              <div className="flex gap-1">
-                {["#C2185B", "#7B1FA2", "#00897B", "#F9A825"].map((c, i) => (
-                  <span key={i} style={{ display: "block", width: 12, height: 3, background: c, borderRadius: 2 }} />
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Type */}
+          <div style={{ padding: "0 4px" }}>
+            <Chip {...ft} />
+          </div>
+
+          {/* Status */}
+          <div style={{ padding: "0 4px" }}>
+            <StatusSelect
+              value={sub.status}
+              onChange={v => updateStatus(sub.id, v)}
+            />
+          </div>
+
+          {/* Date */}
+          <div style={{
+            padding: "0 4px",
+            fontFamily: "var(--font-body)",
+            fontSize: 12,
+            color: "var(--ek-ink-lt)"
+          }}>
+            {new Date(sub.created_at).toLocaleDateString("fr-FR")}
+          </div>
+
+          {/* Actions */}
+          <div style={{ padding: "0 4px", display: "flex", gap: 6 }}>
+            <IconBtn onClick={() => setDetailSub(sub)} title="Voir les détails">
+              <Eye size={13} strokeWidth={2} />
+            </IconBtn>
+
+            <IconBtn
+              onClick={() => setReplySub(sub)}
+              title="Répondre"
+              hoverAccent="#7B1FA2"
+              hoverBg="#F8F0FF"
+            >
+              <Reply size={13} strokeWidth={2} />
+            </IconBtn>
+
+            {sub.status === "converted" && (
+              <IconBtn
+                onClick={() => setConvSub(sub)}
+                title="Convertir CRM"
+                hoverAccent="#00897B"
+                hoverBg="#E8F8F5"
+              >
+                <CheckCircle size={13} strokeWidth={2} />
+              </IconBtn>
+            )}
+          </div>
         </motion.div>
+      );
+    })}
+
+    {/* Footer */}
+    {filteredSubmissions.length > 0 && (
+      <div style={{
+        padding: "12px 20px",
+        background: "#F7F6FC",
+        borderTop: "1px solid rgba(45,45,58,0.06)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between"
+      }}>
+        <span style={{
+          fontFamily: "var(--font-label)",
+          fontSize: 9,
+          letterSpacing: 2,
+          textTransform: "uppercase",
+          color: "rgba(45,45,58,0.35)",
+          fontWeight: 700
+        }}>
+          {filteredSubmissions.length} résultat{filteredSubmissions.length !== 1 ? "s" : ""}
+        </span>
+
+        <div className="flex gap-1">
+          {["#C2185B", "#7B1FA2", "#00897B", "#F9A825"].map((c, i) => (
+            <span key={i} style={{ width: 12, height: 3, background: c, borderRadius: 2 }} />
+          ))}
+        </div>
+      </div>
+    )}
+  </motion.div>
+</div>
       </div>
 
       {/* ─── Modals ─── */}
