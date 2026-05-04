@@ -319,7 +319,7 @@ function AdminLayout() {
         </div> */}
 
         {/* ── Page content ── */}
-        <main className="flex-1 px-4 sm:px-6 pt-6 pb-24 md:pb-10 max-w-[1100px] w-full mx-auto">
+        <main className="flex-1 px-4 sm:px-6 pt-6 pb-24 md:pb-10 w-full mx-auto">
           <motion.div
             key={currentPath}
             initial={{ opacity: 0, y: 10 }}

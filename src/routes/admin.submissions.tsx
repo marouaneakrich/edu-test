@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { supabase, EzSubmission } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
+import type { EzSubmission } from "@/lib/supabase";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Download, Eye, Reply, CheckCircle, X, ChevronDown, Send } from "lucide-react";
@@ -8,6 +9,20 @@ import { Search, Download, Eye, Reply, CheckCircle, X, ChevronDown, Send } from 
 export const Route = createFileRoute("/admin/submissions")({
   component: AdminSubmissions,
 });
+
+const BRAND = {
+  mg: { hex: "#C2185B", rgb: "194,24,91", bg: "#FFF0F5" },
+  pp: { hex: "#7B1FA2", rgb: "123,31,162", bg: "#F8F0FF" },
+  tl: { hex: "#00897B", rgb: "0,137,123", bg: "#E8F8F5" },
+  gd: { hex: "#F9A825", rgb: "249,168,37", bg: "#FFF8EC" },
+  ink: "#2D2D3A",
+  inkLt: "#5A5A6A",
+  canvas: "#FFFDF9",
+};
+
+const FH = "'Nunito', sans-serif";
+const FE = "'Playfair Display', serif";
+const FL = "'Cormorant Garamond', serif";
 
 /* ─── Status config ─── */
 const STATUS = {
@@ -22,12 +37,13 @@ const FORM_TYPE = {
   appointment: { label: "Rendez-vous", color: "#00897B", bg: "#E8F8F5", rgb: "0,137,123"  },
 } as const;
 
+
 /* ─── Shared badge ─── */
 function Chip({ label, color, bg, rgb }: { label: string; color: string; bg: string; rgb: string }) {
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: 5,
-      fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 11, letterSpacing: 0.3,
+      fontFamily: FH, fontWeight: 700, fontSize: 11, letterSpacing: 0.3,
       color, background: bg, border: `1px solid rgba(${rgb},0.28)`,
       padding: "3px 10px", borderRadius: 100,
     }}>
@@ -55,7 +71,7 @@ function StatusSelect({ value, onChange }: { value: string; onChange: (v: string
         onClick={() => setOpen(v => !v)}
         style={{
           display: "inline-flex", alignItems: "center", gap: 6,
-          fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 11,
+          fontFamily: FH, fontWeight: 700, fontSize: 11,
           color: s.color, background: s.bg,
           border: `1px solid rgba(${s.rgb},0.28)`,
           padding: "4px 10px", borderRadius: 100, cursor: "pointer", transition: "opacity 0.15s",
@@ -74,8 +90,8 @@ function StatusSelect({ value, onChange }: { value: string; onChange: (v: string
             transition={{ duration: 0.14, ease: "easeOut" }}
             style={{
               position: "absolute", top: "calc(100% + 6px)", left: 0, zIndex: 50,
-              background: "white", borderRadius: 10, border: "1px solid rgba(45,45,58,0.1)",
-              boxShadow: "0 8px 24px rgba(45,45,58,0.12)", minWidth: 140, overflow: "hidden",
+              background: "white", borderRadius: 6, border: "1px solid rgba(45,45,58,0.08)",
+              boxShadow: "0 16px 40px -8px rgba(45,45,58,0.18)", minWidth: 148, overflow: "hidden",
             }}
           >
             {Object.entries(STATUS).map(([key, cfg]) => (
@@ -84,9 +100,9 @@ function StatusSelect({ value, onChange }: { value: string; onChange: (v: string
                 onClick={() => { onChange(key); setOpen(false); }}
                 style={{
                   width: "100%", display: "flex", alignItems: "center", gap: 8,
-                  padding: "9px 14px", background: key === value ? cfg.bg : "transparent",
-                  border: "none", cursor: "pointer",
-                  fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 12,
+                  padding: "10px 14px", background: key === value ? cfg.bg : "transparent",
+                  border: "none", borderLeft: `3px solid ${key === value ? cfg.color : "transparent"}`, cursor: "pointer",
+                  fontFamily: FH, fontWeight: 700, fontSize: 12,
                   color: cfg.color, transition: "background 0.15s", textAlign: "left",
                 }}
               >
@@ -115,7 +131,7 @@ function Modal({ onClose, children, maxWidth = 580 }: { onClose: () => void; chi
         exit={{ opacity: 0, y: 24, scale: 0.97 }}
         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
         onClick={e => e.stopPropagation()}
-        style={{ background: "white", borderRadius: 4, border: "1px solid rgba(45,45,58,0.1)", boxShadow: "0 32px 80px rgba(45,45,58,0.18), 6px 6px 0 rgba(123,31,162,0.08)", width: "100%", maxWidth, maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column" }}
+        style={{ background: "white", borderRadius: 6, border: "1px solid rgba(45,45,58,0.1)", boxShadow: "0 32px 80px rgba(45,45,58,0.18), 0 1px 2px rgba(45,45,58,0.04)", width: "100%", maxWidth, maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column" }}
       >
         <div style={{ height: 3, background: "linear-gradient(90deg,#C2185B,#7B1FA2,#00897B,#F9A825)", flexShrink: 0 }} />
         {children}
@@ -131,14 +147,14 @@ function ModalHeader({ chapter, title, badge, onClose }: { chapter: string; titl
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
           <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#7B1FA2" }} />
-          <span style={{ fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "#7B1FA2", fontWeight: 700 }}>{chapter}</span>
+          <span style={{ fontFamily: FL, fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "#7B1FA2", fontWeight: 600 }}>{chapter}</span>
         </div>
-        <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 20, letterSpacing: "-0.5px", color: "var(--ek-ink)", marginBottom: badge ? 6 : 0 }}>{title}</h2>
+        <h2 style={{ fontFamily: FH, fontWeight: 800, fontSize: 22, letterSpacing: "-0.5px", color: BRAND.ink, marginBottom: badge ? 6 : 0 }}>{title}</h2>
         {badge}
       </div>
       <button
         onClick={onClose}
-        style={{ width: 32, height: 32, borderRadius: 8, border: "1px solid rgba(45,45,58,0.1)", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ek-ink-lt)", flexShrink: 0, transition: "background 0.15s" }}
+        style={{ width: 32, height: 32, borderRadius: 6, border: "1px solid rgba(45,45,58,0.1)", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: BRAND.inkLt, flexShrink: 0, transition: "background 0.15s" }}
       >
         <X size={14} strokeWidth={2.5} />
       </button>
@@ -150,9 +166,9 @@ function ModalHeader({ chapter, title, badge, onClose }: { chapter: string; titl
 function InfoTile({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
-    <div style={{ padding: "11px 13px", background: "#F7F6FC", borderRadius: 4, border: "1px solid rgba(45,45,58,0.07)" }}>
-      <div style={{ fontFamily: "var(--font-label)", fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 700, marginBottom: 4 }}>{label}</div>
-      <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, color: "var(--ek-ink)", lineHeight: 1.3 }}>{value}</div>
+    <div style={{ padding: "12px 14px", background: BRAND.canvas, borderRadius: 4, border: "1px solid rgba(45,45,58,0.07)" }}>
+      <div style={{ fontFamily: FL, fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 600, marginBottom: 4 }}>{label}</div>
+      <div style={{ fontFamily: FH, fontWeight: 700, fontSize: 13, color: BRAND.ink, lineHeight: 1.3 }}>{value}</div>
     </div>
   );
 }
@@ -182,15 +198,15 @@ function DetailModal({ sub, onClose, onConvert }: { sub: EzSubmission; onClose: 
 
         {sub.subject && (
           <div style={{ padding: "11px 13px", background: "#F7F6FC", borderRadius: 4, border: "1px solid rgba(45,45,58,0.07)" }}>
-            <div style={{ fontFamily: "var(--font-label)", fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 700, marginBottom: 4 }}>Sujet</div>
-            <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13.5, color: "var(--ek-ink)" }}>{sub.subject}</div>
+            <div style={{ fontFamily: FL, fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 600, marginBottom: 4 }}>Sujet</div>
+            <div style={{ fontFamily: FH, fontWeight: 700, fontSize: 13.5, color: BRAND.ink }}>{sub.subject}</div>
           </div>
         )}
 
         {sub.message && (
           <div style={{ padding: "13px 14px", background: "white", borderRadius: 4, border: "1px solid rgba(45,45,58,0.09)" }}>
-            <div style={{ fontFamily: "var(--font-label)", fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 700, marginBottom: 8 }}>Message</div>
-            <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 13.5, color: "var(--ek-ink)", lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap" }}>{sub.message}</p>
+            <div style={{ fontFamily: FL, fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 600, marginBottom: 8 }}>Message</div>
+            <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: 13.5, color: BRAND.ink, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap" }}>{sub.message}</p>
           </div>
         )}
 
@@ -204,7 +220,7 @@ function DetailModal({ sub, onClose, onConvert }: { sub: EzSubmission; onClose: 
               padding: "12px 20px", borderRadius: 100,
               background: "linear-gradient(135deg,#00897B,#00695C)",
               color: "white", border: "none", cursor: "pointer",
-              fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 13.5,
+              fontFamily: FH, fontWeight: 800, fontSize: 13.5,
               boxShadow: "0 4px 16px rgba(0,137,123,0.25)", marginTop: 4,
             }}
           >
@@ -250,13 +266,13 @@ function ReplyModal({ sub, onClose, onSent }: { sub: EzSubmission; onClose: () =
       <div style={{ overflowY: "auto", padding: "20px 24px 24px", display: "flex", flexDirection: "column", gap: 14 }}>
         {/* To field */}
         <div style={{ padding: "10px 13px", background: "#F8F0FF", borderRadius: 4, border: "1px solid rgba(123,31,162,0.15)" }}>
-          <div style={{ fontFamily: "var(--font-label)", fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "#7B1FA2", fontWeight: 700, marginBottom: 3 }}>Destinataire</div>
-          <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, color: "var(--ek-ink)" }}>{sub.email}</div>
+          <div style={{ fontFamily: FL, fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "#7B1FA2", fontWeight: 600, marginBottom: 3 }}>Destinataire</div>
+          <div style={{ fontFamily: FH, fontWeight: 700, fontSize: 13, color: BRAND.ink }}>{sub.email}</div>
         </div>
 
         {/* Subject */}
         <div>
-          <div style={{ fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.4)", fontWeight: 700, marginBottom: 6 }}>Sujet</div>
+          <div style={{ fontFamily: FL, fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.4)", fontWeight: 600, marginBottom: 6 }}>Sujet</div>
           <input
             type="text"
             value={subject}
@@ -264,7 +280,7 @@ function ReplyModal({ sub, onClose, onSent }: { sub: EzSubmission; onClose: () =
             placeholder="Sujet de votre réponse…"
             style={{
               width: "100%", height: 40, padding: "0 13px",
-              fontFamily: "var(--font-display)", fontSize: 13, fontWeight: 600, color: "var(--ek-ink)",
+              fontFamily: FH, fontSize: 13, fontWeight: 600, color: BRAND.ink,
               background: "white", border: "1px solid rgba(45,45,58,0.12)", borderRadius: 8,
               outline: "none", transition: "border-color 0.2s, box-shadow 0.2s", boxSizing: "border-box",
             }}
@@ -275,7 +291,7 @@ function ReplyModal({ sub, onClose, onSent }: { sub: EzSubmission; onClose: () =
 
         {/* Message */}
         <div>
-          <div style={{ fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.4)", fontWeight: 700, marginBottom: 6 }}>Message</div>
+          <div style={{ fontFamily: FL, fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.4)", fontWeight: 600, marginBottom: 6 }}>Message</div>
           <textarea
             value={message}
             onChange={e => setMessage(e.target.value)}
@@ -283,7 +299,7 @@ function ReplyModal({ sub, onClose, onSent }: { sub: EzSubmission; onClose: () =
             rows={6}
             style={{
               width: "100%", padding: "11px 13px", resize: "vertical",
-              fontFamily: "var(--font-body)", fontSize: 13.5, color: "var(--ek-ink)",
+              fontFamily: FH, fontSize: 13.5, color: BRAND.ink,
               background: "white", border: "1px solid rgba(45,45,58,0.12)", borderRadius: 8,
               outline: "none", transition: "border-color 0.2s, box-shadow 0.2s", boxSizing: "border-box", lineHeight: 1.6,
             }}
@@ -301,8 +317,8 @@ function ReplyModal({ sub, onClose, onSent }: { sub: EzSubmission; onClose: () =
             width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
             padding: "12px 20px", borderRadius: 100,
             background: sending ? "rgba(45,45,58,0.15)" : "linear-gradient(135deg,#7B1FA2,#C2185B)",
-            color: sending ? "var(--ek-ink-lt)" : "white", border: "none", cursor: sending ? "not-allowed" : "pointer",
-            fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 13.5,
+            color: sending ? BRAND.inkLt : "white", border: "none", cursor: sending ? "not-allowed" : "pointer",
+            fontFamily: FH, fontWeight: 800, fontSize: 13.5,
             boxShadow: sending ? "none" : "0 4px 16px rgba(123,31,162,0.25)",
             transition: "all 0.2s",
           }}
@@ -337,7 +353,7 @@ function ConversionModal({ sub, onClose, onConfirm, loading }: { sub: EzSubmissi
       >
         {checked && <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1,6 4.5,9.5 11,2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
       </button>
-      <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 13.5, color: "var(--ek-ink)" }}>{label}</span>
+      <span style={{ fontFamily: FH, fontWeight: 600, fontSize: 13.5, color: BRAND.ink }}>{label}</span>
     </label>
   );
 
@@ -346,7 +362,7 @@ function ConversionModal({ sub, onClose, onConfirm, loading }: { sub: EzSubmissi
       <ModalHeader chapter="Conversion CRM" title={<>Convertir <span style={{ color: "#00897B", fontStyle: "italic" }}>{sub.first_name}</span></>} onClose={onClose} />
       <div style={{ padding: "20px 24px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
         <div style={{ padding: "12px 14px", background: "#E8F8F5", border: "1px solid rgba(0,137,123,0.2)", borderRadius: 4 }}>
-          <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 13, color: "#00897B", lineHeight: 1.6 }}>
+          <div style={{ fontFamily: FE, fontStyle: "italic", fontSize: 13, color: "#00897B", lineHeight: 1.6 }}>
             Ce client sera ajouté ou mis à jour dans le CRM avec le statut <strong>Converti</strong>.
           </div>
         </div>
@@ -367,7 +383,7 @@ function ConversionModal({ sub, onClose, onConfirm, loading }: { sub: EzSubmissi
               padding: "11px 0", borderRadius: 100, border: "none",
               background: loading || !addToCrm ? "rgba(45,45,58,0.1)" : "linear-gradient(135deg,#00897B,#00695C)",
               color: loading || !addToCrm ? "rgba(45,45,58,0.35)" : "white",
-              fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 13.5,
+              fontFamily: FH, fontWeight: 800, fontSize: 13.5,
               cursor: loading || !addToCrm ? "not-allowed" : "pointer",
               boxShadow: loading || !addToCrm ? "none" : "0 4px 16px rgba(0,137,123,0.22)",
               transition: "all 0.2s",
@@ -386,8 +402,8 @@ function ConversionModal({ sub, onClose, onConfirm, loading }: { sub: EzSubmissi
             style={{
               flex: 1, padding: "11px 0", borderRadius: 100,
               border: "1px solid rgba(45,45,58,0.15)", background: "white",
-              fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13.5,
-              color: "var(--ek-ink-lt)", cursor: "pointer", transition: "all 0.18s",
+              fontFamily: FH, fontWeight: 700, fontSize: 13.5,
+              color: BRAND.inkLt, cursor: "pointer", transition: "all 0.18s",
             }}
           >
             Annuler
@@ -523,11 +539,11 @@ function AdminSubmissions() {
   }
 
   return (
-    <div style={{ fontFamily: "var(--font-body)", color: "var(--ek-ink)", minHeight: "100%", position: "relative" }}>
+    <div style={{ fontFamily: FH, color: BRAND.ink, minHeight: "100%", position: "relative", background: BRAND.canvas, padding: "24px 24px 48px" }}>
       {/* Dot-grid */}
       <div aria-hidden style={{ position: "fixed", inset: 0, pointerEvents: "none", backgroundImage: "radial-gradient(circle at 1px 1px, rgba(45,45,58,0.065) 1px, transparent 0)", backgroundSize: "22px 22px", opacity: 0.45, zIndex: 0 }} />
 
-      <div style={{ position: "relative", zIndex: 1, paddingBottom: 48 }}>
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 1280, margin: "0 auto" }}>
 
         {/* ─── Header ─── */}
         <motion.div
@@ -536,18 +552,18 @@ function AdminSubmissions() {
         >
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: "var(--ek-pp)" }} />
-              <span style={{ fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "var(--ek-pp)", fontWeight: 600 }}>
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: BRAND.pp.hex }} />
+              <span style={{ fontFamily: FL, fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: BRAND.pp.hex, fontWeight: 600 }}>
                 Chapitre 05 — Rendez-vous
               </span>
             </div>
-            <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "clamp(28px, 4vw, 48px)", lineHeight: 0.93, letterSpacing: "-1.5px", color: "var(--ek-ink)" }}>
+            <h1 style={{ fontFamily: FH, fontWeight: 800, fontSize: "clamp(28px, 4vw, 48px)", lineHeight: 0.93, letterSpacing: "-1.5px", color: BRAND.ink }}>
               <motion.span initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} style={{ display: "block" }}>Gestion des</motion.span>
-              <motion.span initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }} style={{ display: "block", fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 500, color: "var(--ek-pp)" }}>
+              <motion.span initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }} style={{ display: "block", fontFamily: FE, fontStyle: "italic", fontWeight: 500, color: BRAND.pp.hex }}>
                 rendez-vous
               </motion.span>
             </h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 14, color: "var(--ek-ink-lt)", marginTop: 8, lineHeight: 1.5 }}>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} style={{ fontFamily: FE, fontStyle: "italic", fontSize: 14, color: BRAND.inkLt, marginTop: 8, lineHeight: 1.5 }}>
               {filteredSubmissions.length} demande{filteredSubmissions.length !== 1 ? "s" : ""} affichée{filteredSubmissions.length !== 1 ? "s" : ""}
             </motion.p>
           </div>
@@ -557,7 +573,7 @@ function AdminSubmissions() {
             whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}
             onClick={exportToCSV}
             className="flex items-center gap-2 flex-shrink-0"
-            style={{ background: "var(--ek-ink)", color: "white", fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 13, padding: "10px 20px", borderRadius: 100, border: "none", cursor: "pointer", boxShadow: "0 4px 16px rgba(30,30,46,0.18)", letterSpacing: 0.2 }}
+            style={{ background: BRAND.ink, color: "white", fontFamily: FH, fontWeight: 800, fontSize: 13, padding: "10px 20px", borderRadius: 100, border: "none", cursor: "pointer", boxShadow: "0 4px 16px rgba(30,30,46,0.18)", letterSpacing: 0.2 }}
           >
             <Download size={14} strokeWidth={2.5} />
             Exporter CSV
@@ -575,7 +591,7 @@ function AdminSubmissions() {
             <input
               type="text" placeholder="Rechercher par nom, email ou sujet…"
               value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-              style={{ width: "100%", height: 40, paddingLeft: 36, paddingRight: 14, fontFamily: "var(--font-display)", fontSize: 13, fontWeight: 600, color: "var(--ek-ink)", background: "white", border: "1px solid rgba(45,45,58,0.12)", borderRadius: 10, outline: "none", transition: "border-color 0.2s, box-shadow 0.2s", boxSizing: "border-box" }}
+              style={{ width: "100%", height: 40, paddingLeft: 36, paddingRight: 14, fontFamily: FH, fontSize: 13, fontWeight: 600, color: BRAND.ink, background: "white", border: "1px solid rgba(45,45,58,0.12)", borderRadius: 6, outline: "none", transition: "border-color 0.2s, box-shadow 0.2s", boxSizing: "border-box" }}
               onFocus={e => { e.currentTarget.style.borderColor = "#7B1FA2"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(123,31,162,0.09)"; }}
               onBlur={e => { e.currentTarget.style.borderColor = "rgba(45,45,58,0.12)"; e.currentTarget.style.boxShadow = "none"; }}
             />
@@ -584,22 +600,22 @@ function AdminSubmissions() {
           {/* Type filter */}
           <div className="flex items-center gap-2 flex-wrap">
             {[
-              { key: "all",         label: "Tous",         color: "var(--ek-ink)", bg: "white",   rgb: "45,45,58" },
+              { key: "all",         label: "Tous",         color: BRAND.ink, bg: "white",   rgb: "45,45,58" },
               { key: "contact",     label: "Contact",      color: "#7B1FA2",       bg: "#F8F0FF", rgb: "123,31,162" },
               { key: "appointment", label: "Rendez-vous",  color: "#00897B",       bg: "#E8F8F5", rgb: "0,137,123" },
             ].map(f => (
-              <button key={f.key} onClick={() => setTypeFilter(f.key)} style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 11, color: typeFilter === f.key ? f.color : "rgba(45,45,58,0.4)", background: typeFilter === f.key ? f.bg : "transparent", border: `1px solid ${typeFilter === f.key ? `rgba(${f.rgb},0.3)` : "rgba(45,45,58,0.1)"}`, padding: "5px 12px", borderRadius: 100, cursor: "pointer", transition: "all 0.18s", letterSpacing: 0.3 }}>
+              <button key={f.key} onClick={() => setTypeFilter(f.key)} style={{ fontFamily: FH, fontWeight: 700, fontSize: 11, color: typeFilter === f.key ? f.color : "rgba(45,45,58,0.4)", background: typeFilter === f.key ? f.bg : "transparent", border: `1px solid ${typeFilter === f.key ? `rgba(${f.rgb},0.3)` : "rgba(45,45,58,0.1)"}`, padding: "5px 12px", borderRadius: 100, cursor: "pointer", transition: "all 0.18s", letterSpacing: 0.3 }}>
                 {f.label}
               </button>
             ))}
             <span style={{ width: 1, height: 20, background: "rgba(45,45,58,0.1)", margin: "0 2px" }} />
             {[
-              { key: "all",       label: "Tous statuts", color: "var(--ek-ink)", bg: "white",   rgb: "45,45,58" },
+              { key: "all",       label: "Tous statuts", color: BRAND.ink, bg: "white",   rgb: "45,45,58" },
               { key: "new",       ...STATUS.new },
               { key: "contacted", ...STATUS.contacted },
               { key: "converted", ...STATUS.converted },
             ].map(f => (
-              <button key={f.key} onClick={() => setStatusFilter(f.key)} style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 11, color: statusFilter === f.key ? f.color : "rgba(45,45,58,0.4)", background: statusFilter === f.key ? f.bg : "transparent", border: `1px solid ${statusFilter === f.key ? `rgba(${f.rgb},0.3)` : "rgba(45,45,58,0.1)"}`, padding: "5px 12px", borderRadius: 100, cursor: "pointer", transition: "all 0.18s", letterSpacing: 0.3 }}>
+              <button key={f.key} onClick={() => setStatusFilter(f.key)} style={{ fontFamily: FH, fontWeight: 700, fontSize: 11, color: statusFilter === f.key ? f.color : "rgba(45,45,58,0.4)", background: statusFilter === f.key ? f.bg : "transparent", border: `1px solid ${statusFilter === f.key ? `rgba(${f.rgb},0.3)` : "rgba(45,45,58,0.1)"}`, padding: "5px 12px", borderRadius: 100, cursor: "pointer", transition: "all 0.18s", letterSpacing: 0.3 }}>
                 {f.label}
               </button>
             ))}
@@ -616,9 +632,9 @@ function AdminSubmissions() {
     transition={{ delay: 0.28, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
     style={{
       background: "white",
-      borderRadius: 4,
+      borderRadius: 6,
       border: "1px solid rgba(45,45,58,0.1)",
-      boxShadow: "3px 3px 0 rgba(45,45,58,0.06)",
+      boxShadow: "0 16px 34px -20px rgba(45,45,58,0.3)",
       overflow: "hidden"
     }}
   >
@@ -628,7 +644,7 @@ function AdminSubmissions() {
         display: "grid",
         gridTemplateColumns: "1fr 1fr 110px 130px 90px 80px",
         padding: "10px 20px",
-        background: "#F7F6FC",
+        background: BRAND.canvas,
         borderBottom: "1px solid rgba(45,45,58,0.08)"
       }}
     >
@@ -636,7 +652,7 @@ function AdminSubmissions() {
         <div
           key={i}
           style={{
-            fontFamily: "var(--font-label)",
+            fontFamily: FL,
             fontSize: 9,
             letterSpacing: 2.5,
             textTransform: "uppercase",
@@ -654,7 +670,7 @@ function AdminSubmissions() {
     {filteredSubmissions.length === 0 ? (
       <div style={{ padding: "48px 20px", textAlign: "center" }}>
         <div style={{
-          fontFamily: "var(--font-display)",
+          fontFamily: FH,
           fontWeight: 900,
           fontSize: 32,
           color: "rgba(45,45,58,0.08)",
@@ -663,10 +679,10 @@ function AdminSubmissions() {
           —
         </div>
         <div style={{
-          fontFamily: "var(--font-serif)",
+          fontFamily: FE,
           fontStyle: "italic",
           fontSize: 13.5,
-          color: "var(--ek-ink-lt)",
+          color: BRAND.inkLt,
           marginTop: 8
         }}>
           Aucune demande trouvée
@@ -694,10 +710,10 @@ function AdminSubmissions() {
           {/* Name */}
           <div style={{
             padding: "0 4px",
-            fontFamily: "var(--font-display)",
+            fontFamily: FH,
             fontWeight: 700,
             fontSize: 13.5,
-            color: "var(--ek-ink)",
+            color: BRAND.ink,
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap"
@@ -708,9 +724,9 @@ function AdminSubmissions() {
           {/* Email */}
           <div style={{
             padding: "0 4px",
-            fontFamily: "var(--font-body)",
+            fontFamily: FH,
             fontSize: 12.5,
-            color: "var(--ek-ink-lt)",
+            color: BRAND.inkLt,
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap"
@@ -734,9 +750,9 @@ function AdminSubmissions() {
           {/* Date */}
           <div style={{
             padding: "0 4px",
-            fontFamily: "var(--font-body)",
+            fontFamily: FH,
             fontSize: 12,
-            color: "var(--ek-ink-lt)"
+            color: BRAND.inkLt
           }}>
             {new Date(sub.created_at).toLocaleDateString("fr-FR")}
           </div>
@@ -775,14 +791,14 @@ function AdminSubmissions() {
     {filteredSubmissions.length > 0 && (
       <div style={{
         padding: "12px 20px",
-        background: "#F7F6FC",
+        background: BRAND.canvas,
         borderTop: "1px solid rgba(45,45,58,0.06)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between"
       }}>
         <span style={{
-          fontFamily: "var(--font-label)",
+          fontFamily: FL,
           fontSize: 9,
           letterSpacing: 2,
           textTransform: "uppercase",

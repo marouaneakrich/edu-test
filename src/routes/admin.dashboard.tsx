@@ -1,573 +1,760 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
-import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight, ShoppingBag, CalendarDays, ChevronDown, TrendingUp, MessageSquare, } from "lucide-react";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, } from "recharts";
 
 export const Route = createFileRoute("/admin/dashboard")({
   component: AdminDashboard,
 });
 
-/* ─── SVG Icons ─── */
-function IconCart() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-    </svg>
-  );
-}
-function IconMessage() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-  );
-}
-function IconArrow() {
-  return <ArrowUpRight size={13} strokeWidth={2.5} />;
-}
+const BRAND = {
+  mg: { hex: "#C2185B", rgb: "194,24,91", bg: "#FFF0F5" },
+  pp: { hex: "#7B1FA2", rgb: "123,31,162", bg: "#F8F0FF" },
+  tl: { hex: "#00897B", rgb: "0,137,123", bg: "#E8F8F5" },
+  gd: { hex: "#F9A825", rgb: "249,168,37", bg: "#FFF8EC" },
+  ink: "#2D2D3A",
+  inkLt: "#5A5A6A",
+  canvas: "#FFFDF9",
+};
 
-/* ─── Animated divider ─── */
-function Divider({ color, delay = 0.4 }: { color: string; delay?: number }) {
-  return (
-    <div className="relative h-px w-full" style={{ background: "rgba(45,45,58,0.09)" }}>
-      <motion.div
-        className="absolute inset-y-0 left-0"
-        style={{ background: color, height: 1.5, top: -0.25 }}
-        initial={{ width: "0%" }}
-        animate={{ width: "100%" }}
-        transition={{ duration: 0.7, ease: "easeOut", delay }}
-      />
-    </div>
-  );
-}
+const FH = "'Nunito', sans-serif";
+const FE = "'Playfair Display', serif";
+const FL = "'Cormorant Garamond', serif";
+const FB = "'Quicksand', sans-serif";
 
-/* ─── Stat card (only 2 now) ─── */
-const STAT_CONFIGS = [
+type MetricKey = "totalOrders" | "totalSubmissions";
+
+const METRICS: {
+  key: MetricKey;
+  chapter: string;
+  label: string;
+  sublabel: string;
+  brand: typeof BRAND.mg;
+  trendBrand: typeof BRAND.tl;
+  Icon: React.ComponentType<{ size?: number; strokeWidth?: number; color?: string }>;
+  href: string;
+}[] = [
   {
     key: "totalOrders",
+    chapter: "01",
     label: "Commandes",
     sublabel: "Total des commandes reçues",
-    chapter: "01",
-    accent: "var(--ek-mg)",
-    accentRgb: "194,24,91",
-    icon: <IconCart />,
-    suffix: "",
+    brand: BRAND.mg,
+    trendBrand: BRAND.tl,
+    Icon: ShoppingBag,
     href: "/admin/orders",
   },
   {
     key: "totalSubmissions",
+    chapter: "02",
     label: "Rendez-vous",
     sublabel: "Demandes & messages reçus",
-    chapter: "02",
-    accent: "var(--ek-pp)",
-    accentRgb: "123,31,162",
-    icon: <IconMessage />,
-    suffix: "",
+    brand: BRAND.pp,
+    trendBrand: BRAND.gd,
+    Icon: CalendarDays,
     href: "/admin/submissions",
   },
 ];
 
-function StatCard({
-  config,
-  value,
-  loading,
-  index,
-}: {
-  config: (typeof STAT_CONFIGS)[0];
-  value: number | string;
+/* ─── Custom hook for breakpoints ─── */
+function useBreakpoint() {
+  const [width, setWidth] = React.useState(
+    typeof window !== "undefined" ? window.innerWidth : 1024
+  );
+  React.useEffect(() => {
+    const handler = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return {
+    isMobile: width < 480,
+    isTablet: width >= 480 && width < 768,
+    isDesktop: width >= 768,
+    width,
+  };
+}
+
+function StatCard({ cfg, value, loading, index, trendPct,}: {
+  cfg: typeof METRICS[number];
+  value: number;
   loading: boolean;
   index: number;
+  trendPct: number;
 }) {
   const [hovered, setHovered] = React.useState(false);
-  const display = loading ? "—" : `${value}${config.suffix}`;
+  const { isMobile } = useBreakpoint();
+  const { brand, trendBrand, Icon } = cfg;
 
   return (
     <motion.a
-      href={config.href}
+      href={cfg.href}
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, delay: 0.1 + index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.55, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       whileHover={{ y: -4 }}
-      className="no-underline block"
       style={{
-        background: "white",
-        borderRadius: 4,
-        border: `1px solid ${hovered ? `rgba(${config.accentRgb},0.3)` : "rgba(45,45,58,0.1)"}`,
+        position: "relative",
+        display: "block",
+        background: "#fff",
+        borderRadius: 6,
+        border: `1px solid ${hovered ? `rgba(${brand.rgb},0.28)` : "rgba(45,45,58,0.08)"}`,
         boxShadow: hovered
-          ? `0 16px 40px -8px rgba(${config.accentRgb},0.18), 4px 4px 0 rgba(${config.accentRgb},0.1)`
-          : "3px 3px 0 rgba(45,45,58,0.06)",
+          ? `0 24px 48px -16px rgba(${brand.rgb},0.22)`
+          : "0 1px 2px rgba(45,45,58,0.04)",
         overflow: "hidden",
-        transition: "border-color 0.25s, box-shadow 0.3s",
         textDecoration: "none",
+        transition: "border-color .3s, box-shadow .35s",
       }}
     >
-      {/* Accent top stripe */}
-      <div style={{ height: 3, background: `rgba(${config.accentRgb}, 1)`, opacity: hovered ? 1 : 0.6, transition: "opacity 0.25s" }} />
+      <motion.div
+        animate={{ opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.4 }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `radial-gradient(120% 80% at 100% 0%, ${brand.bg} 0%, transparent 60%)`,
+          pointerEvents: "none",
+        }}
+      />
+      <motion.div
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 0.7, delay: 0.2 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          height: 3,
+          background: `linear-gradient(90deg, ${brand.hex}, ${trendBrand.hex})`,
+          transformOrigin: "left",
+        }}
+      />
 
-      <div className="px-6 pt-5 pb-5">
-        {/* Chapter label */}
-        <div className="flex items-center gap-2.5 mb-4">
-          <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: config.accent }} />
-          <span style={{ fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: 3, textTransform: "uppercase" as const, color: config.accent, fontWeight: 700 }}>
-            {config.chapter} — {config.label}
+      <div
+        style={{
+          position: "relative",
+          padding: isMobile ? "18px 18px 16px" : "24px 24px 20px",
+        }}
+      >
+        {/* chapter label */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: isMobile ? 14 : 18 }}>
+          <div style={{ width: 18, height: 1.5, background: brand.hex, flexShrink: 0 }} />
+          <span style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 3, textTransform: "uppercase", color: brand.hex }}>
+            {cfg.chapter} — {cfg.label}
           </span>
         </div>
 
-        {/* Value */}
-        <motion.div
-          key={String(value)}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          style={{
-            fontFamily: "var(--font-display)",
-            fontWeight: 900,
-            fontSize: "clamp(40px, 6vw, 56px)",
-            lineHeight: 1,
-            color: loading ? "rgba(45,45,58,0.15)" : config.accent,
-            letterSpacing: "-2px",
-          }}
-        >
-          {display}
-        </motion.div>
-        <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 13, color: "var(--ek-ink-lt)", marginTop: 6 }}>
-          {config.sublabel}
-        </div>
-
-        {/* Divider + CTA */}
-        <div className="mt-5">
-          <Divider color={config.accent} delay={0.25 + index * 0.07} />
-        </div>
-
-        <div className="flex items-center justify-between mt-4">
-          <span style={{ color: config.accent, opacity: 0.4 }}>{config.icon}</span>
-          <motion.span
-            animate={{ opacity: hovered ? 1 : 0.25, x: hovered ? 0 : -4 }}
-            transition={{ duration: 0.2 }}
-            className="w-7 h-7 rounded-full flex items-center justify-center"
+        {/* icon + trend pill row */}
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: isMobile ? 12 : 16, gap: 8 }}>
+          <motion.div
+            animate={{ rotate: hovered ? -6 : 0, scale: hovered ? 1.05 : 1 }}
+            transition={{ type: "spring", stiffness: 220, damping: 14 }}
             style={{
-              background: hovered ? config.accent : "rgba(45,45,58,0.07)",
-              color: hovered ? "white" : "var(--ek-ink-lt)",
-              transition: "background 0.25s, color 0.25s",
+              width: isMobile ? 38 : 44,
+              height: isMobile ? 38 : 44,
+              borderRadius: 4,
+              background: brand.bg,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
             }}
           >
-            <IconArrow />
-          </motion.span>
+            <Icon size={isMobile ? 18 : 20} strokeWidth={1.8} color={brand.hex} />
+          </motion.div>
+
+          <div style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            padding: "4px 9px",
+            borderRadius: 100,
+            background: `rgba(${trendBrand.rgb},0.1)`,
+            border: `1px solid rgba(${trendBrand.rgb},0.18)`,
+            flexShrink: 0,
+          }}>
+            <TrendingUp size={10} strokeWidth={2.2} color={trendBrand.hex} />
+            <span style={{ fontFamily: FH, fontSize: 10, fontWeight: 700, color: trendBrand.hex }}>
+              +{trendPct}%
+            </span>
+          </div>
+        </div>
+
+        {/* big value */}
+        <div style={{
+          fontFamily: FH,
+          fontWeight: 800,
+          fontSize: isMobile ? "clamp(36px, 10vw, 48px)" : "clamp(40px, 6vw, 56px)",
+          lineHeight: 1,
+          color: BRAND.ink,
+          letterSpacing: "-0.02em",
+        }}>
+          {loading ? (
+            <motion.span
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.4, repeat: Infinity }}
+              style={{ display: "inline-block" }}
+            >—</motion.span>
+          ) : (
+            <motion.span
+              key={value}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              style={{ display: "inline-block" }}
+            >{value}</motion.span>
+          )}
+        </div>
+
+        <p style={{
+          fontFamily: FE,
+          fontStyle: "italic",
+          fontSize: isMobile ? 12 : 13,
+          color: BRAND.inkLt,
+          marginTop: 8,
+          marginBottom: isMobile ? 14 : 18,
+        }}>
+          {cfg.sublabel}
+        </p>
+
+        {/* footer */}
+        <div style={{ height: 1, background: "rgba(45,45,58,0.08)", marginBottom: 12 }} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", color: BRAND.inkLt }}>
+            Voir le détail
+          </span>
+          <motion.div
+            animate={{ x: hovered ? 3 : 0, y: hovered ? -3 : 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 18 }}
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              background: hovered ? brand.hex : brand.bg,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "background .25s",
+              flexShrink: 0,
+            }}
+          >
+            <ArrowUpRight size={13} strokeWidth={2} color={hovered ? "#fff" : brand.hex} />
+          </motion.div>
         </div>
       </div>
     </motion.a>
   );
 }
 
-/* ─── Custom tooltip ─── */
-function CustomTooltip({ active, payload, label }: any) {
-  if (!active || !payload?.length) return null;
+function MetricDropdown({ selected, onChange }: { selected: MetricKey; onChange: (k: MetricKey) => void }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+  const { isMobile } = useBreakpoint();
+  const cur = METRICS.find((m) => m.key === selected)!;
+
+  React.useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
   return (
-    <div
-      style={{
-        background: "white",
-        border: "1px solid rgba(45,45,58,0.1)",
-        borderRadius: 8,
-        padding: "10px 14px",
-        boxShadow: "0 8px 24px rgba(45,45,58,0.1)",
-        fontFamily: "var(--font-display)",
-      }}
-    >
-      <div style={{ fontSize: 11, color: "var(--ek-ink-lt)", marginBottom: 6, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>
-        {label}
-      </div>
-      {payload.map((p: any) => (
-        <div key={p.name} className="flex items-center gap-2 mb-1">
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: p.color, flexShrink: 0, display: "block" }} />
-          <span style={{ fontSize: 12, color: "var(--ek-ink-lt)", fontWeight: 600 }}>{p.name}</span>
-          <span style={{ fontSize: 14, fontWeight: 900, color: p.color, marginLeft: "auto", paddingLeft: 12 }}>{p.value}</span>
-        </div>
-      ))}
+    <div ref={ref} style={{ position: "relative", flexShrink: 0 }}>
+      <motion.button
+        whileTap={{ scale: 0.97 }}
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          padding: isMobile ? "8px 10px" : "10px 14px 10px 12px",
+          background: "#fff",
+          border: `1px solid rgba(${cur.brand.rgb},0.25)`,
+          borderRadius: 4,
+          cursor: "pointer",
+          minWidth: isMobile ? 140 : 180,
+          boxShadow: `0 2px 0 rgba(${cur.brand.rgb},0.06)`,
+          transition: "border-color .25s",
+        }}
+      >
+        <span style={{
+          width: 8, height: 8, borderRadius: "50%",
+          background: cur.brand.hex,
+          boxShadow: `0 0 0 3px rgba(${cur.brand.rgb},0.15)`,
+          flexShrink: 0,
+        }} />
+        <span style={{
+          flex: 1,
+          textAlign: "left",
+          fontFamily: FH,
+          fontSize: isMobile ? 12 : 14,
+          fontWeight: 700,
+          color: BRAND.ink,
+        }}>
+          {cur.label}
+        </span>
+        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.25 }}>
+          <ChevronDown size={14} strokeWidth={2} color={cur.brand.hex} />
+        </motion.div>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.97 }}
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              position: "absolute",
+              top: "calc(100% + 6px)",
+              right: 0,
+              minWidth: 200,
+              background: "#fff",
+              border: "1px solid rgba(45,45,58,0.08)",
+              borderRadius: 4,
+              boxShadow: "0 16px 40px -8px rgba(45,45,58,0.18)",
+              overflow: "hidden",
+              zIndex: 50,
+            }}
+          >
+            {METRICS.map((m) => {
+              const active = m.key === selected;
+              return (
+                <button
+                  key={m.key}
+                  onClick={() => { onChange(m.key); setOpen(false); }}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "12px 14px",
+                    background: active ? m.brand.bg : "transparent",
+                    border: "none",
+                    borderLeft: `3px solid ${active ? m.brand.hex : "transparent"}`,
+                    cursor: "pointer",
+                    textAlign: "left",
+                    transition: "background .2s",
+                  }}
+                  onMouseEnter={(e) => { if (!active) (e.currentTarget.style.background = "rgba(45,45,58,0.03)"); }}
+                  onMouseLeave={(e) => { if (!active) (e.currentTarget.style.background = "transparent"); }}
+                >
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: m.brand.hex, flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: FH, fontSize: 13, fontWeight: 700, color: BRAND.ink }}>{m.label}</div>
+                    <div style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", color: BRAND.inkLt, marginTop: 2 }}>
+                      Chapitre {m.chapter}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-/* ─── Quick action link ─── */
-function ActionCard({
-  href, icon, title, desc, accent, accentRgb, index,
-}: {
-  href: string; icon: React.ReactNode; title: string; desc: string;
-  accent: string; accentRgb: string; index: number;
-}) {
+function ChartTooltip({ active, payload, label, brandHex }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      background: "#fff",
+      border: "1px solid rgba(45,45,58,0.08)",
+      borderRadius: 4,
+      padding: "8px 12px",
+      boxShadow: "0 8px 24px -8px rgba(45,45,58,0.15)",
+      fontFamily: FB,
+    }}>
+      <div style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", color: BRAND.inkLt, marginBottom: 5 }}>
+        {label}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span style={{ width: 8, height: 8, borderRadius: "50%", background: brandHex }} />
+        <span style={{ fontFamily: FH, fontWeight: 800, fontSize: 16, color: BRAND.ink }}>{payload[0].value}</span>
+      </div>
+    </div>
+  );
+}
+
+function ActionCard({ href, icon, title, desc, accent, accentRgb, index }: { href: string; icon: React.ReactNode; title: string; desc: string; accent: string; accentRgb: string; index: number; }) 
+{
   const [hovered, setHovered] = React.useState(false);
   return (
     <motion.a
       href={href}
-      initial={{ opacity: 0, x: -12 }}
+      initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.6 + index * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.4, delay: 0.1 + index * 0.08 }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      whileHover={{ x: 4 }}
-      className="flex items-center gap-4 no-underline"
+      whileHover={{ x: 3 }}
       style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        textDecoration: "none",
         background: hovered ? `rgba(${accentRgb},0.04)` : "transparent",
         border: `1px solid ${hovered ? `rgba(${accentRgb},0.25)` : "rgba(45,45,58,0.09)"}`,
         borderRadius: 4,
-        padding: "13px 16px",
+        padding: "12px 14px",
         transition: "background 0.25s, border-color 0.25s",
-        textDecoration: "none",
-      }}
+      }} 
     >
-      <span style={{ color: accent, opacity: 0.7, flexShrink: 0 }}>{icon}</span>
-      <div className="flex-1 min-w-0">
-        <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13.5, color: "var(--ek-ink)", letterSpacing: "-0.2px" }}>
-          {title}
-        </div>
-        <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 12, color: "var(--ek-ink-lt)", marginTop: 1 }}>
-          {desc}
-        </div>
+      <div style={{ width: 34, height: 34, borderRadius: 4, background: `rgba(${accentRgb},0.1)`, display: "flex", alignItems: "center", justifyContent: "center", color: accent, flexShrink: 0,}}>
+        {icon}
       </div>
-      <motion.span
-        animate={{ x: hovered ? 2 : 0, opacity: hovered ? 1 : 0.25 }}
-        transition={{ duration: 0.2 }}
-        className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
-        style={{ background: hovered ? accent : "rgba(45,45,58,0.08)", color: hovered ? "white" : "var(--ek-ink-lt)", transition: "background 0.25s, color 0.25s" }}
-      >
-        <IconArrow />
-      </motion.span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: FH, fontSize: 13, fontWeight: 700, color: BRAND.ink }}>{title}</div>
+        <div style={{ fontFamily: FE, fontStyle: "italic", fontSize: 11, color: BRAND.inkLt, marginTop: 2 }}>{desc}</div>
+      </div>
+      <ArrowUpRight size={15} strokeWidth={1.8} color={accent} style={{ flexShrink: 0 }} />
     </motion.a>
   );
 }
 
-/* ─── Build monthly chart data from raw rows ─── */
-function buildChartData(
-  orders: { created_at: string }[],
-  submissions: { created_at: string }[]
-) {
-  const MONTHS = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"];
+function buildChartData(orders: { created_at: string }[], submissions: { created_at: string }[]) {
+  const M = ["Jan","Fév","Mar","Avr","Mai","Jun","Jul","Aoû","Sep","Oct","Nov","Déc"];
   const now = new Date();
-  // last 6 months
   const months: { key: string; label: string }[] = [];
   for (let i = 5; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    months.push({ key: `${d.getFullYear()}-${d.getMonth()}`, label: MONTHS[d.getMonth()] });
+    months.push({ key: `${d.getFullYear()}-${d.getMonth()}`, label: M[d.getMonth()] });
   }
-
   const count = (rows: { created_at: string }[], key: string) =>
     rows.filter((r) => {
       const d = new Date(r.created_at);
       return `${d.getFullYear()}-${d.getMonth()}` === key;
     }).length;
-
   return months.map((m) => ({
     month: m.label,
-    Commandes: count(orders, m.key),
-    "Rendez-vous": count(submissions, m.key),
+    totalOrders: count(orders, m.key),
+    totalSubmissions: count(submissions, m.key),
   }));
 }
 
-/* ─── Main dashboard ─── */
 function AdminDashboard() {
   const [stats, setStats] = React.useState({ totalOrders: 0, totalSubmissions: 0 });
-  const [chartData, setChartData] = React.useState<{ month: string; Commandes: number; "Rendez-vous": number }[]>([]);
+  const [chartData, setChartData] = React.useState<{ month: string; totalOrders: number; totalSubmissions: number }[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [selected, setSelected] = React.useState<MetricKey>("totalOrders");
+
+  const { isMobile, isTablet, isDesktop, width } = useBreakpoint();
+
+  // Responsive values
+  const px = isMobile ? 16 : isTablet ? 24 : 56;
+  const py = isMobile ? 20 : isTablet ? 28 : 48;
+  const sectionGap = isMobile ? 28 : isTablet ? 36 : 56;
+  const chartHeight = isMobile ? 200 : isTablet ? 250 : 320;
+  const cardPadding = isMobile ? "16px 16px 14px" : isTablet ? "20px 20px 18px" : "28px 28px 24px";
 
   React.useEffect(() => {
-    fetchData();
+    (async () => {
+      try {
+        const [o, s] = await Promise.all([
+          supabase.from("ez_orders").select("total_amount, order_status, created_at"),
+          supabase.from("ez_submissions").select("*, created_at"),
+        ]);
+        const orders = o.data ?? [];
+        const submissions = s.data ?? [];
+        setStats({ totalOrders: orders.length, totalSubmissions: submissions.length });
+        setChartData(buildChartData(orders, submissions));
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const [ordersRes, submissionsRes] = await Promise.all([
-        supabase.from("ez_orders").select("total_amount, order_status, created_at"),
-        supabase.from("ez_submissions").select("*, created_at"),
-      ]);
+  const cur = METRICS.find((m) => m.key === selected)!;
+  const empty = chartData.every((d) => d[selected] === 0);
 
-      const orders = ordersRes.data ?? [];
-      const submissions = submissionsRes.data ?? [];
-
-      setStats({
-        totalOrders: orders.length,
-        totalSubmissions: submissions.length,
-      });
-
-      setChartData(buildChartData(orders, submissions));
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const statValues: Record<string, number | string> = {
-    totalOrders: stats.totalOrders,
-    totalSubmissions: stats.totalSubmissions,
+  const trendFor = (k: MetricKey) => {
+    const last = chartData[chartData.length - 1]?.[k] ?? 0;
+    const prev = chartData[chartData.length - 2]?.[k] ?? 0;
+    if (!prev) return last > 0 ? 100 : 0;
+    return Math.round(((last - prev) / prev) * 100);
   };
 
   return (
-    <div
-      style={{
-        fontFamily: "var(--font-body)",
-        color: "var(--ek-ink)",
-        minHeight: "100%",
-        position: "relative",
-      }}
-    >
+    <div style={{
+      position: "relative",
+      background: BRAND.canvas,
+      minHeight: "100vh",
+      padding: `${py}px ${px}px`,
+      fontFamily: FB,
+      overflow: "hidden",
+      boxSizing: "border-box",
+    }}>
       {/* Dot-grid texture */}
-      <div
-        aria-hidden
-        style={{
-          position: "fixed", inset: 0, pointerEvents: "none",
-          backgroundImage: "radial-gradient(circle at 1px 1px, rgba(45,45,58,0.065) 1px, transparent 0)",
-          backgroundSize: "22px 22px", opacity: 0.45, zIndex: 0,
-        }}
-      />
+      <div style={{
+        position: "fixed",
+        inset: 0,
+        backgroundImage: "radial-gradient(rgba(45,45,58,0.06) 1px, transparent 1px)",
+        backgroundSize: "24px 24px",
+        pointerEvents: "none",
+        opacity: 0.6,
+        zIndex: 0,
+      }} />
 
-      <div style={{ position: "relative", zIndex: 1, paddingBottom: 48 }}>
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 1280, margin: "0 auto" }}>
 
         {/* ─── Page header ─── */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-[rgba(45,45,58,0.08)] pb-6 mb-8"
-        >
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: "var(--ek-mg)" }} />
-              <span style={{ fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "var(--ek-mg)", fontWeight: 600 }}>
-                Chapitre 03 — Vue d'ensemble
-              </span>
-            </div>
-            <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "clamp(32px, 5vw, 52px)", lineHeight: 0.93, letterSpacing: "-1.5px", color: "var(--ek-ink)" }}>
-              <motion.span initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} style={{ display: "block" }}>
-                Tableau
-              </motion.span>
-              <motion.span
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.16 }}
-                style={{ display: "block", fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 500, color: "var(--ek-mg)" }}
-              >
-                de bord
-              </motion.span>
-            </h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 14, color: "var(--ek-ink-lt)", marginTop: 8, lineHeight: 1.5 }}
-            >
-              Vue d'ensemble de votre activité
-            </motion.p>
+        <div style={{ marginBottom: sectionGap }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
+            <div style={{ width: 22, height: 1.5, background: BRAND.tl.hex, flexShrink: 0 }} />
+            <span style={{
+              fontFamily: FL, fontSize: 10, fontWeight: 600,
+              letterSpacing: isMobile ? 3 : 5,
+              textTransform: "uppercase", color: BRAND.tl.hex,
+            }}>
+              Chapitre 03 — Vue d'ensemble
+            </span>
           </div>
 
+          <h1 style={{
+            fontFamily: FH, fontWeight: 800,
+            fontSize: isMobile ? "clamp(26px, 8vw, 34px)" : isTablet ? "clamp(30px, 5vw, 42px)" : "clamp(34px, 5vw, 58px)",
+            lineHeight: 1.05, color: BRAND.ink,
+            marginBottom: isMobile ? 10 : 14,
+            letterSpacing: "-0.02em",
+          }}>
+            <span>Tableau </span>
+            <span style={{ fontFamily: FE, fontStyle: "italic", color: BRAND.mg.hex, fontWeight: 500 }}>
+              de bord
+            </span>
+          </h1>
+
+          <p style={{
+            fontFamily: FE, fontStyle: "italic",
+            fontSize: isMobile ? 13 : 15,
+            color: BRAND.inkLt, maxWidth: 520,
+            lineHeight: 1.6, marginBottom: isMobile ? 16 : 20,
+          }}>
+            Vue d'ensemble de votre activité
+          </p>
+
           {/* Tag chips */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.38 }}
-            className="flex flex-wrap gap-2"
-          >
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {[
-              { t: "Commandes", c: "var(--ek-mg)" },
-              { t: "Rendez-vous", c: "var(--ek-pp)" },
+              { t: "Commandes", c: BRAND.mg },
+              { t: "Rendez-vous", c: BRAND.pp },
             ].map((tag, i) => (
               <motion.span
                 key={tag.t}
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.42 + i * 0.06 }}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.2 + i * 0.06 }}
                 style={{
-                  fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 11,
-                  border: `1.5px solid ${tag.c}`, color: tag.c,
-                  padding: "4px 12px", borderRadius: 100, letterSpacing: 0.3,
+                  fontFamily: FL, fontSize: 9, fontWeight: 600,
+                  letterSpacing: 2, textTransform: "uppercase",
+                  padding: "4px 10px", borderRadius: 100,
+                  border: `1px solid rgba(${tag.c.rgb},0.2)`,
+                  color: tag.c.hex, background: tag.c.bg,
                 }}
               >
                 {tag.t}
               </motion.span>
             ))}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
-        {/* ─── 2 Stat cards ─── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-          {STAT_CONFIGS.map((cfg, i) => (
+        {/* ─── 2 STAT CARDS ─── */}
+        <div style={{
+          display: "grid",
+          // On mobile: single column. Tablet+: 2 columns
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)",
+          gap: isMobile ? 12 : isTablet ? 16 : 24,
+          marginBottom: sectionGap,
+        }}>
+          {METRICS.map((cfg, i) => (
             <StatCard
               key={cfg.key}
-              config={cfg}
-              value={statValues[cfg.key]}
-              loading={loading}
+              cfg={cfg}
               index={i}
+              value={stats[cfg.key]}
+              loading={loading}
+              trendPct={Math.max(0, trendFor(cfg.key))}
             />
           ))}
         </div>
 
-        {/* ─── Combined area chart ─── */}
+        {/* ─── CHART ─── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           style={{
-            background: "white",
-            borderRadius: 4,
-            border: "1px solid rgba(45,45,58,0.1)",
-            boxShadow: "3px 3px 0 rgba(45,45,58,0.06)",
-            overflow: "hidden",
-            marginBottom: 20,
+            background: "#fff",
+            border: "1px solid rgba(45,45,58,0.08)",
+            borderRadius: 6,
+            padding: isMobile ? "18px 14px 14px" : isTablet ? "24px 20px 18px" : "32px 32px 24px",
+            boxShadow: "0 1px 2px rgba(45,45,58,0.04)",
+            marginBottom: sectionGap,
           }}
         >
-          {/* Chart header */}
-          <div style={{ padding: "20px 24px 0" }}>
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div>
-                <div className="flex items-center gap-2.5 mb-2">
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--ek-mg)" }} />
-                  <span style={{ fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "var(--ek-mg)", fontWeight: 700 }}>
-                    03 — Activité
-                  </span>
-                </div>
-                <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 18, letterSpacing: "-0.5px", color: "var(--ek-ink)", lineHeight: 1.1 }}>
-                  Commandes &{" "}
-                  <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 500, color: "var(--ek-pp)" }}>
-                    Rendez-vous
-                  </span>
-                </h2>
-                <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 12.5, color: "var(--ek-ink-lt)", marginTop: 4 }}>
-                  Évolution sur les 6 derniers mois
-                </p>
+          {/* Chart header — stacks on mobile */}
+          <div style={{
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            alignItems: isMobile ? "flex-start" : "flex-start",
+            justifyContent: "space-between",
+            gap: isMobile ? 14 : 20,
+            flexWrap: "wrap",
+            marginBottom: isMobile ? 16 : 24,
+          }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8, flexWrap: "wrap" }}>
+                <div style={{ width: 18, height: 1.5, background: cur.brand.hex, flexShrink: 0 }} />
+                <span style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 3, textTransform: "uppercase", color: cur.brand.hex }}>
+                  03 — Activité
+                </span>
               </div>
-
-              {/* Legend pills */}
-              <div className="flex items-center gap-3 flex-wrap">
-                {[
-                  { label: "Commandes", color: "#C2185B" },
-                  { label: "Rendez-vous", color: "#7B1FA2" },
-                ].map((l) => (
-                  <div key={l.label} className="flex items-center gap-1.5">
-                    <span style={{ width: 10, height: 10, borderRadius: "50%", background: l.color, display: "block" }} />
-                    <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 11, color: "var(--ek-ink-lt)" }}>
-                      {l.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <h3 style={{
+                fontFamily: FH, fontWeight: 800,
+                fontSize: isMobile ? "clamp(17px, 5vw, 22px)" : isTablet ? "clamp(20px, 3.5vw, 26px)" : "clamp(24px, 3vw, 32px)",
+                lineHeight: 1.1, color: BRAND.ink, letterSpacing: "-0.02em",
+              }}>
+                Évolution des{" "}
+                <span style={{ fontFamily: FE, fontStyle: "italic", color: cur.brand.hex, fontWeight: 500 }}>
+                  {cur.label.toLowerCase()}
+                </span>
+              </h3>
+              <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: 12, color: BRAND.inkLt, marginTop: 4 }}>
+                Sur les 6 derniers mois
+              </p>
             </div>
 
-            <div style={{ marginTop: 16 }}>
-              <Divider color="var(--ek-mg)" delay={0.5} />
+            {/* Dropdown — full width on mobile */}
+            <div style={{ width: isMobile ? "100%" : "auto" }}>
+              <MetricDropdown selected={selected} onChange={setSelected} />
             </div>
           </div>
 
-          {/* Chart */}
-          <div style={{ padding: "20px 12px 16px" }}>
-            {loading ? (
-              <div className="flex items-center justify-center" style={{ height: 240 }}>
-                <motion.span
-                  style={{ width: 22, height: 22, borderRadius: "50%", border: "2.5px solid rgba(194,24,91,0.2)", borderTopColor: "#C2185B", display: "block" }}
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                />
-              </div>
-            ) : chartData.every(d => d.Commandes === 0 && d["Rendez-vous"] === 0) ? (
-              /* No data placeholder */
-              <div className="flex flex-col items-center justify-center gap-2" style={{ height: 240 }}>
-                <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 32, color: "rgba(45,45,58,0.08)", letterSpacing: "-1px" }}>—</div>
-                <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 13, color: "var(--ek-ink-lt)" }}>
-                  Aucune donnée pour cette période
-                </div>
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height={260}>
-                <AreaChart data={chartData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="gradCommandes" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#C2185B" stopOpacity={0.18} />
-                      <stop offset="95%" stopColor="#C2185B" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="gradRdv" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#7B1FA2" stopOpacity={0.15} />
-                      <stop offset="95%" stopColor="#7B1FA2" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(45,45,58,0.06)" vertical={false} />
-
-                  <XAxis
-                    dataKey="month"
-                    tick={{ fontFamily: "var(--font-display)", fontSize: 11, fontWeight: 700, fill: "rgba(45,45,58,0.4)" }}
-                    axisLine={false}
-                    tickLine={false}
-                    dy={8}
-                  />
-                  <YAxis
-                    allowDecimals={false}
-                    tick={{ fontFamily: "var(--font-display)", fontSize: 11, fontWeight: 700, fill: "rgba(45,45,58,0.3)" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-
-                  <Tooltip content={<CustomTooltip />} cursor={{ stroke: "rgba(45,45,58,0.08)", strokeWidth: 1 }} />
-
-                  <Area
-                    type="monotone"
-                    dataKey="Commandes"
-                    stroke="#C2185B"
-                    strokeWidth={2.5}
-                    fill="url(#gradCommandes)"
-                    dot={{ r: 3.5, fill: "#C2185B", strokeWidth: 0 }}
-                    activeDot={{ r: 5.5, fill: "#C2185B", strokeWidth: 2, stroke: "white" }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="Rendez-vous"
-                    stroke="#7B1FA2"
-                    strokeWidth={2.5}
-                    fill="url(#gradRdv)"
-                    dot={{ r: 3.5, fill: "#7B1FA2", strokeWidth: 0 }}
-                    activeDot={{ r: 5.5, fill: "#7B1FA2", strokeWidth: 2, stroke: "white" }}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            )}
+          {/* Chart area */}
+          <div style={{ width: "100%", height: chartHeight }}>
+            <AnimatePresence mode="wait">
+              {loading ? (
+                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: BRAND.inkLt, fontFamily: FE, fontStyle: "italic", fontSize: 13 }}>
+                  Chargement…
+                </motion.div>
+              ) : empty ? (
+                <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                  <div style={{ fontFamily: FH, fontSize: 40, fontWeight: 800, color: `rgba(${cur.brand.rgb}, 0.2)` }}>—</div>
+                  <p style={{ fontFamily: FE, fontStyle: "italic", color: BRAND.inkLt, fontSize: 13 }}>Aucune donnée pour cette période</p>
+                </motion.div>
+              ) : (
+                <motion.div key={selected} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35 }} style={{ width: "100%", height: "100%" }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                      data={chartData}
+                      margin={{
+                        top: 8,
+                        right: isMobile ? 4 : 8,
+                        left: isMobile ? -28 : -20,
+                        bottom: 0,
+                      }}
+                    >
+                      <defs>
+                        <linearGradient id={`grad-${selected}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={cur.brand.hex} stopOpacity={0.35} />
+                          <stop offset="100%" stopColor={cur.brand.hex} stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(45,45,58,0.06)" vertical={false} />
+                      <XAxis
+                        dataKey="month"
+                        tick={{ fontFamily: FH, fontSize: isMobile ? 10 : 12, fill: BRAND.inkLt }}
+                        axisLine={false}
+                        tickLine={false}
+                        // On mobile show fewer labels
+                        interval={isMobile ? 1 : 0}
+                      />
+                      <YAxis
+                        tick={{ fontFamily: FH, fontSize: isMobile ? 10 : 12, fill: BRAND.inkLt }}
+                        axisLine={false}
+                        tickLine={false}
+                        allowDecimals={false}
+                        width={isMobile ? 28 : 36}
+                      />
+                      <Tooltip
+                        content={<ChartTooltip brandHex={cur.brand.hex} />}
+                        cursor={{ stroke: `rgba(${cur.brand.rgb},0.15)`, strokeWidth: 1 }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey={selected}
+                        name={cur.label}
+                        stroke={cur.brand.hex}
+                        strokeWidth={isMobile ? 2 : 2.5}
+                        fill={`url(#grad-${selected})`}
+                        dot={{ r: isMobile ? 3 : 4, fill: "#fff", stroke: cur.brand.hex, strokeWidth: 2 }}
+                        activeDot={{ r: isMobile ? 5 : 6, fill: cur.brand.hex, stroke: "#fff", strokeWidth: 2 }}
+                        animationDuration={700}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
 
         {/* ─── Quick actions ─── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          style={{ background: "white", borderRadius: 4, border: "1px solid rgba(45,45,58,0.1)", overflow: "hidden", boxShadow: "3px 3px 0 rgba(45,45,58,0.06)" }}
-        >
-          <div style={{ padding: "20px 22px 16px" }}>
-            <div className="flex items-center gap-2.5 mb-3">
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--ek-mg)" }} />
-              <span style={{ fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "var(--ek-mg)", fontWeight: 700 }}>
-                04 — Navigation
-              </span>
-            </div>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 18, letterSpacing: "-0.5px", color: "var(--ek-ink)", lineHeight: 1.1 }}>
-              Actions{" "}
-              <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 500, color: "var(--ek-mg)" }}>rapides</span>
-            </h2>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+            <div style={{ width: 18, height: 1.5, background: BRAND.gd.hex, flexShrink: 0 }} />
+            <span style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 3, textTransform: "uppercase", color: BRAND.gd.hex }}>
+              04 — Navigation
+            </span>
           </div>
+          <h3 style={{
+            fontFamily: FH, fontWeight: 800,
+            fontSize: isMobile ? "clamp(18px, 5vw, 22px)" : isTablet ? "clamp(20px, 3vw, 24px)" : "clamp(22px, 2.6vw, 28px)",
+            color: BRAND.ink, marginBottom: isMobile ? 14 : 20, letterSpacing: "-0.02em",
+          }}>
+            Actions{" "}
+            <span style={{ fontFamily: FE, fontStyle: "italic", color: BRAND.gd.hex, fontWeight: 500 }}>
+              rapides
+            </span>
+          </h3>
 
-          <div style={{ padding: "0 22px 22px", display: "flex", flexDirection: "column", gap: 10 }}>
-            <ActionCard href="/admin/orders" icon={<IconCart />} title="Voir les commandes" desc="Gérer les commandes clients" accent="var(--ek-mg)" accentRgb="194,24,91" index={0} />
-            <ActionCard href="/admin/submissions" icon={<IconMessage />} title="Voir les rendez-vous" desc="Répondre aux demandes" accent="var(--ek-pp)" accentRgb="123,31,162" index={1} />
+          <div style={{
+            display: "grid",
+            // Mobile: 1 col. Tablet+: 2 cols
+            gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)",
+            gap: isMobile ? 10 : 12,
+          }}>
+            <ActionCard
+              href="/admin/orders"
+              icon={<ShoppingBag size={17} strokeWidth={1.8} />}
+              title="Voir les commandes"
+              desc="Gérer les commandes clients"
+              accent={BRAND.mg.hex}
+              accentRgb={BRAND.mg.rgb}
+              index={0}
+            />
+            <ActionCard
+              href="/admin/submissions"
+              icon={<MessageSquare size={17} strokeWidth={1.8} />}
+              title="Voir les rendez-vous"
+              desc="Répondre aux demandes"
+              accent={BRAND.pp.hex}
+              accentRgb={BRAND.pp.rgb}
+              index={1}
+            />
           </div>
-        </motion.div>
+        </div>
+
       </div>
     </div>
   );
