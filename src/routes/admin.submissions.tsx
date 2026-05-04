@@ -43,7 +43,7 @@ function Chip({ label, color, bg, rgb }: { label: string; color: string; bg: str
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: 5,
-      fontFamily: FH, fontWeight: 700, fontSize: 11, letterSpacing: 0.3,
+      fontFamily: FH, fontWeight: 700, fontSize: 10, letterSpacing: 0.3,
       color, background: bg, border: `1px solid rgba(${rgb},0.28)`,
       padding: "3px 10px", borderRadius: 100,
     }}>
@@ -71,7 +71,7 @@ function StatusSelect({ value, onChange }: { value: string; onChange: (v: string
         onClick={() => setOpen(v => !v)}
         style={{
           display: "inline-flex", alignItems: "center", gap: 6,
-          fontFamily: FH, fontWeight: 700, fontSize: 11,
+          fontFamily: FH, fontWeight: 700, fontSize: 10,
           color: s.color, background: s.bg,
           border: `1px solid rgba(${s.rgb},0.28)`,
           padding: "4px 10px", borderRadius: 100, cursor: "pointer", transition: "opacity 0.15s",
@@ -624,7 +624,7 @@ function AdminSubmissions() {
 
         {/* ─── Table ─── */}
         {/* ─── Table ─── */}
-<div className="w-full overflow-x-auto">
+<div className="w-full">
   <motion.div
     className="min-w-[720px]"
     initial={{ opacity: 0, y: 16 }}
@@ -635,7 +635,6 @@ function AdminSubmissions() {
       borderRadius: 6,
       border: "1px solid rgba(45,45,58,0.1)",
       boxShadow: "0 16px 34px -20px rgba(45,45,58,0.3)",
-      overflow: "hidden"
     }}
   >
     {/* Header */}

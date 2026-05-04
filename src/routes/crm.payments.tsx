@@ -30,7 +30,7 @@ function CrmPayments() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterMethod, setFilterMethod] = useState("all");
-  const [filterfacture, setFilterfacture] = useState("all");
+  const [filterCertificate, setFilterCertificate] = useState("all");
 
   useEffect(() => {
     fetchPayments();
@@ -84,12 +84,12 @@ function CrmPayments() {
       payment.receipt_number?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesMethod = filterMethod === "all" || payment.payment_method === filterMethod;
-    const matchesfacture =
-      filterfacture === "all" ||
-      (filterfacture === "sent" && payment.facture_sent) ||
-      (filterfacture === "not_sent" && !payment.facture_sent);
+    const matchescertificate =
+      filterCertificate === "all" ||
+      (filterCertificate === "sent" && payment.certificate_sent) ||
+      (filterCertificate === "not_sent" && !payment.certificate_sent);
 
-    return matchesSearch && matchesMethod && matchesfacture;
+    return matchesSearch && matchesMethod && matchescertificate;
   });
 
   if (loading) {
@@ -126,7 +126,7 @@ function CrmPayments() {
               Historique des <span style={{ fontFamily: FE, fontStyle: "italic", color: BRAND.tl.hex, fontWeight: 500 }}>paiements</span>
             </h1>
             <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: 14, color: BRAND.inkLt, marginTop: 8 }}>
-            Historique et gestion des paiements clients
+            Historique et gestion des paiements parents
             </p>
         </div>
           <button
@@ -154,7 +154,7 @@ function CrmPayments() {
             <div style={{ position: "relative" }}>
               <Search size={14} strokeWidth={2} style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", color: BRAND.inkLt }} />
               <input
-                placeholder="Rechercher par client, reçu..."
+                placeholder="Rechercher par parent, reçu..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{
@@ -179,8 +179,8 @@ function CrmPayments() {
                 <option value="bank">Banque</option>
               </select>
               <select
-                value={filterfacture}
-                onChange={(e) => setFilterfacture(e.target.value)}
+                value={filterCertificate}
+                onChange={(e) => setFilterCertificate(e.target.value)}
                 style={{
                   padding: "9px 12px", border: `1px solid ${BRAND.border}`, borderRadius: 6,
                   background: "#fff", fontFamily: FH, fontSize: 13, color: BRAND.ink,
@@ -199,7 +199,7 @@ function CrmPayments() {
             <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 980 }}>
               <thead style={{ background: BRAND.canvas }}>
                 <tr>
-                  {["Client", "Enfant", "Montant", "Date", "Mode", "Période", "Reçu", "facture"].map((h) => (
+                  {["Parent", "Enfant", "Montant", "Date", "Mode", "Période", "Reçu", "facture"].map((h) => (
                     <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontFamily: FL, fontSize: 9, letterSpacing: 2.2, textTransform: "uppercase", color: "rgba(45,45,58,0.45)", fontWeight: 600 }}>
                       {h}
                     </th>
@@ -252,13 +252,13 @@ function CrmPayments() {
                       <td style={{ padding: "11px 14px" }}>
                         <span style={{
                           display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 10px", borderRadius: 100,
-                          background: payment.facture_sent ? BRAND.tl.bg : "#F5F5F7",
-                          border: `1px solid ${payment.facture_sent ? `rgba(${BRAND.tl.rgb},0.2)` : "rgba(90,90,106,0.16)"}`,
-                          color: payment.facture_sent ? BRAND.tl.hex : BRAND.inkLt,
+                          background: payment.certificate_sent ? BRAND.tl.bg : "#F5F5F7",
+                          border: `1px solid ${payment.certificate_sent ? `rgba(${BRAND.tl.rgb},0.2)` : "rgba(90,90,106,0.16)"}`,
+                          color: payment.certificate_sent ? BRAND.tl.hex : BRAND.inkLt,
                           fontFamily: FL, fontSize: 10, fontWeight: 600, letterSpacing: 1.4, textTransform: "uppercase",
                         }}>
-                          <span style={{ width: 5, height: 5, borderRadius: "50%", background: payment.facture_sent ? BRAND.tl.hex : BRAND.inkLt }} />
-                          {payment.facture_sent ? "Envoyé" : "Non envoyé"}
+                          <span style={{ width: 5, height: 5, borderRadius: "50%", background: payment.certificate_sent ? BRAND.tl.hex : BRAND.inkLt }} />
+                          {payment.certificate_sent ? "Envoyé" : "Non envoyé"}
                         </span>
                       </td>
                     </tr>

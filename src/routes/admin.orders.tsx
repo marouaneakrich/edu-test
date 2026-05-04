@@ -476,7 +476,6 @@ function AdminOrders() {
             background: "white", borderRadius: 6,
             border: "1px solid rgba(45,45,58,0.08)",
             boxShadow: "0 1px 2px rgba(45,45,58,0.04)",
-            overflow: showTable ? "hidden" : "visible",
           }}
         >
           {filteredOrders.length === 0 ? (
