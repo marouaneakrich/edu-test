@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { PageShell, PageHero } from "@/components/site/PageShell";
-import { ShoppingBag, Search, Heart, Plus } from "lucide-react";
+import { Search, Heart, Plus } from "lucide-react";
 import { MagneticButton } from "@/components/site/motion/MagneticButton";
 import { Doodle } from "@/components/site/motion/Doodle";
 import { useCart } from "@/hooks/useCart";

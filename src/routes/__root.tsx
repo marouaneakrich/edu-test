@@ -3,7 +3,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import appCss from "../styles.css?url";
 import { CartProvider } from "../hooks/useCart";
 import { AdminToaster } from "../components/admin/AdminToaster";
-import { toast } from "sonner";
+import iconUrl from "../assets/icon.png";
 
 function NotFoundComponent() {
   return (
@@ -46,11 +46,11 @@ export const Route = createRootRoute({
         rel: "stylesheet",
         href: appCss,
       },
-          {
-      rel: "icon",
-      href: "https://eiden-group.com/wp-content/uploads/2026/04/icon.png",
-      type: "image/x-icon",
-    },
+      {
+        rel: "icon",
+        href: iconUrl,
+        type: "image/png",
+      },
     ],
   }),
   shellComponent: RootShell,

@@ -444,14 +444,13 @@ function AdminDashboard() {
   const [loading, setLoading] = React.useState(true);
   const [selected, setSelected] = React.useState<MetricKey>("totalOrders");
 
-  const { isMobile, isTablet, isDesktop, width } = useBreakpoint();
+  const { isMobile, isTablet } = useBreakpoint();
 
   // Responsive values
   const px = isMobile ? 16 : isTablet ? 24 : 56;
   const py = isMobile ? 20 : isTablet ? 28 : 48;
   const sectionGap = isMobile ? 28 : isTablet ? 36 : 56;
   const chartHeight = isMobile ? 200 : isTablet ? 250 : 320;
-  const cardPadding = isMobile ? "16px 16px 14px" : isTablet ? "20px 20px 18px" : "28px 28px 24px";
 
   React.useEffect(() => {
     (async () => {

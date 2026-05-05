@@ -11,21 +11,12 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
-
-
-
 function LoginPage() {
   const { login, isAuthenticated, loading } = useAdminAuth();
   const [identifier, setIdentifier] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-  const [time, setTime] = React.useState(() => new Date());
-
-  React.useEffect(() => {
-    const t = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
 
   React.useEffect(() => {
     if (isAuthenticated && !loading) {
@@ -47,9 +38,6 @@ function LoginPage() {
       setIsLoading(false);
     }
   };
-
-  const hh = String(time.getHours()).padStart(2, "0");
-  const mm = String(time.getMinutes()).padStart(2, "0");
 
   return (
     <div className="min-h-screen w-full relative overflow-x-hidden"  style={{ background: "var(--ek-canvas)", fontFamily: "var(--font-body)", color: "var(--ek-ink)" }}>

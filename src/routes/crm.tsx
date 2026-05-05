@@ -1,11 +1,11 @@
 import * as React from "react";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { useUserRole } from "@/hooks/useUserRole";
+import { useUserRole, type UserPermissions } from "@/hooks/useUserRole";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Users, CreditCard, Settings, LogOut } from "lucide-react";
+import logoIcon from "../assets/icon.png";
 
 export const Route = createFileRoute("/crm")({
   component: CrmLayout,
@@ -19,7 +19,7 @@ const NAV = [
     activeClass: "text-[#C2185B] bg-[#FFF0F5] border-[rgba(194,24,91,0.2)]",
     iconColor: "text-[#C2185B]",
     dotColor: "bg-[#C2185B]",
-    permission: null as string | null,
+    permission: null as keyof UserPermissions | null,
     adminOnly: false,
     icon: (
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -34,7 +34,7 @@ const NAV = [
     activeClass: "text-[#7B1FA2] bg-[#F8F0FF] border-[rgba(123,31,162,0.2)]",
     iconColor: "text-[#7B1FA2]",
     dotColor: "bg-[#7B1FA2]",
-    permission: "view_customers",
+    permission: "view_customers" as keyof UserPermissions,
     adminOnly: false,
     icon: (
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -49,7 +49,7 @@ const NAV = [
     activeClass: "text-[#00897B] bg-[#E8F8F5] border-[rgba(0,137,123,0.2)]",
     iconColor: "text-[#00897B]",
     dotColor: "bg-[#00897B]",
-    permission: "view_payments",
+    permission: "view_payments" as keyof UserPermissions,
     adminOnly: false,
     icon: (
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -64,7 +64,7 @@ const NAV = [
     activeClass: "text-[#1565C0] bg-[#EEF3FB] border-[rgba(21,101,192,0.2)]",
     iconColor: "text-[#1565C0]",
     dotColor: "bg-[#1565C0]",
-    permission: null,
+    permission: null as keyof UserPermissions | null,
     adminOnly: true,
     icon: (
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -159,11 +159,7 @@ function CrmLayout() {
               whileHover={{ rotate: -8, scale: 1.08 }}
               transition={{ type: "spring", stiffness: 250, damping: 16 }}
             >
-              <img
-                src="https://eiden-group.com/wp-content/uploads/2026/04/icon.png"
-                alt="EducazenKids Icon"
-                className="w-[22px] h-[22px] object-contain"
-              />
+              <img src={logoIcon} className="w-[22px] h-[22px] object-contain" alt="EducazenKids Icon" />
             </motion.div>
             <div className="hidden sm:block text-left">
               <div className="font-display font-black text-[15px] tracking-[-0.4px] leading-none text-foreground">

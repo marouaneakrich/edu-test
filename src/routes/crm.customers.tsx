@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
 import { useState, useEffect, useRef } from "react";
 import { Search, Edit, Eye, Plus, X, ChevronDown, Check } from "lucide-react";
@@ -357,13 +357,12 @@ function IconBtn({ onClick, children, accentRgb, accentBg }: {
 
 /* ─── Main component ─── */
 function CrmCustomers() {
-  const navigate = useNavigate();
   const { isMobile, isTablet } = useBreakpoint();
 
   const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStage, setFilterStage] = useState("all");
+  const [filterStage] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterOverdue, setFilterOverdue] = useState(false);
 

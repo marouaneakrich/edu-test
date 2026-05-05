@@ -198,15 +198,6 @@ function WorkspaceCard({ card, index, onClick }: { card: (typeof CARDS)[0]; inde
 function AdminChoice() {
   const { isAuthenticated, loading, logout } = useAdminAuth();
   const navigate = useNavigate();
-  const [time, setTime] = React.useState(() => new Date());
-
-  React.useEffect(() => {
-    const t = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
-
-  const hh = String(time.getHours()).padStart(2, "0");
-  const mm = String(time.getMinutes()).padStart(2, "0");
 
   if (loading) {
     return (

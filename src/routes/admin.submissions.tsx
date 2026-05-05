@@ -476,22 +476,31 @@ function AdminSubmissions() {
 
   const handleConfirmConversion = async (paid: boolean) => {
     if (!convSub) return;
+    
+    // Check if already exists in CRM with converti status
+    let existing: any = null;
+    const { data: byId } = await supabase.from("ez_crm_customers").select("*").eq("submission_id", convSub.id).single();
+    if (byId) { existing = byId; }
+    else {
+      const { data: byPhone } = await supabase.from("ez_crm_customers").select("*").eq("phone", convSub.phone?.toLowerCase()).single();
+      if (byPhone) { existing = byPhone; }
+      else {
+        const { data: byEmail } = await supabase.from("ez_crm_customers").select("*").eq("email", convSub.email?.toLowerCase()).single();
+        if (byEmail) { existing = byEmail; }
+      }
+    }
+    
+    // If already in CRM with converti status, show error
+    if (existing && existing.crm_stage === "converti") {
+      toast.error("Ce client est déjà converti dans le CRM");
+      setConvSub(null);
+      return;
+    }
+    
     setIsConverting(true);
     try {
       const { data: settingsData } = await supabase.from("ez_settings").select("value").eq("key", `monthly_fee_${convSub.child_profile?.toLowerCase().replace("enfant ", "").replace(" ", "_")}`).single();
       const monthlyFee = settingsData ? Number(settingsData.value) : 800;
-
-      let existing = null;
-      const { data: byId } = await supabase.from("ez_crm_customers").select("*").eq("submission_id", convSub.id).single();
-      if (byId) { existing = byId; }
-      else {
-        const { data: byPhone } = await supabase.from("ez_crm_customers").select("*").eq("phone", convSub.phone?.toLowerCase()).single();
-        if (byPhone) { existing = byPhone; }
-        else {
-          const { data: byEmail } = await supabase.from("ez_crm_customers").select("*").eq("email", convSub.email?.toLowerCase()).single();
-          if (byEmail) { existing = byEmail; }
-        }
-      }
 
       const enrollmentDate = new Date().toISOString().split("T")[0];
       const paymentDay = new Date().getDate();

@@ -117,6 +117,8 @@ interface ParentCustomer {
   email: string;
   phone: string;
   crm_stage: string;
+  monthly_fee?: number;
+  child_profile?: string;
 }
 
 /* ─── Individual stat card ─── */
@@ -447,7 +449,7 @@ function PaymentModal({
               background: "#fff",
               borderRadius: 6,
               border: "1px solid rgba(45,45,58,0.1)",
-              boxShadow: "0 32px 80px rgba(45,45,58,0.18), 0 1px 2px rgba(45,45,58,0.04)",
+              boxShadow: "0 32px 80px -16px rgba(45,45,58,0.18), 0 1px 2px rgba(45,45,58,0.04)",
               width: "100%",
               maxWidth: 920,
               maxHeight: "90vh",
@@ -745,11 +747,22 @@ function CrmDashboard() {
     fetchParentsForPayment();
   }, [showPaymentModal]);
 
+  useEffect(() => {
+    if (!selectedParentId) return;
+    const selectedParent = parents.find((p) => p.id === selectedParentId);
+    if (selectedParent && selectedParent.monthly_fee) {
+      setPaymentForm((prev) => ({
+        ...prev,
+        amount: selectedParent.monthly_fee || 0,
+      }));
+    }
+  }, [selectedParentId, parents]);
+
   /* ── Same logic as original ── */
   const fetchParentsForPayment = async () => {
     const { data, error } = await supabase
       .from("ez_crm_customers")
-      .select("id, parent_name, child_name, email, phone, crm_stage")
+      .select("id, parent_name, child_name, email, phone, crm_stage, monthly_fee, child_profile")
       .order("created_at", { ascending: false });
     if (error) {
       toast.error("Erreur lors du chargement des parents");

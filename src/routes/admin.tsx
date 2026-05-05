@@ -1,7 +1,6 @@
 import * as React from "react";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -56,7 +55,6 @@ const NAV = [
 
 function AdminLayout() {
   const { isAuthenticated, loading, logout, user } = useAdminAuth();
-  const { isAdmin } = useUserRole();
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   // const [time, setTime] = React.useState(() => new Date());
   const [currentPath, setCurrentPath] = React.useState(
@@ -117,7 +115,6 @@ function AdminLayout() {
 
   // const hh = String(time.getHours()).padStart(2, "0");
   // const mm = String(time.getMinutes()).padStart(2, "0");
-  const activeNav = NAV.find(n => currentPath === n.href || currentPath.startsWith(n.href + "/"));
   const userInitial = user?.email?.[0]?.toUpperCase() ?? "A";
   const userEmailShort = user?.email?.split("@")[0] ?? "Admin";
 

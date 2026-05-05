@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { ArrowLeft, CreditCard, Plus, History, DollarSign } from "lucide-react";
+import { ArrowLeft, Plus, DollarSign } from "lucide-react";
 
 export const Route = createFileRoute("/crm/customers/$id")({
   component: CustomerDetail,
@@ -239,21 +239,6 @@ function CustomerDetail() {
       </div>
     );
   }
-
-  const getStageColor = (stage: string) => {
-    switch (stage) {
-      case "nouveau":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "contacte":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "qualifie":
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      case "converti":
-        return "bg-green-100 text-green-800 border-green-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
 
   return (
     <div className="space-y-6">

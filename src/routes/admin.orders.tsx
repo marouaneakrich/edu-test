@@ -1,9 +1,9 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { supabase, EzOrder } from "@/lib/supabase";
+import { supabase, type EzOrder } from "@/lib/supabase";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Download, Eye, X, ChevronDown, ShoppingBag } from "lucide-react";
+import { Search, Download, Eye, X, ChevronDown } from "lucide-react";
 
 export const Route = createFileRoute("/admin/orders")({
   component: AdminOrders,
