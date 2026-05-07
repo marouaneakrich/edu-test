@@ -725,6 +725,7 @@ function AddClientModal({
                 { key: "fatherName", label: "Nom du père", type: "text" },
                 { key: "motherName", label: "Nom de mère", type: "text" },
                 { key: "cinOrPassport", label: "CIN ou Passport", type: "text" },
+                { key: "niveau", label: "Niveau", type: "select" },
                 { key: "email1", label: "Email 1", type: "email" },
                 { key: "email2", label: "Email 2", type: "email" },
                 { key: "phone1", label: "Téléphone 1", type: "text" },
@@ -734,33 +735,27 @@ function AddClientModal({
                   <label style={{ display: "block", marginBottom: 6, fontFamily: FL, fontSize: 10, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" as const, color: BRAND.inkLt }}>
                     {field.label}
                   </label>
-                  <input
-                    type={field.type}
-                    value={form[field.key as keyof NewClientForm]}
-                    onChange={(e) => setField(field.key as keyof NewClientForm, e.target.value)}
-                    style={{ width: "100%", border: "1px solid rgba(45,45,58,0.12)", borderRadius: 6, padding: "10px 12px", fontFamily: FH, fontSize: 13, boxSizing: "border-box" }}
-                  />
+                  {field.type === "select" ? (
+                    <select
+                      value={form.niveau}
+                      onChange={(e) => setField("niveau", e.target.value)}
+                      style={{ width: "100%", border: "1px solid rgba(45,45,58,0.12)", borderRadius: 6, padding: "10px 12px", fontFamily: FH, fontSize: 13, boxSizing: "border-box", background: "#fff" }}
+                    >
+                      <option value="">Sélectionner un niveau</option>
+                      {levels.map((level) => (
+                        <option key={level} value={level}>{level}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type={field.type}
+                      value={form[field.key as keyof NewClientForm]}
+                      onChange={(e) => setField(field.key as keyof NewClientForm, e.target.value)}
+                      style={{ width: "100%", border: "1px solid rgba(45,45,58,0.12)", borderRadius: 6, padding: "10px 12px", fontFamily: FH, fontSize: 13, boxSizing: "border-box" }}
+                    />
+                  )}
                 </div>
               ))}
-
-              <div style={{ gridColumn: "1 / -1", display: "flex", gap: 12, flexWrap: "wrap" }}>
-                
-                <div style={{ flex: "1 1 280px" }}>
-                  <label style={{ display: "block", marginBottom: 6, fontFamily: FL, fontSize: 10, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" as const, color: BRAND.inkLt }}>
-                    Niveau
-                  </label>
-                  <select
-                    value={form.niveau}
-                    onChange={(e) => setField("niveau", e.target.value)}
-                    style={{ width: "100%", border: "1px solid rgba(45,45,58,0.12)", borderRadius: 6, padding: "10px 12px", fontFamily: FH, fontSize: 13, boxSizing: "border-box", background: "#fff" }}
-                  >
-                    <option value="">Sélectionner un niveau</option>
-                    {levels.map((level) => (
-                      <option key={level} value={level}>{level}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
 
               <div style={{ gridColumn: "1 / -1", display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 6 }}>
                 <button

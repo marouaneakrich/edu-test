@@ -355,6 +355,19 @@ function IconBtn({ onClick, children, accentRgb, accentBg }: {
   );
 }
 
+type NewClientForm = {
+  studentName: string;
+  birthDate: string;
+  fatherName: string;
+  motherName: string;
+  cinOrPassport: string;
+  email1: string;
+  email2: string;
+  phone1: string;
+  phone2: string;
+  niveau: string;
+};
+
 /* ─── Main component ─── */
 function CrmCustomers() {
   const { isMobile, isTablet } = useBreakpoint();
@@ -369,7 +382,21 @@ function CrmCustomers() {
   const [showViewDialog, setShowViewDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [showAddClientDialog, setShowAddClientDialog] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [isSavingClient, setIsSavingClient] = useState(false);
+  const [newClientForm, setNewClientForm] = useState<NewClientForm>({
+    studentName: "",
+    birthDate: "",
+    fatherName: "",
+    motherName: "",
+    cinOrPassport: "",
+    email1: "",
+    email2: "",
+    phone1: "",
+    phone2: "",
+    niveau: "",
+  });
 
   const [editForm, setEditForm] = useState({
     parent_name: "", child_name: "", email: "", phone: "",
@@ -477,6 +504,53 @@ function CrmCustomers() {
     } finally { setLoading(false); }
   };
 
+  const addClientFromModal = async () => {
+    if (!newClientForm.studentName || !newClientForm.fatherName || !newClientForm.niveau) {
+      toast.error("Veuillez remplir au minimum: nom d'élève, nom du père, et niveau");
+      return;
+    }
+
+    setIsSavingClient(true);
+    try {
+      const parentLabel = `${newClientForm.fatherName}${newClientForm.motherName ? ` / ${newClientForm.motherName}` : ""}`;
+      const { error } = await supabase
+        .from("ez_crm_customers")
+        .insert({
+          parent_name: parentLabel,
+          child_name: newClientForm.studentName,
+          email: newClientForm.email1 || newClientForm.email2 || null,
+          phone: newClientForm.phone1 || newClientForm.phone2 || null,
+          child_profile: newClientForm.niveau,
+          crm_stage: "nouveau",
+          enrollment_date: new Date().toISOString().split("T")[0],
+          monthly_fee: 0,
+          payment_day: 1,
+        });
+      if (error) throw error;
+
+      toast.success("Client ajouté avec succès");
+      setShowAddClientDialog(false);
+      setNewClientForm({
+        studentName: "",
+        birthDate: "",
+        fatherName: "",
+        motherName: "",
+        cinOrPassport: "",
+        email1: "",
+        email2: "",
+        phone1: "",
+        phone2: "",
+        niveau: "",
+      });
+      fetchCustomers();
+    } catch (error) {
+      console.error("Error adding customer:", error);
+      toast.error("Erreur lors de l'ajout du client");
+    } finally {
+      setIsSavingClient(false);
+    }
+  };
+
   const filteredCustomers = customers.filter((customer) => {
     const matchesSearch =
       customer.parent_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -517,7 +591,8 @@ function CrmCustomers() {
       <div style={{ position: "relative", zIndex: 1, maxWidth: 1400, margin: "0 auto" }}>
 
         {/* ─── Page header ─── */}
-        <div style={{ marginBottom: isMobile ? 28 : 40 }}>
+        <div style={{ marginBottom: isMobile ? 28 : 40, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          <div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
             <div style={{ width: 22, height: 1.5, background: BRAND.mg.hex, flexShrink: 0 }} />
             <span style={{ fontFamily: FL, fontSize: 10, fontWeight: 600, letterSpacing: 5, textTransform: "uppercase" as const, color: BRAND.mg.hex }}>
@@ -535,6 +610,22 @@ function CrmCustomers() {
           <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: isMobile ? 13 : 15, color: BRAND.inkLt, lineHeight: 1.6 }}>
             Gérez vos clients et leur progression dans le pipeline de vente
           </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAddClientDialog(true)}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              border: "none", borderRadius: 100,
+              padding: "10px 16px",
+              background: BRAND.mg.hex, color: "#fff",
+              fontFamily: FH, fontWeight: 800, fontSize: 13,
+              cursor: "pointer", flexShrink: 0,
+            }}
+          >
+            <Plus size={14} strokeWidth={2.4} />
+            Ajouter un client
+          </button>
         </div>
 
         {/* ─── Filters bar ─── */}
@@ -743,16 +834,25 @@ function CrmCustomers() {
       <Modal open={showViewDialog} onClose={() => setShowViewDialog(false)} title="Détails du client">
           {selectedCustomer && (
             <>
+              {(() => {
+                const parentParts = String(selectedCustomer.parent_name || "").split("/").map((s: string) => s.trim());
+                const fatherName = parentParts[0] || "—";
+                const motherName = parentParts[1] || "—";
+                return (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px 20px", marginBottom: 24 }}>
                 {[
-                  { label: "Parent", value: selectedCustomer.parent_name },
-                  { label: "Enfant", value: selectedCustomer.child_name },
-                  { label: "Email", value: selectedCustomer.email },
-                  { label: "Téléphone", value: selectedCustomer.phone },
+                  { label: "Nom d'élève", value: selectedCustomer.child_name || "—" },
+                  { label: "Date de naissance", value: selectedCustomer.birth_date || "—" },
+                  { label: "Nom du père", value: fatherName },
+                  { label: "Nom de mère", value: motherName },
+                  { label: "CIN ou Passport", value: selectedCustomer.cin_or_passport || "—" },
+                  { label: "Email 1", value: selectedCustomer.email || "—" },
+                  { label: "Email 2", value: selectedCustomer.email_2 || "—" },
+                  { label: "Téléphone 1", value: selectedCustomer.phone || "—" },
+                  { label: "Téléphone 2", value: selectedCustomer.phone_2 || "—" },
+                  { label: "Niveau", value: selectedCustomer.niveau || selectedCustomer.child_profile || "—" },
                   { label: "Profil", value: selectedCustomer.child_profile },
-                  { label: "Stade CRM", value: null, node: <StagePill stage={selectedCustomer.crm_stage} /> },
                   { label: "Frais mensuels", value: `${selectedCustomer.monthly_fee} MAD` },
-                  { label: "Jour de paiement", value: `Le ${selectedCustomer.payment_day} de chaque mois` },
                 ].map(({ label, value, node }) => (
                   <div key={label}>
                     <div style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 2.5, textTransform: "uppercase" as const, color: BRAND.inkLt, marginBottom: 4 }}>{label}</div>
@@ -760,6 +860,8 @@ function CrmCustomers() {
                   </div>
                 ))}
               </div>
+                );
+              })()}
 
               <div style={{ height: 1, background: BRAND.border, marginBottom: 16 }} />
 
@@ -776,6 +878,53 @@ function CrmCustomers() {
               </div>
             </>
           )}
+      </Modal>
+
+      {/* ─── ADD CLIENT DIALOG ─── */}
+      <Modal open={showAddClientDialog} onClose={() => setShowAddClientDialog(false)} title="Ajouter un client">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          {[
+            { key: "studentName", label: "Nom d'élève", type: "text" },
+            { key: "birthDate", label: "Date de naissance", type: "date" },
+            { key: "fatherName", label: "Nom du père", type: "text" },
+            { key: "motherName", label: "Nom de mère", type: "text" },
+            { key: "cinOrPassport", label: "CIN ou Passport", type: "text" },
+            { key: "niveau", label: "Niveau", type: "select" },
+            { key: "email1", label: "Email 1", type: "email" },
+            { key: "email2", label: "Email 2", type: "email" },
+            { key: "phone1", label: "Téléphone 1", type: "text" },
+            { key: "phone2", label: "Téléphone 2", type: "text" },
+          ].map((field) => (
+            <Field key={field.key} label={field.label}>
+              {field.type === "select" ? (
+                <StyledSelect
+                  value={newClientForm.niveau}
+                  onChange={(v) => setNewClientForm({ ...newClientForm, niveau: v })}
+                  options={[
+                    { value: "C1", label: "C1" },
+                    { value: "C2", label: "C2" },
+                    { value: "C3", label: "C3" },
+                    { value: "C4", label: "C4" },
+                    { value: "College", label: "College" },
+                  ]}
+                  placeholder="Sélectionner un niveau"
+                />
+              ) : (
+                <StyledInput
+                  type={field.type}
+                  value={newClientForm[field.key as keyof NewClientForm]}
+                  onChange={(v) => setNewClientForm({ ...newClientForm, [field.key]: v })}
+                />
+              )}
+            </Field>
+          ))}
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 16 }}>
+          <PrimaryBtn variant="outline" onClick={() => setShowAddClientDialog(false)}>Annuler</PrimaryBtn>
+          <PrimaryBtn onClick={addClientFromModal} disabled={isSavingClient}>
+            {isSavingClient ? "Enregistrement..." : "Ajouter le client"}
+          </PrimaryBtn>
+        </div>
       </Modal>
 
       {/* ─── PAYMENT DIALOG ─── */}
