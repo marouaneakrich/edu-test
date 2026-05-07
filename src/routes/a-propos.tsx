@@ -45,7 +45,7 @@ function AboutPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-10 grid md:grid-cols-2 gap-8">
           {[
             { letter: "M", label: "Notre Mission", text: "Permettre à chaque enfant de reprendre goût à l'apprentissage, faire émerger ses compétences et vivre une expérience éducative unique.", bg: "bg-magenta-bg", color: "text-magenta", rot: -2 },
-            { letter: "V", label: "Notre Vision", text: "Devenir la référence de l'éducation inclusive au Maroc  un modèle où chaque enfant trouve sa place et s'épanouit.", bg: "bg-lavender", color: "text-purple", rot: 2 },
+            { letter: "V", label: "Notre Vision", text: "Devenir le modèle du Maroc où chaque enfant est accueilli et accompagné vers son épanouissement.", bg: "bg-lavender", color: "text-purple", rot: 2 },
           ].map((m, i) => (
             <motion.div
               key={m.letter}

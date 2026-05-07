@@ -216,8 +216,8 @@ function Hero() {
 /* ---------- 2. MARQUEE STRIP ---------- */
 function MarqueeStrip() {
   const colors = ["text-magenta", "text-purple", "text-teal", "text-gold"];
-  const words1 = ["Montessori", "Freinet", "Steiner", "HPI", "TDAH", "DYS", "Art-thérapie"];
-  const words2 = ["Bienveillance", "Inclusivité", "Personnalisé", "Maternelle", "Primaire", "D.I.E.C", "Créativité", "Autonomie"];
+  const words1 = ["Montessori", "Freinet", "Steiner", "HPI", "TDAH", "DYS"];
+  const words2 = ["Bienveillance", "Inclusivité", "Personnalisé", "Maternelle", "Primaire", "D.I.E.C", "Créativité", "Autonomie", "Collège CNED"];
   return (
     <section className="bg-white py-10 border-y border-border overflow-hidden">
       <Marquee className="mb-3">
@@ -243,7 +243,7 @@ function StatsBand() {
   const stats = [
     { n: 6, suf: " ans", label: "d'expérience", color: "magenta", isInfinity: false },
     { n: 70, suf: "+", label: "familles accompagnées", color: "purple", isInfinity: false },
-    { n: 13, suf: "", label: "pédagogues experts", color: "teal", isInfinity: false },
+    { n: 13, suf: "", label: "experts pluridisciplinaires", color: "teal", isInfinity: false },
     { n: 0, suf: "", label: "méthodes pédagogiques", color: "gold", isInfinity: true },
   ];
   return (
@@ -267,8 +267,8 @@ function StatsBand() {
 /* ---------- 4. PILLARS  sticker cards ---------- */
 function Pillars() {
   const pillars = [
-    { icon: Sparkles, color: "magenta", title: "Inclusivité", desc: "Chaque enfant accueilli avec sa singularité  la diversité est notre richesse.", rot: -3 },
-    { icon: Heart, color: "purple", title: "Bienveillance", desc: "Un cadre chaleureux où l'enfant reprend goût à l'apprentissage.", rot: 2 },
+    { icon: Sparkles, color: "magenta", title: "Inclusivité", desc: "la diversité est notre richesse.", rot: -3 },
+    { icon: Heart, color: "purple", title: "Bienveillance", desc: "Un accompagnement cadré et chaleureux.", rot: 2 },
     { icon: Target, color: "teal", title: "Personnalisation", desc: "Plan d'Accompagnement Personnalisé (PAP) pour chaque élève.", rot: -2 },
     { icon: Brain, color: "gold", title: "Innovation", desc: "Module D.I.E.C alliant pédagogie moderne et art-thérapie.", rot: 3 },
   ];
@@ -468,7 +468,6 @@ function ActivitiesExpand() {
   const acts = [
     { img: activityMontessori, title: "Pédagogie Montessori", tag: "Maternelle", color: "magenta", desc: "Apprentissage par la manipulation et l'autonomie." },
     { img: activityArt, title: "Art-thérapie", tag: "Tout âge", color: "purple", desc: "Exprimer ses émotions à travers la création." },
-    { img: activityMusic, title: "Éveil musical", tag: "3  8 ans", color: "teal", desc: "Découverte du rythme, du chant et des instruments." },
     { img: activityNature, title: "Découverte nature", tag: "Plein air", color: "gold", desc: "Apprendre dehors, observer, expérimenter." },
   ];
   return (
