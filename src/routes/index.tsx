@@ -216,7 +216,7 @@ function Hero() {
 function MarqueeStrip() {
   const colors = ["text-magenta", "text-purple", "text-teal", "text-gold"];
   const words1 = ["Montessori", "Freinet", "Steiner", "HPI", "TDAH", "DYS"];
-  const words2 = ["Bienveillance", "Inclusivité", "Personnalisé", "Maternelle", "Primaire", "D.I.E.C", "Créativité", "Autonomie", "Collège CNED"];
+  const words2 = ["Bienveillance", "Inclusivité", "Personnalisé", "Maternelle", "Primaire", "Collège CNED", "D.I.E.C", "Créativité", "Autonomie"];
   return (
     <section className="bg-white py-10 border-y border-border overflow-hidden">
       <Marquee className="mb-3">
@@ -489,7 +489,9 @@ function ActivitiesExpand() {
           {acts.map((a) => (
             <motion.div
               key={a.title}
-              className={`group relative flex-1 hover:flex-[3] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer overflow-hidden bg-${a.color}`}
+              className={`group relative ${
+  a.title === "Pédagogie Montessori" ? "flex-[1.2]" : "flex-1"
+} hover:flex-[3] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer overflow-hidden bg-${a.color}`}
             >
               <img src={a.img} alt={a.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-90 transition-opacity duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
