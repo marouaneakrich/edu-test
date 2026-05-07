@@ -11,6 +11,7 @@ import {
   Search,
   X,
   ClockAlert,
+  Plus,
 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, } from "recharts";
 import { toast } from "sonner";
@@ -119,6 +120,19 @@ interface ParentCustomer {
   crm_stage: string;
   monthly_fee?: number;
   child_profile?: string;
+}
+
+interface NewClientForm {
+  studentName: string;
+  birthDate: string;
+  fatherName: string;
+  motherName: string;
+  cinOrPassport: string;
+  email1: string;
+  email2: string;
+  phone1: string;
+  phone2: string;
+  niveau: string;
 }
 
 /* ─── Individual stat card ─── */
@@ -618,6 +632,166 @@ function PaymentModal({
   );
 }
 
+function AddClientModal({
+  open,
+  onClose,
+  form,
+  onFormChange,
+  onSave,
+  saving,
+}: {
+  open: boolean;
+  onClose: () => void;
+  form: NewClientForm;
+  onFormChange: (next: NewClientForm) => void;
+  onSave: () => void;
+  saving: boolean;
+}) {
+  const setField = (key: keyof NewClientForm, value: string) => {
+    onFormChange({ ...form, [key]: value });
+  };
+
+  const levels = ["C1", "C2", "C3", "C4", "College"];
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 210,
+            background: "rgba(30,30,46,0.35)",
+            backdropFilter: "blur(6px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px 16px",
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.97 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff",
+              borderRadius: 6,
+              border: "1px solid rgba(45,45,58,0.1)",
+              boxShadow: "0 32px 80px -16px rgba(45,45,58,0.18), 0 1px 2px rgba(45,45,58,0.04)",
+              width: "100%",
+              maxWidth: 900,
+              maxHeight: "90vh",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div style={{ height: 3, background: `linear-gradient(90deg, ${BRAND.mg.hex}, ${BRAND.pp.hex}, ${BRAND.tl.hex}, ${BRAND.gd.hex})`, flexShrink: 0 }} />
+            <div style={{ padding: "20px 24px 16px", borderBottom: "1px solid rgba(45,45,58,0.08)", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                  <div style={{ width: 18, height: 1.5, background: BRAND.mg.hex }} />
+                  <span style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 3, textTransform: "uppercase" as const, color: BRAND.mg.hex }}>
+                    Ajouter un client
+                  </span>
+                </div>
+                <h2 style={{ fontFamily: FH, fontWeight: 800, fontSize: 22, letterSpacing: "-0.5px", color: BRAND.ink }}>
+                  Nouveau client CRM
+                </h2>
+              </div>
+              <button
+                onClick={onClose}
+                style={{
+                  width: 32, height: 32, borderRadius: 6,
+                  border: "1px solid rgba(45,45,58,0.1)", background: "transparent",
+                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                  color: BRAND.inkLt, flexShrink: 0, transition: "background 0.15s",
+                }}
+              >
+                <X size={14} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            <div style={{ overflowY: "auto", padding: "20px 24px 24px", display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
+              {[
+                { key: "studentName", label: "Nom d'élève", type: "text" },
+                { key: "birthDate", label: "Date de naissance", type: "date" },
+                { key: "fatherName", label: "Nom du père", type: "text" },
+                { key: "motherName", label: "Nom de mère", type: "text" },
+                { key: "cinOrPassport", label: "CIN ou Passport", type: "text" },
+                { key: "niveau", label: "Niveau", type: "select" },
+                { key: "email1", label: "Email 1", type: "email" },
+                { key: "email2", label: "Email 2", type: "email" },
+                { key: "phone1", label: "Téléphone 1", type: "text" },
+                { key: "phone2", label: "Téléphone 2", type: "text" },
+              ].map((field) => (
+                <div key={field.key}>
+                  <label style={{ display: "block", marginBottom: 6, fontFamily: FL, fontSize: 10, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" as const, color: BRAND.inkLt }}>
+                    {field.label}
+                  </label>
+                  {field.type === "select" ? (
+                    <select
+                      value={form.niveau}
+                      onChange={(e) => setField("niveau", e.target.value)}
+                      style={{ width: "100%", border: "1px solid rgba(45,45,58,0.12)", borderRadius: 6, padding: "10px 12px", fontFamily: FH, fontSize: 13, boxSizing: "border-box", background: "#fff" }}
+                    >
+                      <option value="">Sélectionner un niveau</option>
+                      {levels.map((level) => (
+                        <option key={level} value={level}>{level}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type={field.type}
+                      value={form[field.key as keyof NewClientForm]}
+                      onChange={(e) => setField(field.key as keyof NewClientForm, e.target.value)}
+                      style={{ width: "100%", border: "1px solid rgba(45,45,58,0.12)", borderRadius: 6, padding: "10px 12px", fontFamily: FH, fontSize: 13, boxSizing: "border-box" }}
+                    />
+                  )}
+                </div>
+              ))}
+
+              <div style={{ gridColumn: "1 / -1", display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 6 }}>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  style={{ border: "1px solid rgba(45,45,58,0.12)", background: "#fff", borderRadius: 6, padding: "9px 14px", fontFamily: FH, fontWeight: 700, cursor: "pointer" }}
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  onClick={onSave}
+                  disabled={saving}
+                  style={{
+                    border: "1px solid rgba(194,24,91,0.2)",
+                    background: BRAND.mg.hex,
+                    color: "#fff",
+                    borderRadius: 6,
+                    padding: "9px 14px",
+                    fontFamily: FH,
+                    fontWeight: 700,
+                    cursor: saving ? "wait" : "pointer",
+                    opacity: saving ? 0.65 : 1,
+                  }}
+                >
+                  {saving ? "Enregistrement..." : "Ajouter le client"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 function RevenueChartCard({
   data,
   totalRevenue,
@@ -724,6 +898,7 @@ function CrmDashboard() {
   const [loading, setLoading] = useState(true);
   const [revenueData, setRevenueData] = useState<RevenuePoint[]>([]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showAddClientModal, setShowAddClientModal] = useState(false);
   const [parents, setParents] = useState<ParentCustomer[]>([]);
   const [paymentSearch, setPaymentSearch] = useState("");
   const [selectedParentId, setSelectedParentId] = useState<string | null>(null);
@@ -731,6 +906,19 @@ function CrmDashboard() {
   const [paymentForm, setPaymentForm] = useState({
     amount: 0,
     payment_date: new Date().toISOString().split("T")[0],
+  });
+  const [isSavingClient, setIsSavingClient] = useState(false);
+  const [newClientForm, setNewClientForm] = useState<NewClientForm>({
+    studentName: "",
+    birthDate: "",
+    fatherName: "",
+    motherName: "",
+    cinOrPassport: "",
+    email1: "",
+    email2: "",
+    phone1: "",
+    phone2: "",
+    niveau: "",
   });
   const { isMobile, isTablet } = useBreakpoint();
 
@@ -812,6 +1000,55 @@ function CrmDashboard() {
       toast.error("Erreur lors de l'enregistrement du paiement");
     } finally {
       setIsSavingPayment(false);
+    }
+  };
+
+  const saveClientFromDashboard = async () => {
+    if (!newClientForm.studentName || !newClientForm.fatherName || !newClientForm.niveau) {
+      toast.error("Veuillez remplir au minimum: nom d'élève, nom du père, et niveau");
+      return;
+    }
+
+    setIsSavingClient(true);
+    try {
+      const parentLabel = `${newClientForm.fatherName}${newClientForm.motherName ? ` / ${newClientForm.motherName}` : ""}`;
+      const { error } = await supabase
+        .from("ez_crm_customers")
+        .insert({
+          parent_name: parentLabel,
+          child_name: newClientForm.studentName,
+          email: newClientForm.email1 || newClientForm.email2 || null,
+          phone: newClientForm.phone1 || newClientForm.phone2 || null,
+          child_profile: newClientForm.niveau,
+          crm_stage: "nouveau",
+          monthly_fee: 0,
+          payment_day: 1,
+          enrollment_date: new Date().toISOString().split("T")[0],
+        });
+
+      if (error) throw error;
+
+      toast.success("Client ajouté avec succès");
+      setShowAddClientModal(false);
+      setNewClientForm({
+        studentName: "",
+        birthDate: "",
+        fatherName: "",
+        motherName: "",
+        cinOrPassport: "",
+        email1: "",
+        email2: "",
+        phone1: "",
+        phone2: "",
+        niveau: "",
+      });
+      await fetchDashboardStats();
+      await fetchParentsForPayment();
+    } catch (error) {
+      console.error("Error adding customer:", error);
+      toast.error("Erreur lors de l'ajout du client");
+    } finally {
+      setIsSavingClient(false);
     }
   };
 
@@ -1140,6 +1377,15 @@ function CrmDashboard() {
                 accentRgb={BRAND.gd.rgb}
                 index={2}
               />
+              <ActionButtonCard
+                onClick={() => setShowAddClientModal(true)}
+                icon={<Plus size={17} strokeWidth={1.8} />}
+                title="Ajouter un client"
+                desc="Créer un nouveau client depuis le dashboard"
+                accent={BRAND.mg.hex}
+                accentRgb={BRAND.mg.rgb}
+                index={3}
+              />
             </div>
           </motion.div>
         </div>
@@ -1156,6 +1402,14 @@ function CrmDashboard() {
           onPaymentChange={setPaymentForm}
           onSave={savePaymentFromDashboard}
           saving={isSavingPayment}
+        />
+        <AddClientModal
+          open={showAddClientModal}
+          onClose={() => setShowAddClientModal(false)}
+          form={newClientForm}
+          onFormChange={setNewClientForm}
+          onSave={saveClientFromDashboard}
+          saving={isSavingClient}
         />
       </div>
     </div>

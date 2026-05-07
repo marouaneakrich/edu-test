@@ -88,9 +88,16 @@ function AboutPage() {
             <p className="section-num mb-4">02  Notre histoire</p>
             <h2 className="font-display font-bold text-4xl md:text-6xl leading-[1.05] mb-6">Né d'une <span className="font-handwritten text-magenta">conviction</span> profonde.</h2>
             <div className="space-y-5 text-ink-light leading-relaxed">
-              <p>EducazenKids est né de la conviction qu'aucun enfant ne devrait être laissé pour compte. Que ce soit un enfant à haut potentiel, atteint de TDAH, de troubles DYS, du spectre autistique, ou simplement un enfant qui a perdu confiance  chacun mérite une approche pensée pour lui.</p>
-              <p>Notre équipe pluridisciplinaire  enseignants spécialisés, psychologues, art-thérapeutes, paramédicaux  travaille main dans la main pour construire un Plan d'Accompagnement Personnalisé adapté à chaque élève.</p>
-              <p>Au cœur de notre approche : les méthodes Montessori, Freinet et Steiner, enrichies par notre module exclusif <strong className="text-magenta">D.I.E.C</strong>.</p>
+              <p>EducaZenKids est née de mon histoire. Celle d’une maman d’enfant atypique, confrontée très tôt à l’incompréhension du système scolaire.</p>
+              <p>Des portes qui se ferment, des écoles qui refusent, et ce sentiment profond d’être seule face aux besoins de son enfant.
+              J’ai connu l’errance, les doutes, et ce combat quotidien pour trouver des solutions adaptées.</p>
+              {/* <p>Au cœur de notre approche : les méthodes Montessori, Freinet et Steiner, enrichies par notre module exclusif <strong className="text-magenta">D.I.E.C</strong>.</p> */}
+              <p>Très vite, un constat s’est imposé : il manque des approches pédagogiques réellement différenciées.
+Et surtout, des lieux capables d’accueillir ces enfants avec justesse et bienveillance.</p>
+<p>Alors j’ai décidé de transformer cette épreuve en engagement.
+Créer un espace où chaque enfant est compris dans sa singularité.
+Et où les parents trouvent enfin soutien, écoute et repères.</p>
+<p>EducaZenKids, c’est le lieu que j’aurais aimé trouver pour mon enfant et pour moi.</p>
             </div>
           </motion.div>
         </div>

@@ -63,7 +63,7 @@ const CARDS = [
     accentRgb: "123,31,162",
     accentBg: "#F8F0FF",
     titleLine1: "Gestion",
-    titleLine2: "clients",
+    titleLine2: "Des Parents",
     desc: "Accompagnez chaque famille avec soin et précision.",
     icon: <IconCRM />,
     features: ["Suivi des prospects", "Gestion des paiements", "Certificats automatiques"],
