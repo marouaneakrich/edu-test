@@ -20,7 +20,6 @@ import poster from "@/assets/inscriptions-poster.jpg";
 import activityArt from "@/assets/activity-art.jpg";
 import activityNature from "@/assets/activity-nature.jpg";
 import activityMontessori from "@/assets/activity-montessori.jpg";
-import activityMusic from "@/assets/activity-music.jpg";
 import blog1 from "@/assets/blog-1.jpg";
 import blog2 from "@/assets/blog-2.jpg";
 import blog3 from "@/assets/blog-3.jpg";
