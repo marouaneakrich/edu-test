@@ -853,10 +853,10 @@ function CrmCustomers() {
                   { label: "Niveau", value: selectedCustomer.niveau || selectedCustomer.child_profile || "—" },
                   { label: "Profil", value: selectedCustomer.child_profile },
                   { label: "Frais mensuels", value: `${selectedCustomer.monthly_fee} MAD` },
-                ].map(({ label, value, node }) => (
+                ].map(({ label, value }) => (
                   <div key={label}>
                     <div style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 2.5, textTransform: "uppercase" as const, color: BRAND.inkLt, marginBottom: 4 }}>{label}</div>
-                    {node ?? <div style={{ fontFamily: FH, fontSize: 13, fontWeight: 600, color: BRAND.ink }}>{value}</div>}
+                    {<div style={{ fontFamily: FH, fontSize: 13, fontWeight: 600, color: BRAND.ink }}>{value}</div>}
                   </div>
                 ))}
               </div>
