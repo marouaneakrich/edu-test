@@ -366,6 +366,7 @@ type NewClientForm = {
   phone1: string;
   phone2: string;
   niveau: string;
+  childProfile: string;
 };
 
 /* ─── Main component ─── */
@@ -396,6 +397,7 @@ function CrmCustomers() {
     phone1: "",
     phone2: "",
     niveau: "",
+    childProfile: "",
   });
 
   const [editForm, setEditForm] = useState({
@@ -520,7 +522,8 @@ function CrmCustomers() {
           child_name: newClientForm.studentName,
           email: newClientForm.email1 || newClientForm.email2 || null,
           phone: newClientForm.phone1 || newClientForm.phone2 || null,
-          child_profile: newClientForm.niveau,
+          child_profile: newClientForm.childProfile,
+          niveau: newClientForm.niveau,
           crm_stage: "nouveau",
           enrollment_date: new Date().toISOString().split("T")[0],
           monthly_fee: 0,
@@ -918,6 +921,21 @@ function CrmCustomers() {
               )}
             </Field>
           ))}
+
+  <Field label="Profil">
+  <StyledSelect
+    value={newClientForm.childProfile}
+    onChange={(v) => setNewClientForm({ ...newClientForm, childProfile: v })}
+    options={[
+      { value: "Enfant typique", label: "Typique" },
+      { value: "Enfant Dys", label: "Dys" },
+      { value: "Enfant Autiste", label: "Autiste" },
+      { value: "Enfant TDAH", label: "TDAH" },
+    ]}
+    placeholder="Sélectionner le profil"
+  />
+</Field>
+
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 16 }}>
           <PrimaryBtn variant="outline" onClick={() => setShowAddClientDialog(false)}>Annuler</PrimaryBtn>
