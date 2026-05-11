@@ -544,6 +544,7 @@ function CrmCustomers() {
         phone1: "",
         phone2: "",
         niveau: "",
+        childProfile: "",
       });
       fetchCustomers();
     } catch (error) {
