@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, px } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform} from "framer-motion";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import { Doodle } from "./motion/Doodle";
 import { useCart } from "@/hooks/useCart";
