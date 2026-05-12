@@ -23,7 +23,7 @@ export function Header() {
   const [cartOpen, setCartOpen] = useState(false);
   const { scrollY } = useScroll();
   const sparkRotate = useTransform(scrollY, [0, 1500], [0, 360]);
-  const { getCartCount } = useCart();
+  // const { getCartCount } = useCart();
   // const cartCount = getCartCount();
 
   useEffect(() => {
