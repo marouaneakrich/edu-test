@@ -122,7 +122,7 @@ function Hero() {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
             className="mt-8 font-body font-medium text-lg md:text-xl text-ink-light max-w-xl leading-relaxed"
           >
-            Un enseignement sur mesure pour enfants typiques, atypiques, avec difficultés ou troubles d'apprentissage.
+            Un enseignement sur mesure pour enfants avec ou sans d'apprentissage.
           </motion.p>
 
           <motion.div
@@ -466,7 +466,7 @@ function AboutSticky() {
 function ActivitiesExpand() {
   const acts = [
     { img: activityMontessori, title: "Pédagogie Montessori", tag: "Maternelle", color: "magenta", desc: "Apprentissage par la manipulation et l'autonomie." },
-    { img: activityArt, title: "Art-thérapie", tag: "Tout âge", color: "purple", desc: "Exprimer ses émotions à travers la création." },
+    /* { img: activityArt, title: "Art-thérapie", tag: "Tout âge", color: "purple", desc: "Exprimer ses émotions à travers la création." }, */
     { img: activityNature, title: "Découverte nature", tag: "Plein air", color: "gold", desc: "Apprendre dehors, observer, expérimenter." },
   ];
   return (
@@ -628,7 +628,7 @@ function InscriptionsCTA() {
             <span className="font-handwritten font-bold">Ouvertes !</span>
           </h2>
           <p className="mt-6 md:mt-8 font-handwritten text-2xl md:text-3xl text-white/90 max-w-lg">
-            Maternelle & Primaire  réservez la place de votre enfant.
+            Maternelle & Primaire et Collège réservez la place de votre enfant.
           </p>
           <div className="mt-8 md:mt-10 flex flex-wrap gap-4">
             <MagneticButton

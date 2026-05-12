@@ -35,7 +35,7 @@ function AboutPage() {
       <PageHero
         eyebrow="01  Notre histoire"
         title={<>L'<span className="font-handwritten text-magenta">enseignement</span><br/>sur mesure.</>}
-        subtitle="Un centre où chaque enfant  quel que soit son profil  trouve sa place et s'épanouit."
+        subtitle="Un centre où chaque enfant peut être lui même."
         accent="magenta"
       />
 
@@ -44,8 +44,8 @@ function AboutPage() {
         <Doodle kind="star" color="oklch(0.52 0.21 357 / 0.3)" className="absolute top-10 right-10 w-12 h-12" />
         <div className="mx-auto max-w-7xl px-6 lg:px-10 grid md:grid-cols-2 gap-8">
           {[
-            { letter: "M", label: "Notre Mission", text: "Permettre à chaque enfant de reprendre goût à l'apprentissage, faire émerger ses compétences et vivre une expérience éducative unique.", bg: "bg-magenta-bg", color: "text-magenta", rot: -2 },
-            { letter: "V", label: "Notre Vision", text: "Devenir le modèle du Maroc où chaque enfant est accueilli et accompagné vers son épanouissement.", bg: "bg-lavender", color: "text-purple", rot: 2 },
+            { letter: "M", label: "Notre Mission", text: "Permettre à chaque enfant de reprendre goût à l’apprentissage, dans un environnement bienveillant, stimulant et inclusif.", bg: "bg-magenta-bg", color: "text-magenta", rot: -2 },
+            { letter: "V", label: "Notre Vision", text: "Devenir une référence de l’éducation inclusive au Maroc.", bg: "bg-lavender", color: "text-purple", rot: 2 },
           ].map((m, i) => (
             <motion.div
               key={m.letter}
@@ -80,7 +80,7 @@ function AboutPage() {
               </div>
             </TiltCard>
             <motion.div initial={{ opacity: 0, scale: 0.5 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="absolute -bottom-6 -left-6 bg-magenta rounded-3xl p-6 shadow-glow text-white -rotate-6">
-              <p className="font-display font-bold text-5xl"><CountUp to={2020} /></p>
+              <p className="font-display font-bold text-5xl"><CountUp to={2024} /></p>
               <p className="text-sm">Année de fondation</p>
             </motion.div>
           </motion.div>

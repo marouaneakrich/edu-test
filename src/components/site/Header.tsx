@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, px } from "framer-motion";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import { Doodle } from "./motion/Doodle";
 import { useCart } from "@/hooks/useCart";
 import { CartModal } from "./CartModal";
+import logoIcon from "../../assets/icon.png";
 
 const NAV = [
   { to: "/", label: "Accueil" },
@@ -47,9 +48,18 @@ export function Header() {
           <motion.div style={{ rotate: sparkRotate }} className="absolute -top-2 -left-3 h-4 w-4 text-magenta">
             <Doodle kind="spark" color="currentColor" className="w-full h-full" />
           </motion.div>
-          <span className="logo-style text-2xl">
-            <span className="text-magenta">educa</span><span className="text-purple">zen</span><span className="text-teal">kids</span>
-          </span>
+<span className="logo-style text-2xl flex items-center justify-end">
+  <img
+    src={logoIcon}
+    className="object-contain mr-2"
+    alt="Educazen Kids"
+    style={{ width: "40px" }}
+  />
+
+  <span className="text-magenta">educa</span>
+  <span className="text-purple">zen</span>
+  <span className="text-teal">kids</span>
+</span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">
