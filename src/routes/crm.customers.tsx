@@ -847,8 +847,8 @@ function CrmCustomers() {
                 {[
                   { label: "Nom d'élève", value: selectedCustomer.child_name || "—" },
                   { label: "Date de naissance", value: selectedCustomer.birth_date || "—" },
-                  { label: "Nom du père", value: fatherName },
-                  { label: "Nom de mère", value: motherName },
+                  { label: "père", value: fatherName },
+                  { label: "mère", value: motherName },
                   { label: "CIN ou Passport", value: selectedCustomer.cin_or_passport || "—" },
                   { label: "Email 1", value: selectedCustomer.email || "—" },
                   { label: "Email 2", value: selectedCustomer.email_2 || "—" },
@@ -890,8 +890,8 @@ function CrmCustomers() {
           {[
             { key: "studentName", label: "Nom d'élève", type: "text" },
             { key: "birthDate", label: "Date de naissance", type: "date" },
-            { key: "fatherName", label: "Nom du père", type: "text" },
-            { key: "motherName", label: "Nom de mère", type: "text" },
+            { key: "fatherName", label: "père", type: "text" },
+            { key: "motherName", label: "mère", type: "text" },
             { key: "cinOrPassport", label: "CIN ou Passport", type: "text" },
             { key: "niveau", label: "Niveau", type: "select" },
             { key: "email1", label: "Email 1", type: "email" },

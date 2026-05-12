@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform} from "framer-motion";
-import { Menu, X, ShoppingCart } from "lucide-react";
+// import { Menu, X, ShoppingCart } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Doodle } from "./motion/Doodle";
 import { useCart } from "@/hooks/useCart";
 import { CartModal } from "./CartModal";
@@ -12,7 +13,7 @@ const NAV = [
   { to: "/a-propos", label: "À propos" },
   { to: "/activites", label: "Activités" },
   { to: "/blog", label: "Blog" },
-  { to: "/boutique", label: "Boutique" },
+  // { to: "/boutique", label: "Boutique" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
@@ -23,7 +24,7 @@ export function Header() {
   const { scrollY } = useScroll();
   const sparkRotate = useTransform(scrollY, [0, 1500], [0, 360]);
   const { getCartCount } = useCart();
-  const cartCount = getCartCount();
+  // const cartCount = getCartCount();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -88,8 +89,8 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <button
+         <div className="flex items-center gap-3">
+        {/*  <button
             onClick={() => setCartOpen(true)}
             className="relative inline-flex items-center gap-2 rounded-full bg-gradient-hero px-4 py-2.5 text-sm font-bold text-white shadow-soft transition-transform hover:scale-105"
           >
@@ -100,7 +101,7 @@ export function Header() {
                 {cartCount > 9 ? '9+' : cartCount}
               </span>
             )}
-          </button>
+          </button>*/}
           <button
             onClick={() => setOpen(!open)}
             className="lg:hidden rounded-full bg-magenta-bg p-2.5 text-magenta hover:scale-110 transition-transform"
@@ -109,7 +110,7 @@ export function Header() {
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
-      </div>
+      </div> 
 
       <AnimatePresence>
         {open && (

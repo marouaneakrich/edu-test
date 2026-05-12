@@ -723,8 +723,8 @@ function AddClientModal({
               {[
                 { key: "studentName", label: "Nom d'élève", type: "text" },
                 { key: "birthDate", label: "Date de naissance", type: "date" },
-                { key: "fatherName", label: "Nom du père", type: "text" },
-                { key: "motherName", label: "Nom de mère", type: "text" },
+                { key: "fatherName", label: "père", type: "text" },
+                { key: "motherName", label: "mère", type: "text" },
                 { key: "cinOrPassport", label: "CIN ou Passport", type: "text" },
                 { key: "niveau", label: "Niveau", type: "select" },
                 { key: "email1", label: "Email 1", type: "email" },
