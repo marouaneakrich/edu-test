@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform} from "framer-motion";
 // import { Menu, X, ShoppingCart } from "lucide-react";
 import { Menu, X } from "lucide-react";
 import { Doodle } from "./motion/Doodle";
-import { useCart } from "@/hooks/useCart";
+// import { useCart } from "@/hooks/useCart";
 import { CartModal } from "./CartModal";
 import logoIcon from "../../assets/icon.png";
 
