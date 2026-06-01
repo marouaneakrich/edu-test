@@ -10,6 +10,8 @@ const NAV = [
   { to: "/", label: "Accueil" },
   { to: "/a-propos", label: "À propos" },
   { to: "/activites", label: "Activités" },
+  { to: "/camp-ete", label: "Camp d'été" },
+  { to: "/camps-vacances", label: "Camps de vacances" },
   { to: "/blog", label: "Blog" },
   { to: "/boutique", label: "Boutique" },
   { to: "/contact", label: "Contact" },
