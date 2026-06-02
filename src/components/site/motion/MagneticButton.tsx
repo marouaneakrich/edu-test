@@ -44,7 +44,7 @@ export function MagneticButton({
       ref={ref}
       onMouseMove={disabled ? undefined : onMove}
       onMouseLeave={disabled ? undefined : onLeave}
-      style={{ x: sx, y: sy, display: "inline-block" }}
+      style={{ x: sx, y: sy, display: "inline-block", }}
     >
       <Tag 
         href={href} 
