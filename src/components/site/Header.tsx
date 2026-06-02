@@ -7,22 +7,31 @@ import { Doodle } from "./motion/Doodle";
 // import { useCart } from "@/hooks/useCart";
 import { CartModal } from "./CartModal";
 import logoIcon from "../../assets/icon.png";
-
-const NAV = [
-  { to: "/", label: "Accueil" },
-  { to: "/a-propos", label: "À propos" },
-  { to: "/activites", label: "Activités" },
-  { to: "/camp-ete", label: "Camp d'été" },
-  { to: "/camps-vacances", label: "Camps de vacances" },
-  { to: "/blog", label: "Blog" },
-  // { to: "/boutique", label: "Boutique" },
-  { to: "/contact", label: "Contact" },
-] as const;
+import { NAV, isNavItemVisible, type NavVisibility } from "@/lib/navConfig";
+import { supabase } from "@/lib/supabase";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [navVisibility, setNavVisibility] = useState<NavVisibility | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from("ez_settings")
+      .select("value")
+      .eq("key", "nav_visibility")
+      .single()
+      .then(({ data, error }) => {
+        if (!error && data?.value) {
+          try {
+            setNavVisibility(JSON.parse(data.value));
+          } catch {}
+        }
+      });
+  }, []);
+
+  const visibleNav = NAV.filter((item) => isNavItemVisible(item.to, navVisibility));
   const { scrollY } = useScroll();
   const sparkRotate = useTransform(scrollY, [0, 1500], [0, 360]);
   // const { getCartCount } = useCart();
@@ -66,7 +75,7 @@ export function Header() {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">
-          {NAV.map((item) => (
+          {visibleNav.map((item) => (
             <Link
               key={item.to}
               to={item.to}
@@ -127,7 +136,7 @@ export function Header() {
             <Doodle kind="heart" color="oklch(0.45 0.21 312)" className="absolute bottom-20 left-8 w-10 h-10 opacity-40" />
             <Doodle kind="squiggle" color="oklch(0.58 0.10 187)" className="absolute top-1/2 left-1/2 -translate-x-1/2 w-32 h-6 opacity-30" />
             <div className="flex flex-col px-8 py-8 gap-1">
-              {NAV.map((item, i) => (
+              {visibleNav.map((item, i) => (
                 <motion.div
                   key={item.to}
                   initial={{ opacity: 0, x: -30 }}
