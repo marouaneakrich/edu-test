@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { ChevronDown, Check, AlertCircle, Mail, Phone, MapPin } from "lucide-react";
+import { ChevronDown, Check, Mail, Phone, MapPin } from "lucide-react";
 import { PageShell, PageHero } from "@/components/site/PageShell";
 import { TiltCard } from "@/components/site/motion/TiltCard";
 import { Doodle } from "@/components/site/motion/Doodle";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/camps-vacances")({
   head: () => ({
@@ -19,55 +20,124 @@ export const Route = createFileRoute("/camps-vacances")({
   component: HolidayCampsPage,
 });
 
-// Types
+//TYPES
 interface FormData {
   parentName: string;
   email: string;
   phone: string;
   address: string;
+  numberOfChildren: number;
   childName: string;
   dateOfBirth: string;
-  specialProfile: string;
+  specialNeeds: string;
   allergies: string;
-  medications: string;
-  holiday: string;
-  durationOption: string;
-  specificDates: string;
-  fullTime: boolean;
-  withLunch: boolean;
+  medicalConditions: string;
+  selectedPeriods: string[];
+  campType: "fulltime" | "parttime";
   activities: string[];
   specialRequests: string;
-  emergencyName: string;
+  emergencyContactName: string;
   emergencyPhone: string;
   insurance: string;
+  medications: string;
   photoConsent: boolean;
   termsAccepted: boolean;
-  hearAbout: string;
-  promoCode: string;
 }
 
-interface FormErrors { [key: string]: string }
+interface FormErrors {
+  [key: string]: string;
+}
 
-// Holiday definitions (approximate dates for Moroccan school holidays)
+// Animation variants
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 }
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
+// ---------------- CONSTANTS ---------------- 
+
 const HOLIDAYS = [
-  { key: "automne", name: "Automne", dates: "Début novembre", duration: "1-2 semaines", theme: "Découverte & Nature", activities: ["Nature", "Arts"], suited: "Tous, idéal pour explorateurs" },
-  { key: "hiver", name: "Hiver (Noël)", dates: "Mi-décembre – Début janvier", duration: "3-4 semaines", theme: "Créativité & Projets", activities: ["Ateliers créatifs", "Projets STEM"], suited: "Tous, parfait pour projets longs" },
-  { key: "printemps", name: "Printemps", dates: "Fin mars – Début avril", duration: "2-3 semaines", theme: "Sciences & Jeux", activities: ["STEM", "Sports"], suited: "Tous, idéal pour curiosité" },
-  { key: "ramadan", name: "Ramadan", dates: "Pendant le Ramadan", duration: "1-2 semaines (variable)", theme: "Rythme adapté & activités calmes", activities: ["Ateliers calmes", "Arts"], suited: "Enfants bénéficiant d'un rythme doux" },
+  { 
+    key: "autumn", 
+    name: "Vacances d'Automne", 
+    dates: "Oct - Nov", 
+    duration: "1 semaine", 
+    theme: "Couleurs d'Automne", 
+    color: "gold",
+    activities: ["Arts créatifs", "Découverte de la nature", "Bricolage & récupération", "Jeux de société"] 
+  },
+  { 
+    key: "winter", 
+    name: "Vacances d'Hiver", 
+    dates: "Déc - Jan", 
+    duration: "2 semaines", 
+    theme: "Magie d'Hiver", 
+    color: "purple",
+    activities: ["Sports d'hiver adaptés", "Bricolage de Noël", "Atelier cuisine", "Contes et légendes"] 
+  },
+  { 
+    key: "spring", 
+    name: "Vacances de Printemps", 
+    dates: "Mars - Avril", 
+    duration: "1 semaine", 
+    theme: "Réveil de la Nature", 
+    color: "teal",
+    activities: ["Jardinage", "Arts & nature", "Exploration", "Chasse aux œufs"] 
+  },
+  { 
+    key: "ramadan", 
+    name: "Vacances Ramadan", 
+    dates: "Adapté", 
+    duration: "Flexible", 
+    theme: "Créativité & Spiritualité", 
+    color: "magenta",
+    activities: ["Arts calmes", "Lecture et contes", "Méditation", "Activités spirituelles douces"] 
+  },
 ];
 
-const BENEFITS = [
-  "Options d'inscription flexibles (période complète, semaines, jours)",
-  "Encadrement expert et activités personnalisées",
-  "Inclusif: Développement typique, HPI, TDAH, DYS, TSA",
-  "Environnement sécurisé axé sur l'apprentissage créatif",
+const ACTIVITIES_OPTIONS = [
+  { value: "arts", label: "Arts Créatifs" },
+  { value: "science", label: "Sciences" },
+  { value: "sports", label: "Sports" },
+];
+
+const SPECIAL_NEEDS_OPTIONS = [
+  { value: "typical", label: "Développement typique" },
+  { value: "hpi", label: "HPI" },
+  { value: "tdah", label: "TDAH" },
+  { value: "dys", label: "DYS" },
+  { value: "tsa", label: "TSA" },
+  { value: "other", label: "Autre" },
+];
+
+const CAMP_PERIODS = [
+  { value: "autumn", label: "Automne" },
+  { value: "winter", label: "Hiver" },
+  { value: "spring", label: "Printemps" },
+  { value: "ramadan", label: "Ramadan" },
 ];
 
 const PACKAGES = [
+  { name: "Par semaine", price: "950", span:"MAD/semaine", desc: "Semaine complète avec déjeuner" },
+  { name: "Mi-temps", price: "600", span:"MAD/semaine", desc: "Matinée ou après-midi" },
   { name: "Période complète", price: "Sur devis", desc: "Prix pour la période entière du congé" },
-  { name: "Par semaine", price: "950 MAD / semaine", desc: "Semaine complète avec déjeuner" },
-  { name: "Mi-temps", price: "600 MAD / semaine", desc: "Matinée ou après-midi" },
-  { name: "Sans déjeuner", price: "-150 MAD / semaine", desc: "Option sans repas" },
+  { name: "Sans déjeuner", price: "-150", span:"MAD/semaine", desc: "Option sans repas" },
 ];
 
 const FAQ = [
@@ -78,97 +148,87 @@ const FAQ = [
   { q: "Et pour les enfants avec besoins spécifiques?", a: "Nous adaptons les activités et proposons un accompagnement personnalisé. Précisez le profil dans le formulaire et nous reviendrons pour un échange préalable." },
 ];
 
-const SPECIAL_PROFILES = [
-  { value: "typical", label: "Développement typique" },
-  { value: "hpi", label: "HPI" },
-  { value: "tdah", label: "TDAH" },
-  { value: "dys", label: "DYS" },
-  { value: "tsa", label: "TSA" },
-  { value: "other", label: "Autre" },
+const BENEFITS = [
+  "Encadrement professionnel avec éducateurs spécialisés",
+  "Activités ludiques et éducatives adaptées à chaque âge",
+  "Programme inclusif pour tous les profils d'enfants",
+  "Locaux sécurisés et matériel de qualité"
 ];
-
-const ACT_OPTIONS = [
-  { value: "art", label: "Art & Peinture" },
-  { value: "sports", label: "Sports & Jeux" },
-  { value: "nature", label: "Nature & Écologie" },
-  { value: "stem", label: "STEM & Programmation" },
-  { value: "music", label: "Musique & Danse" },
-  { value: "theatre", label: "Théâtre & Expression" },
-];
-
 
 export default function HolidayCampsPage() {
-  // Reuse a similar structure and helpers as camp-ete for consistent styling
   const [formData, setFormData] = useState<FormData>({
     parentName: "",
     email: "",
     phone: "",
     address: "",
+    numberOfChildren: 1,
     childName: "",
     dateOfBirth: "",
-    specialProfile: "typical",
+    specialNeeds: "typical",
     allergies: "",
-    medications: "",
-    holiday: "hiver",
-    durationOption: "full",
-    specificDates: "",
-    fullTime: true,
-    withLunch: true,
+    medicalConditions: "",
+    selectedPeriods: [],
+    campType: "fulltime",
     activities: [],
     specialRequests: "",
-    emergencyName: "",
+    emergencyContactName: "",
     emergencyPhone: "",
     insurance: "",
+    medications: "",
     photoConsent: false,
     termsAccepted: false,
-    hearAbout: "",
-    promoCode: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
-  };
-
-  const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
-
-  const fadeInUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-80px" }, transition: { duration: 0.6 } } as any;
 
   const validate = () => {
     const e: FormErrors = {};
+
     if (!formData.parentName.trim()) e.parentName = "Nom requis";
-    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = "Email valide requis";
-    if (!formData.phone || !/^[0-9+\s\-()]{8,}$/.test(formData.phone)) e.phone = "Téléphone valide requis";
+    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))
+      e.email = "Email invalide";
+    if (!formData.phone.match(/^[0-9+\s\-()]{8,}$/))
+      e.phone = "Téléphone invalide";
     if (!formData.childName.trim()) e.childName = "Nom de l'enfant requis";
     if (!formData.dateOfBirth) e.dateOfBirth = "Date de naissance requise";
-    if (!formData.emergencyName.trim()) e.emergencyName = "Contact d'urgence requis";
-    if (!formData.emergencyPhone.trim()) e.emergencyPhone = "Téléphone d'urgence requis";
-    if (!formData.termsAccepted) e.termsAccepted = "Vous devez accepter les conditions";
+    if (!formData.emergencyContactName.trim())
+      e.emergencyContactName = "Contact d'urgence requis";
+    if (!formData.emergencyPhone.trim())
+      e.emergencyPhone = "Téléphone d'urgence requis";
+    if (formData.selectedPeriods.length === 0)
+      e.selectedPeriods = "Choisissez une période";
+    if (formData.activities.length === 0)
+      e.activities = "Choisissez au moins une activité";
+    if (!formData.termsAccepted)
+      e.termsAccepted = "Vous devez accepter les conditions";
+
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!validate()) {
-      toast.error("Veuillez corriger les erreurs du formulaire");
+      toast.error("Veuillez corriger les erreurs");
       return;
     }
+
     setLoading(true);
+
+    // Simulate API call
     await new Promise((r) => setTimeout(r, 1200));
+
     setLoading(false);
     setSubmitted(true);
-    toast.success("Inscription envoyée ! Nous vous contacterons sous peu.");
-    setTimeout(() => setSubmitted(false), 4000);
-  };
+    toast.success("Inscription envoyée avec succès");
 
-  const toggleActivity = (value: string) => {
-    setFormData((prev) => ({ ...prev, activities: prev.activities.includes(value) ? prev.activities.filter((a) => a !== value) : [...prev.activities, value] }));
+    setTimeout(() => {
+      setSubmitted(false);
+    }, 3000);
   };
 
   return (
@@ -177,37 +237,86 @@ export default function HolidayCampsPage() {
         <PageHero
           eyebrow="Camps de vacances scolaires"
           title={<>Camps de Vacances Scolaires <span className="font-handwritten text-magenta">EducazenKids</span></>}
-          subtitle="Automne, Hiver (très populaire), Printemps et Ramadan — programmes inclusifs pour 4-12 ans à Agadir."
+          subtitle="Automne, Hiver (très populaire), Printemps et Ramadan programmes inclusifs pour 4-12 ans à Agadir."
           accent="magenta"
         />
 
-        <motion.section {...fadeInUp} className="py-28 bg-gradient-to-br from-lavender via-magenta-bg to-cream overflow-hidden">
+        <motion.section {...fadeInUp} className="py-28 bg-gradient-to-br from-lavender via-magenta-bg to-cream overflow-hidden relative">
           <Doodle kind="circle" color="oklch(0.45 0.21 312 / 0.3)" className="absolute top-20 right-20 w-24 h-24" />
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
-            <motion.div className="text-center mb-12">
+            <motion.div className="text-center mb-12" {...fadeInUp}>
               <p className="section-num mx-auto justify-center mb-4">Nos périodes</p>
-              <h2 className="font-display font-bold text-5xl md:text-6xl">Quatre <span className="font-handwritten text-magenta">périodes</span> dans l'année</h2>
-              <p className="text-ink-light mt-4">Choisissez la période qui convient à votre enfant — activités adaptées, encadrement expert.</p>
+              <h2 className="font-display font-bold text-5xl md:text-6xl md:text-7xl leading-[1.02]">Quatre <span className="font-handwritten text-magenta">périodes</span> dans l'année</h2>
+              <p className="text-ink-light mt-4">Choisissez la période qui convient à votre enfant activités adaptées, encadrement expert.</p>
             </motion.div>
 
-            <motion.div variants={containerVariants} initial="hidden" whileInView="visible" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <motion.div 
+              variants={containerVariants} 
+              initial="hidden" 
+              whileInView="visible" 
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+            >
               {HOLIDAYS.map((h, i) => (
-                <motion.div key={h.key} variants={itemVariants} transition={{ delay: i * 0.06 }}>
-                  <TiltCard className="h-full">
-                    <div className="bg-white rounded-3xl p-6 shadow-sticker h-full border-t-8 border-magenta">
-                      <p className="font-label text-xs text-magenta mb-3">{h.dates}</p>
-                      <h3 className="font-display font-bold text-2xl mb-2">{h.name}</h3>
-                      <p className="text-ink-light mb-3">Durée: {h.duration} • 4-12 ans</p>
-                      <p className="mb-4 font-medium">Thème: <span className="text-magenta">{h.theme}</span></p>
-                      <ul className="text-ink-light mb-6 list-disc pl-5 space-y-1">
-                        {h.activities.map((a) => <li key={a}>{a}</li>)}
-                      </ul>
-                      <div className="mt-auto flex gap-3">
-                        <button onClick={() => document.getElementById('form-section')?.scrollIntoView({ behavior: 'smooth' })} className="flex-1 py-3 rounded-lg font-semibold bg-gradient-to-r from-magenta to-purple text-white">S'inscrire</button>
-                        {h.key === 'hiver' && <span className="inline-flex items-center px-3 rounded-lg bg-magenta/10 text-magenta font-bold text-sm">Le + populaire</span>}
+                <motion.div 
+                  key={h.key} 
+                  variants={itemVariants} 
+                  transition={{ delay: i * 0.1, type: "spring", stiffness: 80 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className="h-full"
+                >
+                  <div className={`relative bg-${h.color || 'white'}-bg rounded-3xl p-6 shadow-sticker h-full cursor-pointer ${h.key === 'winter' ? 'ring-2 ring-magenta ring-offset-2' : ''}`}>
+                    {/* Decorative doodle */}
+                    <Doodle kind="spark" color={`var(--${h.color || 'magenta'})`} className="absolute top-4 right-4 w-6 h-6 opacity-50" />
+                    
+                    {/* Popular badge for winter */}
+                    {h.key === 'winter' && (
+                      <div className="absolute -top-2 -right-2">
+                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-magenta to-purple text-white font-bold text-xs shadow-lg">
+                          Le + populaire
+                          <Doodle kind="star" className="w-3 h-3 ml-1" color="white" />
+                        </div>
                       </div>
+                    )}
+                    
+                    {/* Dates badge */}
+                    <div className={`inline-flex items-center px-3 py-1 rounded-full bg-${h.color || 'magenta'}/10 text-${h.color || 'magenta'} text-xs font-semibold mb-4`}>
+                      {h.dates}
                     </div>
-                  </TiltCard>
+                    
+                    <h3 className="font-display font-bold text-2xl mb-2 text-ink">{h.name}</h3>
+                    <p className="text-sm text-ink-light mb-3 flex items-center gap-2">
+                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-magenta"></span>
+                      Durée: {h.duration} • 4-12 ans
+                    </p>
+                    
+                    {/* Theme with colored badge */}
+                    <div className="mb-4">
+                      <span className="text-xs font-semibold text-ink-light uppercase tracking-wide">Thème</span>
+                      <p className={`font-display font-semibold text-lg text-${h.color || 'magenta'}`}>{h.theme}</p>
+                    </div>
+                    
+                    {/* Activities list */}
+                    <div className="mb-12">
+                      <span className="text-xs font-semibold text-ink-light uppercase tracking-wide mb-2 block">Activités phares</span>
+                      <ul className="space-y-1.5">
+                        {h.activities.map((a, idx) => (
+                          <li key={idx} className="text-sm text-ink-light flex items-center gap-2">
+                            <span className={`inline-block w-1.5 h-1.5 rounded-full bg-${h.color || 'magenta'}`}></span>
+                            {a}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    {/* Button */}
+                    <Button
+                      onClick={() => document.getElementById('form-section')?.scrollIntoView({ behavior: 'smooth' })} 
+                      className="absolute bottom-4 left-6 group inline-flex items-center gap-2 rounded-full bg-gradient-hero px-10 py-2 font-display font-bold text-white shadow-glow transition-all hover:shadow-soft cursor-pointer"
+                    >
+                      S'inscrire
+                    </Button>
+                  </div>
+                  <Doodle kind="spark" color={`var(--${h.color})`} className="absolute top-4 right-4 w-6 h-6 opacity-50" />
                 </motion.div>
               ))}
             </motion.div>
@@ -218,54 +327,54 @@ export default function HolidayCampsPage() {
           <div className="mx-auto max-w-6xl">
             <h2 className="font-display font-bold text-5xl md:text-6xl text-center mb-8">Pourquoi choisir <span className="font-handwritten text-magenta">nos</span> camps</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {BENEFITS.map((b, i) => (
-                <motion.div key={i} variants={itemVariants} className="p-6 bg-white rounded-2xl border-t-4 border-teal shadow-soft">
-                  <h3 className="font-display font-bold text-2xl mb-2">{b.split(' ')[0]}</h3>
-                  <p className="text-ink-light">{b}</p>
-                </motion.div>
-              ))}
+              {BENEFITS.map((b, i) => {
+                const colors = ["magenta", "purple", "teal", "gold"];
+                const color = colors[i % colors.length];
+                const num = String(i + 1).padStart(2, "0");
+                return (
+                  <motion.div key={i} variants={itemVariants} {...fadeInUp} transition={{ ...fadeInUp.transition, delay: i * 0.06 }}>
+                    <TiltCard className="h-full">
+                      <div className={`bg-white rounded-3xl p-8 shadow-sticker h-full border-t-8 border-${color}`}>
+                        <p className={`font-label text-xs text-${color} mb-4`}>{num}</p>
+                        <h3 className="font-display font-bold text-3xl mb-3">{b.split(' ')[0]}</h3>
+                        <p className="text-ink-light leading-relaxed">{b}</p>
+                        <Doodle kind="star" color={`var(--${color})`} className="mt-6 w-8 h-8 opacity-60" />
+                      </div>
+                    </TiltCard>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </motion.section>
 
         <motion.section {...fadeInUp} className="py-16 px-6 lg:px-10 bg-gradient-to-b from-white to-cream">
           <div className="mx-auto max-w-6xl">
-            <h2 className="font-display font-bold text-5xl md:text-6xl text-center mb-8">Comparaison des <span className="font-handwritten text-magenta">périodes</span></h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left rounded-2xl overflow-hidden border-2 border-border">
-                <thead className="bg-cream">
-                  <tr>
-                    <th className="p-4">Période</th>
-                    <th className="p-4">Thème</th>
-                    <th className="p-4">Activités principales</th>
-                    <th className="p-4">Convient pour</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {HOLIDAYS.map((c) => (
-                    <tr key={c.key} className="border-t border-border">
-                      <td className="p-4 font-semibold">{c.name}</td>
-                      <td className="p-4">{c.theme}</td>
-                      <td className="p-4">{c.activities.join(', ')}</td>
-                      <td className="p-4">{c.suited}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </motion.section>
+            <h2 className="font-display font-bold text-5xl md:text-6xl text-center mb-12">Tarifs & <span className="font-handwritten text-magenta">Forfaits</span></h2>
+            <motion.div className="grid grid-cols-1 md:grid-cols-4 gap-4" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}>
+              {PACKAGES.map((pkg, idx) => (
+                <motion.div
+                  key={pkg.name}
+                  variants={itemVariants}
+                  className={`relative p-8 rounded-2xl border-2 transition-all grid grid-cols-1 justify-between${
+                    pkg.name === 'Période complète'
+                      ? 'border-magenta bg-gradient-to-br from-magenta/5 to-purple/5 shadow-xl scale-105 md:scale-110'
+                      : 'border-border bg-white shadow-soft hover:shadow-md'
+                  }`}
+                >
+                  {pkg.name === 'Période complète' && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <span className="inline-block bg-gradient-to-r from-magenta to-purple text-white px-4 py-1 rounded-full text-sm font-bold">Plus populaire</span>
+                    </div>
+                  )}
 
-        <motion.section {...fadeInUp} className="py-16 px-6 lg:px-10">
-          <div className="mx-auto max-w-6xl">
-            <h2 className="font-display font-bold text-5xl md:text-6xl text-center mb-8">Tarifs & <span className="font-handwritten text-magenta">Forfaits</span></h2>
-            <motion.div className="grid grid-cols-1 md:grid-cols-4 gap-8" variants={containerVariants} initial="hidden" whileInView="visible">
-              {PACKAGES.map((pkg) => (
-                <motion.div key={pkg.name} variants={itemVariants} className={`relative p-8 rounded-2xl border-2 ${pkg.name === 'Période complète' ? 'border-magenta bg-gradient-to-br from-magenta/5 to-purple/5 shadow-xl' : 'bg-white border-border shadow-soft'}`}>
-                  <h3 className="font-display font-bold text-2xl mb-2">{pkg.name}</h3>
-                  <p className="text-3xl font-bold mb-4">{pkg.price}</p>
-                  <p className="text-ink-light mb-6">{pkg.desc}</p>
-                  <button onClick={() => document.getElementById('form-section')?.scrollIntoView({ behavior: 'smooth' })} className={`w-full py-3 rounded-lg font-semibold ${pkg.name === 'Période complète' ? 'bg-gradient-to-r from-magenta to-purple text-white' : 'bg-card border border-border text-foreground'}`}>S'inscrire</button>
+                  <h3 className="font-display font-semibold text-md text-ink">{pkg.name}</h3>
+                  <p className={`font-bold text-transparent bg-clip-text bg-gradient-to-r from-magenta to-purple mb-6 ${ pkg.name === 'Période complète' ? 'text-2xl' : 'text-5xl'} `}>{pkg.price} <span className="text-sm font-semibold">{pkg.span}</span></p>
+                  <p className="text-ink-light mb-10">{pkg.desc}</p>
+
+                  <button onClick={() => document.getElementById('form-section')?.scrollIntoView({ behavior: 'smooth' })} className={`w-full py-2 rounded-lg font-semibold transition-all ${pkg.name === 'Période complète' ? 'bg-gradient-to-r from-magenta to-purple text-white hover:shadow-lg' : 'bg-card border border-border text-foreground hover:bg-accent'}`}>
+                    S'inscrire
+                  </button>
                 </motion.div>
               ))}
             </motion.div>
@@ -280,7 +389,7 @@ export default function HolidayCampsPage() {
                 <div key={idx} className="border-2 border-border rounded-xl overflow-hidden hover:border-magenta transition-colors">
                   <button onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)} className="w-full p-6 text-left flex items-center justify-between bg-white">
                     <span className="font-display font-semibold text-lg text-ink pr-4">{faq.q}</span>
-                    <ChevronDown className="w-5 h-5 text-magenta" />
+                    <ChevronDown className={`w-5 h-5 text-magenta transition-transform ${expandedFaq === idx ? 'rotate-180' : ''}`} />
                   </button>
                   <AnimatePresence>
                     {expandedFaq === idx && (
@@ -295,7 +404,7 @@ export default function HolidayCampsPage() {
           </div>
         </motion.section>
 
-        <motion.section {...fadeInUp} id="form-section" className="py-16 px-6 lg:px-10 bg-gradient-to-r from-ink to-purple ">
+        <motion.section {...fadeInUp} id="form-section" className="py-16 px-6 lg:px-10 bg-gradient-to-r from-ink to-purple">
           <div className="mx-auto max-w-4xl">
             <h2 className="font-display font-bold text-5xl md:text-6xl text-center mb-2 text-white">Formulaire d'<span className="font-handwritten text-magenta">inscription</span></h2>
             <p className="text-center font-body text-white mb-10">Inscrivez votre enfant pour la période choisie. Champs obligatoires marqués d'un *</p>
@@ -311,157 +420,229 @@ export default function HolidayCampsPage() {
                 <p className="font-body text-ink-light mb-6">Merci — nous avons bien reçu votre demande d'inscription. Un email de confirmation suivra.</p>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-8 bg-white rounded-2xl p-8 shadow-lg border border-border">
-                {/* Parent info */}
-                <div>
-                  <h3 className="font-display font-bold text-2xl mb-4">Informations du parent/tuteur</h3>
+              <form onSubmit={handleSubmit} className="space-y-8 bg-white rounded-3xl p-8 shadow-xl">
+                {/* ================= PARENT ================= */}
+                <FormSection title="Informations du parent/tuteur">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Nom complet *</label>
-                      <input value={formData.parentName} onChange={(e) => setFormData({ ...formData, parentName: e.target.value })} className={`w-full px-4 py-3 rounded-lg border-2 ${errors.parentName ? 'border-destructive' : 'border-border'}`} />
-                      {errors.parentName && <p className="text-destructive text-xs mt-1">{errors.parentName}</p>}
-                    </div>
-
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Email *</label>
-                      <input value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={`w-full px-4 py-3 rounded-lg border-2 ${errors.email ? 'border-destructive' : 'border-border'}`} />
-                      {errors.email && <p className="text-destructive text-xs mt-1">{errors.email}</p>}
-                    </div>
-
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Téléphone *</label>
-                      <input value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className={`w-full px-4 py-3 rounded-lg border-2 ${errors.phone ? 'border-destructive' : 'border-border'}`} />
-                      {errors.phone && <p className="text-destructive text-xs mt-1">{errors.phone}</p>}
-                    </div>
-
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Adresse</label>
-                      <input value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} className={`w-full px-4 py-3 rounded-lg border-2 border-border`} />
-                    </div>
+                    <FormField
+                      label="Nom complet"
+                      value={formData.parentName}
+                      onChange={(val) => setFormData({ ...formData, parentName: val })}
+                      error={errors.parentName}
+                      required
+                    />
+                    <FormField
+                      label="Email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(val) => setFormData({ ...formData, email: val })}
+                      error={errors.email}
+                      required
+                    />
+                    <FormField
+                      label="Téléphone"
+                      value={formData.phone}
+                      onChange={(val) => setFormData({ ...formData, phone: val })}
+                      error={errors.phone}
+                      required
+                    />
+                    <FormField
+                      label="Adresse"
+                      value={formData.address}
+                      onChange={(val) => setFormData({ ...formData, address: val })}
+                    />
                   </div>
-                </div>
+                </FormSection>
 
-                {/* Child info */}
-                <div>
-                  <h3 className="font-display font-bold text-2xl mb-4">Informations de l'enfant</h3>
+                {/* ================= CHILD ================= */}
+                <FormSection title="Informations de l'enfant">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Nom complet de l'enfant *</label>
-                      <input value={formData.childName} onChange={(e) => setFormData({ ...formData, childName: e.target.value })} className={`w-full px-4 py-3 rounded-lg border-2 ${errors.childName ? 'border-destructive' : 'border-border'}`} />
-                      {errors.childName && <p className="text-destructive text-xs mt-1">{errors.childName}</p>}
+                    <div className="flex flex-col">
+                      <label className="font-label text-sm font-semibold mb-3 text-ink">
+                        Nombre d'enfants
+                        <span className="text-magenta ml-1">*</span>
+                      </label>
+                      <div className="inline-flex items-center w-32 rounded-xl overflow-hidden border-2 border-border bg-white">
+                        <button type="button" onClick={() =>
+                          setFormData({
+                            ...formData,
+                            numberOfChildren: Math.max(1, formData.numberOfChildren - 1),
+                          })
+                        } className="px-4 py-2 bg-white hover:bg-cream transition-colors flex items-center justify-center text-lg font-semibold text-ink"
+                          aria-label="Réduire">−</button>
+                        <span className="text-xl font-bold w-8 text-center">{formData.numberOfChildren}</span>
+                        <button type="button" onClick={() =>
+                          setFormData({
+                            ...formData,
+                            numberOfChildren: formData.numberOfChildren + 1,
+                          })
+                        } className="px-4 py-2 bg-white hover:bg-cream transition-colors flex items-center justify-center text-lg font-semibold text-ink"
+                          aria-label="Augmenter">+</button>
+                      </div>
+                      {errors.numberOfChildren && <p className="text-red-500 text-xs font-label mt-2">{errors.numberOfChildren}</p>}
                     </div>
 
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Date de naissance *</label>
-                      <input type="date" value={formData.dateOfBirth} onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })} className={`w-full px-4 py-3 rounded-lg border-2 ${errors.dateOfBirth ? 'border-destructive' : 'border-border'}`} />
-                      {errors.dateOfBirth && <p className="text-destructive text-xs mt-1">{errors.dateOfBirth}</p>}
-                    </div>
+                    <FormField
+                      label="Date de naissance"
+                      type="date"
+                      value={formData.dateOfBirth}
+                      onChange={(val) => setFormData({ ...formData, dateOfBirth: val })}
+                      error={errors.dateOfBirth}
+                      required={formData.numberOfChildren === 1} // Required if only 1 child, optional if multiple
+                    />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Profil de besoins spéciaux</label>
-                      <select value={formData.specialProfile} onChange={(e) => setFormData({ ...formData, specialProfile: e.target.value })} className="w-full px-4 py-3 rounded-lg border-2 border-border">
-                        {SPECIAL_PROFILES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-                      </select>
-                    </div>
 
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Allergies / Régimes</label>
-                      <input value={formData.allergies} onChange={(e) => setFormData({ ...formData, allergies: e.target.value })} className="w-full px-4 py-3 rounded-lg border-2 border-border" placeholder="Ex: arachides, lactose..." />
-                    </div>
-                  </div>
-                </div>
+                    
+                  <div className="mt-6">
 
-                {/* Camp preferences */}
-                <div>
-                  <h3 className="font-display font-bold text-2xl mb-4">Préférences du camp</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Quelle période ?</label>
-                      <select value={formData.holiday} onChange={(e) => setFormData({ ...formData, holiday: e.target.value })} className="w-full px-4 py-3 rounded-lg border-2 border-border">
-                        {HOLIDAYS.map((h) => <option key={h.key} value={h.key}>{h.name} — {h.dates}</option>)}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Durée</label>
-                      <select value={formData.durationOption} onChange={(e) => setFormData({ ...formData, durationOption: e.target.value })} className="w-full px-4 py-3 rounded-lg border-2 border-border">
-                        <option value="full">Période complète</option>
-                        <option value="week">Semaine individuelle</option>
-                        <option value="days">Jours spécifiques</option>
-                      </select>
-                    </div>
+                    <FormSelect
+                      label="Profil spécial"
+                      value={formData.specialNeeds}
+                      onChange={(val) => setFormData({ ...formData, specialNeeds: val })}
+                      options={SPECIAL_NEEDS_OPTIONS}
+                    />
                   </div>
 
-                  {formData.durationOption === 'days' && (
-                    <div className="mt-4">
-                      <label className="font-label text-sm font-semibold mb-2 block">Sélectionnez les jours</label>
-                      <input type="text" placeholder="Choisissez les dates" value={formData.specificDates} onChange={(e) => setFormData({ ...formData, specificDates: e.target.value })} className="w-full px-4 py-3 rounded-lg border-2 border-border" />
-                    </div>
-                  )}
+                  <div className="grid grid-cols-1 gap-6 mt-6">
 
-                  <div className="mt-4 flex gap-4 items-center">
-                    <label className="inline-flex items-center gap-2"><input type="radio" name="time" checked={formData.fullTime} onChange={() => setFormData({ ...formData, fullTime: true })} className="accent-magenta" /> Temps complet (8h30-16h30)</label>
-                    <label className="inline-flex items-center gap-2"><input type="radio" name="time" checked={!formData.fullTime} onChange={() => setFormData({ ...formData, fullTime: false })} className="accent-magenta" /> Mi-temps</label>
-                    <label className="inline-flex items-center gap-2 ml-auto"><input type="checkbox" checked={formData.withLunch} onChange={(e) => setFormData({ ...formData, withLunch: e.target.checked })} className="accent-magenta" /> Avec déjeuner</label>
+                    <FormTextarea
+                      label="Allergies"
+                      value={formData.allergies}
+                      onChange={(val) => setFormData({ ...formData, allergies: val })}
+                      placeholder="Indiquez toutes les allergies alimentaires ou autres"
+                    />
+
+                    <FormTextarea
+                      label="Conditions médicales"
+                      value={formData.medicalConditions}
+                      onChange={(val) => setFormData({ ...formData, medicalConditions: val })}
+                      placeholder="Médicaments, traitements, etc."
+                    />
                   </div>
+                </FormSection>
 
-                  <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {ACT_OPTIONS.map((a) => (
-                      <label key={a.value} className="flex items-center gap-2"><input type="checkbox" checked={formData.activities.includes(a.value)} onChange={() => toggleActivity(a.value)} className="accent-magenta" /> <span>{a.label}</span></label>
+                {/* ================= PERIODS ================= */}
+                <FormSection title="Périodes de vacances">
+                  <div className="grid grid-cols-2 gap-3">
+                    {CAMP_PERIODS.map((p) => (
+                      <label key={p.value} className="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-cream">
+                        <input
+                          type="checkbox"
+                          checked={formData.selectedPeriods.includes(p.value)}
+                          onChange={(e) => {
+                            const updated = e.target.checked
+                              ? [...formData.selectedPeriods, p.value]
+                              : formData.selectedPeriods.filter((v) => v !== p.value);
+                            setFormData({ ...formData, selectedPeriods: updated });
+                          }}
+                          className="w-4 h-4"
+                        />
+                        {p.label}
+                      </label>
                     ))}
                   </div>
-                </div>
+                  {errors.selectedPeriods && <p className="text-destructive text-xs mt-2">{errors.selectedPeriods}</p>}
+                </FormSection>
 
-                {/* Health & Safety */}
-                <div>
-                  <h3 className="font-display font-bold text-2xl mb-4">Santé & Sécurité</h3>
+                {/* ================= CAMP TYPE ================= */}
+                <FormSection title="Type de camp">
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        checked={formData.campType === "fulltime"}
+                        onChange={() => setFormData({ ...formData, campType: "fulltime" })}
+                      />
+                      Temps complet
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        checked={formData.campType === "parttime"}
+                        onChange={() => setFormData({ ...formData, campType: "parttime" })}
+                      />
+                      Mi-temps
+                    </label>
+                  </div>
+                </FormSection>
+
+                {/* ================= ACTIVITIES ================= */}
+                <FormSection title="Activités préférées">
+                  <div className="grid grid-cols-2 gap-3">
+                    {ACTIVITIES_OPTIONS.map((a) => (
+                      <label key={a.value} className="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-cream">
+                        <input
+                          type="checkbox"
+                          checked={formData.activities.includes(a.value)}
+                          onChange={(e) => {
+                            const updated = e.target.checked
+                              ? [...formData.activities, a.value]
+                              : formData.activities.filter((v) => v !== a.value);
+                            setFormData({ ...formData, activities: updated });
+                          }}
+                          className="w-4 h-4"
+                        />
+                        {a.label}
+                      </label>
+                    ))}
+                  </div>
+                  {errors.activities && <p className="text-destructive text-xs mt-2">{errors.activities}</p>}
+                </FormSection>
+
+                {/* ================= EMERGENCY ================= */}
+                <FormSection title="Contact d'urgence">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Nom du contact d'urgence *</label>
-                      <input value={formData.emergencyName} onChange={(e) => setFormData({ ...formData, emergencyName: e.target.value })} className={`w-full px-4 py-3 rounded-lg border-2 ${errors.emergencyName ? 'border-destructive' : 'border-border'}`} />
-                      {errors.emergencyName && <p className="text-destructive text-xs mt-1">{errors.emergencyName}</p>}
-                    </div>
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Téléphone d'urgence *</label>
-                      <input value={formData.emergencyPhone} onChange={(e) => setFormData({ ...formData, emergencyPhone: e.target.value })} className={`w-full px-4 py-3 rounded-lg border-2 ${errors.emergencyPhone ? 'border-destructive' : 'border-border'}`} />
-                      {errors.emergencyPhone && <p className="text-destructive text-xs mt-1">{errors.emergencyPhone}</p>}
-                    </div>
+                    <FormField
+                      label="Nom complet"
+                      value={formData.emergencyContactName}
+                      onChange={(val) => setFormData({ ...formData, emergencyContactName: val })}
+                      error={errors.emergencyContactName}
+                      required
+                    />
+                    <FormField
+                      label="Téléphone"
+                      value={formData.emergencyPhone}
+                      onChange={(val) => setFormData({ ...formData, emergencyPhone: val })}
+                      error={errors.emergencyPhone}
+                      required
+                    />
                   </div>
+                </FormSection>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Assurance (optionnel)</label>
-                      <input value={formData.insurance} onChange={(e) => setFormData({ ...formData, insurance: e.target.value })} className="w-full px-4 py-3 rounded-lg border-2 border-border" />
-                    </div>
-                    <div>
-                      <label className="font-label text-sm font-semibold mb-2 block">Médicaments (optionnel)</label>
-                      <input value={formData.medications} onChange={(e) => setFormData({ ...formData, medications: e.target.value })} className="w-full px-4 py-3 rounded-lg border-2 border-border" />
-                    </div>
+                {/* ================= CONSENT ================= */}
+                <FormSection title="Consentements">
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.photoConsent}
+                        onChange={(e) => setFormData({ ...formData, photoConsent: e.target.checked })}
+                        className="w-4 h-4"
+                      />
+                      J'autorise la prise de photos/vidéos lors des activités
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.termsAccepted}
+                        onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })}
+                        className="w-4 h-4"
+                      />
+                      J'accepte les conditions générales *
+                    </label>
+                    {errors.termsAccepted && <p className="text-destructive text-xs">{errors.termsAccepted}</p>}
                   </div>
-                </div>
+                </FormSection>
 
-                {/* Consent */}
-                <div>
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input type="checkbox" checked={formData.photoConsent} onChange={(e) => setFormData({ ...formData, photoConsent: e.target.checked })} className="w-5 h-5 mt-1" />
-                    <span className="ml-2">Autoriser photos/vidéos pour portfolio/site</span>
-                  </label>
-                </div>
-
-                <div>
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input type="checkbox" checked={formData.termsAccepted} onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })} className="w-5 h-5 mt-1" />
-                    <span className="ml-2">J'accepte les conditions générales d'EducazenKids *</span>
-                  </label>
-                  {errors.termsAccepted && <p className="text-destructive text-sm flex items-center gap-2 mt-2"><AlertCircle className="w-4 h-4" />{errors.termsAccepted}</p>}
-                </div>
-
-                <div className="flex gap-4 pt-6">
-                  <button type="submit" disabled={loading} className="flex-1 py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-magenta to-purple text-white">{loading ? 'Envoi en cours...' : "S'inscrire maintenant"}</button>
-                </div>
-                <p className="text-xs text-muted-foreground text-center">* Champs obligatoires. Nous ne partagerons pas vos données avec des tiers.</p>
+                {/* ================= SUBMIT ================= */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-4 bg-gradient-to-r from-magenta to-purple text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all disabled:opacity-50"
+                >
+                  {loading ? "Envoi en cours..." : "S'inscrire au camp"}
+                </button>
               </form>
             )}
           </div>
@@ -493,5 +674,116 @@ export default function HolidayCampsPage() {
         </motion.section>
       </div>
     </PageShell>
+  );
+}
+
+// Form Helper Components
+function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+      <h3 className="font-display font-bold text-2xl mb-6 pb-4 border-b-2 border-border text-ink">{title}</h3>
+      {children}
+    </motion.div>
+  );
+}
+
+function FormField({
+  label,
+  type = "text",
+  value,
+  onChange,
+  error,
+  required = false,
+  placeholder = "",
+}: {
+  label: string;
+  type?: string;
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+  required?: boolean;
+  placeholder?: string;
+}) {
+  return (
+    <div className="flex flex-col">
+      <label className="font-label text-sm font-semibold mb-2 text-ink">
+        {label}
+        {required && <span className="text-magenta ml-1">*</span>}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={`px-4 py-3 rounded-lg border-2 font-body transition-colors focus:outline-none focus:ring-2 focus:ring-magenta/50 ${
+          error ? "border-red-500 bg-red-50" : "border-border hover:border-magenta/50"
+        }`}
+      />
+      {error && <p className="text-red-500 text-xs font-label mt-1">{error}</p>}
+    </div>
+  );
+}
+
+function FormTextarea({
+  label,
+  value,
+  onChange,
+  error,
+  placeholder = "",
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+  placeholder?: string;
+}) {
+  return (
+    <div className="flex flex-col">
+      <label className="font-label text-sm font-semibold mb-2 text-ink">{label}</label>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={3}
+        className={`px-4 py-3 rounded-lg border-2 font-body transition-colors focus:outline-none focus:ring-2 focus:ring-magenta/50 resize-none ${
+          error ? "border-red-500 bg-red-50" : "border-border hover:border-magenta/50"
+        }`}
+      />
+      {error && <p className="text-red-500 text-xs font-label mt-1">{error}</p>}
+    </div>
+  );
+}
+
+function FormSelect({
+  label,
+  value,
+  onChange,
+  options,
+  required = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: Array<{ value: string; label: string }>;
+  required?: boolean;
+}) {
+  return (
+    <div className="flex flex-col">
+      <label className="font-label text-sm font-semibold mb-2 text-ink">
+        {label}
+        {required && <span className="text-magenta ml-1">*</span>}
+      </label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="px-4 py-3 rounded-lg border-2 border-border hover:border-magenta/50 focus:outline-none focus:ring-2 focus:ring-magenta/50 transition-colors bg-white appearance-none cursor-pointer font-body"
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }

@@ -69,9 +69,10 @@ export function Header() {
                     <motion.svg
                       layoutId="nav-underline"
                       viewBox="0 0 80 8"
-                      className="absolute left-2 right-2 -bottom-1 w-[calc(100%-1rem)]"
+                      preserveAspectRatio="none"
+                      className="absolute left-2 right-2 -bottom-1 w-[calc(100%-1rem)] h-2 text-magenta"
                     >
-                      <path d="M2 5 Q 20 -1 40 4 T 78 5" stroke="oklch(0.52 0.21 357)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                      <path d="M2 5 Q 20 -1 40 4 T 78 5" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke" fill="none" strokeLinecap="round" />
                     </motion.svg>
                   )}
                 </>
