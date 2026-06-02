@@ -1,10 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform} from "framer-motion";
-// import { Menu, X, ShoppingCart } from "lucide-react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingCart } from "lucide-react";
 import { Doodle } from "./motion/Doodle";
-// import { useCart } from "@/hooks/useCart";
+import { useCart } from "@/hooks/useCart";
 import { CartModal } from "./CartModal";
 import logoIcon from "../../assets/icon.png";
 import { NAV, isNavItemVisible, type NavVisibility } from "@/lib/navConfig";
@@ -32,10 +31,11 @@ export function Header() {
   }, []);
 
   const visibleNav = NAV.filter((item) => isNavItemVisible(item.to, navVisibility));
+  const boutiqueVisible = isNavItemVisible("/boutique", navVisibility);
   const { scrollY } = useScroll();
   const sparkRotate = useTransform(scrollY, [0, 1500], [0, 360]);
-  // const { getCartCount } = useCart();
-  // const cartCount = getCartCount();
+  const { getCartCount } = useCart();
+  const cartCount = getCartCount();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -102,18 +102,20 @@ export function Header() {
         </nav>
 
          <div className="flex items-center gap-3">
-        {/*  <button
-            onClick={() => setCartOpen(true)}
-            className="relative inline-flex items-center gap-2 rounded-full bg-gradient-hero px-4 py-2.5 text-sm font-bold text-white shadow-soft transition-transform hover:scale-105"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            <span className="hidden sm:inline">Panier</span>
-            {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-gold text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                {cartCount > 9 ? '9+' : cartCount}
-              </span>
-            )}
-          </button>*/}
+          {boutiqueVisible && (
+            <button
+              onClick={() => setCartOpen(true)}
+              className="relative inline-flex items-center gap-2 rounded-full bg-gradient-hero px-4 py-2.5 text-sm font-bold text-white shadow-soft transition-transform hover:scale-105"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              <span className="hidden sm:inline">Panier</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gold text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartCount > 9 ? '9+' : cartCount}
+                </span>
+              )}
+            </button>
+          )}
           <button
             onClick={() => setOpen(!open)}
             className="lg:hidden rounded-full bg-magenta-bg p-2.5 text-magenta hover:scale-110 transition-transform"
