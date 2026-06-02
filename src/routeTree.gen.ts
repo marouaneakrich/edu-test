@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CampsVacancesRouteImport } from './routes/camps-vacances'
+import { Route as CampEteRouteImport } from './routes/camp-ete'
 import { Route as BoutiqueRouteImport } from './routes/boutique'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AdminChoiceRouteImport } from './routes/admin-choice'
@@ -41,6 +43,16 @@ const CrmRoute = CrmRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampsVacancesRoute = CampsVacancesRouteImport.update({
+  id: '/camps-vacances',
+  path: '/camps-vacances',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampEteRoute = CampEteRouteImport.update({
+  id: '/camp-ete',
+  path: '/camp-ete',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BoutiqueRoute = BoutiqueRouteImport.update({
@@ -127,6 +139,8 @@ export interface FileRoutesByFullPath {
   '/admin-choice': typeof AdminChoiceRoute
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
+  '/camp-ete': typeof CampEteRoute
+  '/camps-vacances': typeof CampsVacancesRoute
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRouteWithChildren
   '/login': typeof LoginRoute
@@ -147,6 +161,8 @@ export interface FileRoutesByTo {
   '/admin-choice': typeof AdminChoiceRoute
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
+  '/camp-ete': typeof CampEteRoute
+  '/camps-vacances': typeof CampsVacancesRoute
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRouteWithChildren
   '/login': typeof LoginRoute
@@ -168,6 +184,8 @@ export interface FileRoutesById {
   '/admin-choice': typeof AdminChoiceRoute
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
+  '/camp-ete': typeof CampEteRoute
+  '/camps-vacances': typeof CampsVacancesRoute
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRouteWithChildren
   '/login': typeof LoginRoute
@@ -190,6 +208,8 @@ export interface FileRouteTypes {
     | '/admin-choice'
     | '/blog'
     | '/boutique'
+    | '/camp-ete'
+    | '/camps-vacances'
     | '/contact'
     | '/crm'
     | '/login'
@@ -210,6 +230,8 @@ export interface FileRouteTypes {
     | '/admin-choice'
     | '/blog'
     | '/boutique'
+    | '/camp-ete'
+    | '/camps-vacances'
     | '/contact'
     | '/crm'
     | '/login'
@@ -230,6 +252,8 @@ export interface FileRouteTypes {
     | '/admin-choice'
     | '/blog'
     | '/boutique'
+    | '/camp-ete'
+    | '/camps-vacances'
     | '/contact'
     | '/crm'
     | '/login'
@@ -251,6 +275,8 @@ export interface RootRouteChildren {
   AdminChoiceRoute: typeof AdminChoiceRoute
   BlogRoute: typeof BlogRoute
   BoutiqueRoute: typeof BoutiqueRoute
+  CampEteRoute: typeof CampEteRoute
+  CampsVacancesRoute: typeof CampsVacancesRoute
   ContactRoute: typeof ContactRoute
   CrmRoute: typeof CrmRouteWithChildren
   LoginRoute: typeof LoginRoute
@@ -277,6 +303,20 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/camps-vacances': {
+      id: '/camps-vacances'
+      path: '/camps-vacances'
+      fullPath: '/camps-vacances'
+      preLoaderRoute: typeof CampsVacancesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/camp-ete': {
+      id: '/camp-ete'
+      path: '/camp-ete'
+      fullPath: '/camp-ete'
+      preLoaderRoute: typeof CampEteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/boutique': {
@@ -437,6 +477,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminChoiceRoute: AdminChoiceRoute,
   BlogRoute: BlogRoute,
   BoutiqueRoute: BoutiqueRoute,
+  CampEteRoute: CampEteRoute,
+  CampsVacancesRoute: CampsVacancesRoute,
   ContactRoute: ContactRoute,
   CrmRoute: CrmRouteWithChildren,
   LoginRoute: LoginRoute,
