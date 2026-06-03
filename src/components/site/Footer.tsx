@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { Doodle } from "./motion/Doodle";
+import logoIcon from "../../assets/icon-white.png";
 
 export function Footer() {
   return (
@@ -15,9 +16,18 @@ export function Footer() {
 
       <div className="relative mx-auto max-w-7xl px-6 py-20 lg:px-10">
         <div className="mb-16">
-          <Link to="/" className="logo-style text-5xl md:text-7xl block leading-none">
-            <span className="text-magenta-light">educa</span><span className="text-purple">zen</span><span className="text-teal">kids</span>
-          </Link>
+          <Link to="/" className="logo-style text-5xl flex items-center justify-start md:text-7xl block leading-none">
+            <img
+              src={logoIcon}
+              className="object-contain mr-2"
+              alt="Educazen Kids"
+              style={{ width: "75px" }}
+            />
+<div className="hidden md:inline">
+  <span className="text-magenta-light">educa</span>
+  <span className="text-purple">zen</span>
+  <span className="text-teal">kids</span>
+</div>          </Link>
           <p className="mt-5 font-handwritten text-2xl text-white/70 max-w-xl">
             L'enseignement sur mesure  un cadre bienveillant où chaque enfant trouve sa place. ✦
           </p>
@@ -80,8 +90,17 @@ export function Footer() {
         </div>
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between gap-4 text-xs text-white/50 font-label">
           <span>© 2026 EducazenKids  Tous droits réservés</span>
-          <span>Dévelopé par Eiden-group</span>
-        </div>
+       <span>
+  Développé par{" "}
+  <a
+    href="https://eiden-group.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="font-bold hover:underline text-white/90"
+  >
+    Eiden-group
+  </a>
+</span>        </div>
       </div>
       <div className="h-1.5 bg-gradient-brand" />
     </footer>

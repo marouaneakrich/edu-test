@@ -366,6 +366,7 @@ type NewClientForm = {
   phone1: string;
   phone2: string;
   niveau: string;
+  childProfile: string;
 };
 
 /* ─── Main component ─── */
@@ -396,6 +397,7 @@ function CrmCustomers() {
     phone1: "",
     phone2: "",
     niveau: "",
+    childProfile: "",
   });
 
   const [editForm, setEditForm] = useState({
@@ -520,7 +522,8 @@ function CrmCustomers() {
           child_name: newClientForm.studentName,
           email: newClientForm.email1 || newClientForm.email2 || null,
           phone: newClientForm.phone1 || newClientForm.phone2 || null,
-          child_profile: newClientForm.niveau,
+          child_profile: newClientForm.childProfile,
+          niveau: newClientForm.niveau,
           crm_stage: "nouveau",
           enrollment_date: new Date().toISOString().split("T")[0],
           monthly_fee: 0,
@@ -541,6 +544,7 @@ function CrmCustomers() {
         phone1: "",
         phone2: "",
         niveau: "",
+        childProfile: "",
       });
       fetchCustomers();
     } catch (error) {
@@ -843,8 +847,8 @@ function CrmCustomers() {
                 {[
                   { label: "Nom d'élève", value: selectedCustomer.child_name || "—" },
                   { label: "Date de naissance", value: selectedCustomer.birth_date || "—" },
-                  { label: "Nom du père", value: fatherName },
-                  { label: "Nom de mère", value: motherName },
+                  { label: "père", value: fatherName },
+                  { label: "mère", value: motherName },
                   { label: "CIN ou Passport", value: selectedCustomer.cin_or_passport || "—" },
                   { label: "Email 1", value: selectedCustomer.email || "—" },
                   { label: "Email 2", value: selectedCustomer.email_2 || "—" },
@@ -853,10 +857,10 @@ function CrmCustomers() {
                   { label: "Niveau", value: selectedCustomer.niveau || selectedCustomer.child_profile || "—" },
                   { label: "Profil", value: selectedCustomer.child_profile },
                   { label: "Frais mensuels", value: `${selectedCustomer.monthly_fee} MAD` },
-                ].map(({ label, value, node }) => (
+                ].map(({ label, value }) => (
                   <div key={label}>
                     <div style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 2.5, textTransform: "uppercase" as const, color: BRAND.inkLt, marginBottom: 4 }}>{label}</div>
-                    {node ?? <div style={{ fontFamily: FH, fontSize: 13, fontWeight: 600, color: BRAND.ink }}>{value}</div>}
+                    {<div style={{ fontFamily: FH, fontSize: 13, fontWeight: 600, color: BRAND.ink }}>{value}</div>}
                   </div>
                 ))}
               </div>
@@ -886,8 +890,8 @@ function CrmCustomers() {
           {[
             { key: "studentName", label: "Nom d'élève", type: "text" },
             { key: "birthDate", label: "Date de naissance", type: "date" },
-            { key: "fatherName", label: "Nom du père", type: "text" },
-            { key: "motherName", label: "Nom de mère", type: "text" },
+            { key: "fatherName", label: "père", type: "text" },
+            { key: "motherName", label: "mère", type: "text" },
             { key: "cinOrPassport", label: "CIN ou Passport", type: "text" },
             { key: "niveau", label: "Niveau", type: "select" },
             { key: "email1", label: "Email 1", type: "email" },
@@ -918,6 +922,21 @@ function CrmCustomers() {
               )}
             </Field>
           ))}
+
+  <Field label="Profil">
+  <StyledSelect
+    value={newClientForm.childProfile}
+    onChange={(v) => setNewClientForm({ ...newClientForm, childProfile: v })}
+    options={[
+      { value: "Enfant typique", label: "Typique" },
+      { value: "Enfant Dys", label: "Dys" },
+      { value: "Enfant Autiste", label: "Autiste" },
+      { value: "Enfant TDAH", label: "TDAH" },
+    ]}
+    placeholder="Sélectionner le profil"
+  />
+</Field>
+
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 16 }}>
           <PrimaryBtn variant="outline" onClick={() => setShowAddClientDialog(false)}>Annuler</PrimaryBtn>
