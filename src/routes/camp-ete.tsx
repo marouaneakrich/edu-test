@@ -185,7 +185,7 @@ function SummerCampPage() {
       <div className="font-body">
         <PageHero
           eyebrow="Summer Camp 2026"
-          title={<h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">Rejoignez notre <span className="font-handwritten text-magenta">aventure</span> estivale</h1>}
+          title={<span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">Rejoignez notre <span className="font-handwritten text-magenta">aventure</span> estivale</span>}
           subtitle="Activités créatives, apprentissage ludique et environnement inclusif pour enfants de 4-12 ans (23 juin - 25 juillet)."
           accent="magenta"
         />
@@ -316,20 +316,20 @@ function SummerCampPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="mt-16 rounded-3xl bg-gradient-to-r from-ink to-purple p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+              className="mt-16 bg-gradient-to-r from-ink to-purple flex flex-col md:flex-row items-center justify-between rounded-[1.5em] p-[2em] gap-[1.5em] text-[clamp(0.7rem,1.2vw,1rem)]"
             >
               <div className="text-white text-center md:text-left">
-                <p className="font-label text-sm text-white/60 uppercase tracking-widest mb-1">Votre enfant va adorer</p>
-                <h3 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl">Prêt à vivre l'aventure?</h3>
-                <p className="text-sm sm:text-base text-white/70 mt-2 font-body">Inscrivez-le en quelques minutes. Places limitées à 20 enfants par groupe.</p>
+                <p className="font-label text-white/60 uppercase tracking-widest mb-[0.5em] text-[0.7em]">Votre enfant va adorer</p>
+                <h3 className="font-display font-bold text-[2.5em]">Prêt à vivre l'aventure?</h3>
+                <p className="text-white/70 mt-[0.5em] font-body text-[0.85em]">Inscrivez-le en quelques minutes. Places limitées à 20 enfants par groupe.</p>
               </div>
               <MagneticButton
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={scrollToForm}
-                className="flex-shrink-0 flex items-center gap-3 bg-magenta text-white font-bold px-4 md:px-8 py-2 md:py-4 rounded-full sm:text-xl md:text-4xl shadow-xl hover:bg-magenta/90 transition-all"
+                className="flex-shrink-0 flex items-center gap-[0.75em] bg-magenta text-white font-bold px-[1.5em] py-[0.7em] rounded-full text-[1.1em] shadow-xl hover:bg-magenta/90 transition-all"
               >
-                Je veux inscrire mon enfant <ArrowRight className="w-5 h-5" />
+                Je veux inscrire mon enfant <ArrowRight className="w-[1em] h-[1em]" />
               </MagneticButton>
             </motion.div>
           </div>

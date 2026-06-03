@@ -4,6 +4,7 @@ import { useRef, type ReactNode, type MouseEvent } from "react";
 interface Props {
   children: ReactNode;
   className?: string;
+  style?: React.CSSProperties;
   strength?: number;
   as?: "button" | "a" | "div";
   href?: string;
@@ -16,7 +17,8 @@ interface Props {
 
 export function MagneticButton({ 
   children, 
-  className, 
+  className,
+  style,
   strength = 0.35, 
   as = "button", 
   href, 
@@ -57,6 +59,7 @@ export function MagneticButton({
         onClick={onClick} 
         type={as === "button" ? type : undefined} 
         className={className}
+        style={style}
         disabled={as === "button" ? disabled : undefined}
       >
         {children}
