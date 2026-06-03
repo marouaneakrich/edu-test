@@ -1,26 +1,37 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform} from "framer-motion";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import { Doodle } from "./motion/Doodle";
 import { useCart } from "@/hooks/useCart";
 import { CartModal } from "./CartModal";
-
-const NAV = [
-  { to: "/", label: "Accueil" },
-  { to: "/a-propos", label: "À propos" },
-  { to: "/activites", label: "Activités" },
-  { to: "/camp-ete", label: "Summer Camp" },
-  // { to: "/camps-vacances", label: "Camps de vacances" },
-  { to: "/blog", label: "Blog" },
-  { to: "/boutique", label: "Boutique" },
-  { to: "/contact", label: "Contact" },
-] as const;
+import logoIcon from "../../assets/icon.png";
+import { NAV, isNavItemVisible, type NavVisibility } from "@/lib/navConfig";
+import { supabase } from "@/lib/supabase";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [navVisibility, setNavVisibility] = useState<NavVisibility | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from("ez_settings")
+      .select("value")
+      .eq("key", "nav_visibility")
+      .single()
+      .then(({ data, error }) => {
+        if (!error && data?.value) {
+          try {
+            setNavVisibility(JSON.parse(data.value));
+          } catch {}
+        }
+      });
+  }, []);
+
+  const visibleNav = NAV.filter((item) => isNavItemVisible(item.to, navVisibility));
+  const boutiqueVisible = isNavItemVisible("/boutique", navVisibility);
   const { scrollY } = useScroll();
   const sparkRotate = useTransform(scrollY, [0, 1500], [0, 360]);
   const { getCartCount } = useCart();
@@ -49,13 +60,22 @@ export function Header() {
           <motion.div style={{ rotate: sparkRotate }} className="absolute -top-2 -left-3 h-4 w-4 text-magenta">
             <Doodle kind="spark" color="currentColor" className="w-full h-full" />
           </motion.div>
-          <span className="logo-style text-2xl">
-            <span className="text-magenta">educa</span><span className="text-purple">zen</span><span className="text-teal">kids</span>
-          </span>
+<span className="logo-style text-2xl flex items-center justify-end">
+  <img
+    src={logoIcon}
+    className="object-contain mr-2"
+    alt="Educazen Kids"
+    style={{ width: "40px" }}
+  />
+
+  <span className="text-magenta">educa</span>
+  <span className="text-purple">zen</span>
+  <span className="text-teal">kids</span>
+</span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">
-          {NAV.map((item) => (
+          {visibleNav.map((item) => (
             <Link
               key={item.to}
               to={item.to}
@@ -81,19 +101,21 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setCartOpen(true)}
-            className="relative inline-flex items-center gap-2 rounded-full bg-gradient-hero px-4 py-2.5 text-sm font-bold text-white shadow-soft transition-transform hover:scale-105"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            <span className="hidden sm:inline">Panier</span>
-            {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-gold text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                {cartCount > 9 ? '9+' : cartCount}
-              </span>
-            )}
-          </button>
+         <div className="flex items-center gap-3">
+          {boutiqueVisible && (
+            <button
+              onClick={() => setCartOpen(true)}
+              className="relative inline-flex items-center gap-2 rounded-full bg-gradient-hero px-4 py-2.5 text-sm font-bold text-white shadow-soft transition-transform hover:scale-105"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              <span className="hidden sm:inline">Panier</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gold text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartCount > 9 ? '9+' : cartCount}
+                </span>
+              )}
+            </button>
+          )}
           <button
             onClick={() => setOpen(!open)}
             className="lg:hidden rounded-full bg-magenta-bg p-2.5 text-magenta hover:scale-110 transition-transform"
@@ -102,7 +124,7 @@ export function Header() {
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
-      </div>
+      </div> 
 
       <AnimatePresence>
         {open && (
@@ -116,7 +138,7 @@ export function Header() {
             <Doodle kind="heart" color="oklch(0.45 0.21 312)" className="absolute bottom-20 left-8 w-10 h-10 opacity-40" />
             <Doodle kind="squiggle" color="oklch(0.58 0.10 187)" className="absolute top-1/2 left-1/2 -translate-x-1/2 w-32 h-6 opacity-30" />
             <div className="flex flex-col px-8 py-8 gap-1">
-              {NAV.map((item, i) => (
+              {visibleNav.map((item, i) => (
                 <motion.div
                   key={item.to}
                   initial={{ opacity: 0, x: -30 }}

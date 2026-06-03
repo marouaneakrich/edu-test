@@ -5,7 +5,8 @@ import { createClient } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { useUserRole } from "@/hooks/useUserRole";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Eye, EyeOff, Calendar } from "lucide-react";
+import { NAV, type NavVisibility } from "@/lib/navConfig";
 
 export const Route = createFileRoute("/crm/settings")({
   component: CrmSettings,
@@ -45,6 +46,8 @@ function CrmSettings() {
     role: "sales",
   });
   const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [navVisibility, setNavVisibility] = useState<NavVisibility>({});
+  const [navSaving, setNavSaving] = useState(false);
 
   useEffect(() => {
     if (roleLoading) return;
@@ -64,7 +67,7 @@ function CrmSettings() {
       const { data, error } = await supabase
         .from("ez_settings")
         .select("key, value")
-        .in("key", ["monthly_fee_typique", "monthly_fee_dys", "monthly_fee_autiste", "monthly_fee_tdah"]);
+        .in("key", ["monthly_fee_typique", "monthly_fee_dys", "monthly_fee_autiste", "monthly_fee_tdah", "nav_visibility"]);
 
       if (error) throw error;
 
@@ -74,6 +77,11 @@ function CrmSettings() {
         if (setting.key === "monthly_fee_dys") fees.dys = Number(setting.value);
         if (setting.key === "monthly_fee_autiste") fees.autiste = Number(setting.value);
         if (setting.key === "monthly_fee_tdah") fees.tdah = Number(setting.value);
+        if (setting.key === "nav_visibility") {
+          try {
+            setNavVisibility(JSON.parse(setting.value));
+          } catch {}
+        }
       });
 
       setMonthlyFees(fees);
@@ -305,6 +313,193 @@ function CrmSettings() {
           <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: 13, color: BRAND.inkLt }}>
             Cette fonctionnalité sera disponible dans une prochaine mise à jour.
           </p>
+        </div>
+
+        <div style={{ background: "#fff", border: `1px solid ${BRAND.border}`, borderRadius: 6, padding: 16, boxShadow: "0 10px 28px -24px rgba(45,45,58,0.4)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+            <div style={{ width: 16, height: 1.5, background: BRAND.tl.hex }} />
+            <span style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 2.5, textTransform: "uppercase", color: BRAND.tl.hex }}>
+              Visibilité des pages
+            </span>
+          </div>
+          <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: 13, color: BRAND.inkLt, marginBottom: 14 }}>
+            Affichez ou masquez les pages du site et planifiez leur visibilité
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {NAV.filter((item) => item.to !== "/").map((item) => {
+              const config = navVisibility[item.to] ?? { visible: true, schedule: null };
+              const hasSchedule = config.schedule !== null;
+
+              return (
+                <div
+                  key={item.to}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap",
+                    padding: "10px 14px", borderRadius: 6, border: `1px solid ${BRAND.border}`,
+                    background: BRAND.canvas,
+                  }}
+                >
+                  <div style={{ flex: "1 1 160px", minWidth: 0 }}>
+                    <span style={{ fontFamily: FH, fontWeight: 700, fontSize: 14, color: BRAND.ink }}>
+                      {item.label}
+                    </span>
+                    <span style={{ fontFamily: FH, fontSize: 11, color: BRAND.inkLt, marginLeft: 8 }}>
+                      {item.to}
+                    </span>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <button
+                      type="button"
+                      disabled={hasSchedule}
+                      onClick={() => {
+                        if (hasSchedule) {
+                          toast.error("Veuillez d'abord supprimer le planning pour pouvoir modifier manuellement");
+                          return;
+                        }
+                        setNavVisibility((prev) => ({
+                          ...prev,
+                          [item.to]: { ...config, visible: !config.visible },
+                        }));
+                      }}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: 6,
+                        border: "none", borderRadius: 100,
+                        padding: "6px 14px",
+                        background: config.visible
+                          ? "rgba(0,137,123,0.12)"
+                          : "rgba(45,45,58,0.07)",
+                        color: config.visible ? BRAND.tl.hex : BRAND.inkLt,
+                        fontFamily: FH, fontWeight: 700, fontSize: 12,
+                        cursor: hasSchedule ? "not-allowed" : "pointer",
+                        opacity: hasSchedule ? 0.5 : 1,
+                      }}
+                      title={hasSchedule ? "Désactivez le planning pour modifier" : config.visible ? "Masquer" : "Afficher"}
+                    >
+                      {config.visible ? <Eye size={14} strokeWidth={2.5} /> : <EyeOff size={14} strokeWidth={2.5} />}
+                      {config.visible ? "Visible" : "Masquée"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (hasSchedule) {
+                          setNavVisibility((prev) => ({
+                            ...prev,
+                            [item.to]: { ...config, schedule: null },
+                          }));
+                        } else {
+                          const m = String(new Date().getMonth() + 1).padStart(2, "0");
+                          const d = String(new Date().getDate()).padStart(2, "0");
+                          setNavVisibility((prev) => ({
+                            ...prev,
+                            [item.to]: {
+                              ...config,
+                              schedule: { start: m + "-" + d, end: m + "-" + d },
+                            },
+                          }));
+                        }
+                      }}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: 6,
+                        border: `1px solid ${hasSchedule ? BRAND.mg.hex : BRAND.border}`,
+                        borderRadius: 100,
+                        padding: "6px 14px",
+                        background: hasSchedule ? "rgba(194,24,91,0.08)" : "#fff",
+                        color: hasSchedule ? BRAND.mg.hex : BRAND.inkLt,
+                        fontFamily: FH, fontWeight: 700, fontSize: 12,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Calendar size={14} strokeWidth={2.5} />
+                      {hasSchedule ? `${config.schedule!.start} → ${config.schedule!.end}` : "Planifier"}
+                    </button>
+
+                    {hasSchedule && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <input
+                          type="text"
+                          value={config.schedule!.start}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (/^\d{2}-\d{2}$/.test(val) || val.length <= 5) {
+                              setNavVisibility((prev) => ({
+                                ...prev,
+                                [item.to]: {
+                                  ...config,
+                                  schedule: { ...config.schedule!, start: val },
+                                },
+                              }));
+                            }
+                          }}
+                          placeholder="MM-JJ"
+                          style={{
+                            width: 64, padding: "5px 8px",
+                            border: `1px solid ${BRAND.border}`, borderRadius: 6,
+                            fontFamily: FH, fontSize: 12, color: BRAND.ink,
+                            textAlign: "center", outline: "none", boxSizing: "border-box",
+                          }}
+                        />
+                        <span style={{ fontFamily: FH, fontSize: 12, color: BRAND.inkLt }}>→</span>
+                        <input
+                          type="text"
+                          value={config.schedule!.end}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (/^\d{2}-\d{2}$/.test(val) || val.length <= 5) {
+                              setNavVisibility((prev) => ({
+                                ...prev,
+                                [item.to]: {
+                                  ...config,
+                                  schedule: { ...config.schedule!, end: val },
+                                },
+                              }));
+                            }
+                          }}
+                          placeholder="MM-JJ"
+                          style={{
+                            width: 64, padding: "5px 8px",
+                            border: `1px solid ${BRAND.border}`, borderRadius: 6,
+                            fontFamily: FH, fontSize: 12, color: BRAND.ink,
+                            textAlign: "center", outline: "none", boxSizing: "border-box",
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 14 }}>
+            <button
+              type="button"
+              onClick={async () => {
+                setNavSaving(true);
+                try {
+                  const { error } = await supabase
+                    .from("ez_settings")
+                    .upsert({ key: "nav_visibility", value: JSON.stringify(navVisibility) }, { onConflict: "key" });
+
+                  if (error) throw error;
+                  toast.success("Visibilité enregistrée avec succès");
+                } catch (error) {
+                  console.error("Error saving nav visibility:", error);
+                  toast.error("Erreur lors de l'enregistrement de la visibilité");
+                } finally {
+                  setNavSaving(false);
+                }
+              }}
+              disabled={navSaving}
+              style={{
+                border: "none", background: `linear-gradient(135deg, ${BRAND.tl.hex}, ${BRAND.pp.hex})`, color: "#fff",
+                borderRadius: 100, padding: "10px 18px", fontFamily: FH, fontWeight: 800, fontSize: 13,
+                cursor: navSaving ? "not-allowed" : "pointer", opacity: navSaving ? 0.7 : 1,
+              }}
+            >
+              {navSaving ? "Enregistrement..." : "Enregistrer la visibilité"}
+            </button>
+          </div>
         </div>
 
         <div style={{ background: "#fff", borderRadius: 6, border: "1px solid rgba(45,45,58,0.1)", boxShadow: "0 16px 34px -20px rgba(45,45,58,0.3)", overflow: "hidden" }}>

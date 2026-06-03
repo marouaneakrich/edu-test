@@ -252,13 +252,13 @@ function CrmPayments() {
                       <td style={{ padding: "11px 14px" }}>
                         <span style={{
                           display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 10px", borderRadius: 100,
-                          background: payment.certificate_sent ? BRAND.tl.bg : "#F5F5F7",
-                          border: `1px solid ${payment.certificate_sent ? `rgba(${BRAND.tl.rgb},0.2)` : "rgba(90,90,106,0.16)"}`,
-                          color: payment.certificate_sent ? BRAND.tl.hex : BRAND.inkLt,
+                          background: payment.certificate_sent === true ? BRAND.tl.bg : "#F5F5F7",
+                          border: `1px solid ${payment.certificate_sent === true ? `rgba(${BRAND.tl.rgb},0.2)` : "rgba(90,90,106,0.16)"}`,
+                          color: payment.certificate_sent === true ? BRAND.tl.hex : BRAND.inkLt,
                           fontFamily: FL, fontSize: 10, fontWeight: 600, letterSpacing: 1.4, textTransform: "uppercase",
                         }}>
-                          <span style={{ width: 5, height: 5, borderRadius: "50%", background: payment.certificate_sent ? BRAND.tl.hex : BRAND.inkLt }} />
-                          {payment.certificate_sent ? "Envoyé" : "Non envoyé"}
+                          <span style={{ width: 5, height: 5, borderRadius: "50%", background: payment.certificate_sent === true ? BRAND.tl.hex : BRAND.inkLt }} />
+                          {payment.certificate_sent === true ? "Envoyé" : "Non envoyé"}
                         </span>
                       </td>
                     </tr>

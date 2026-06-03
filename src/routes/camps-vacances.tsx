@@ -352,7 +352,7 @@ export default function HolidayCampsPage() {
           <div className="mx-auto max-w-6xl">
             <h2 className="font-display font-bold text-5xl md:text-6xl text-center mb-12">Tarifs & <span className="font-handwritten text-magenta">Forfaits</span></h2>
             <motion.div className="grid grid-cols-1 md:grid-cols-4 gap-4" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}>
-              {PACKAGES.map((pkg, idx) => (
+              {PACKAGES.map((pkg, _idx) => (
                 <motion.div
                   key={pkg.name}
                   variants={itemVariants}

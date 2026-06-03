@@ -133,6 +133,7 @@ interface NewClientForm {
   phone1: string;
   phone2: string;
   niveau: string;
+  childProfile: string;
 }
 
 /* ─── Individual stat card ─── */
@@ -722,8 +723,8 @@ function AddClientModal({
               {[
                 { key: "studentName", label: "Nom d'élève", type: "text" },
                 { key: "birthDate", label: "Date de naissance", type: "date" },
-                { key: "fatherName", label: "Nom du père", type: "text" },
-                { key: "motherName", label: "Nom de mère", type: "text" },
+                { key: "fatherName", label: "père", type: "text" },
+                { key: "motherName", label: "mère", type: "text" },
                 { key: "cinOrPassport", label: "CIN ou Passport", type: "text" },
                 { key: "niveau", label: "Niveau", type: "select" },
                 { key: "email1", label: "Email 1", type: "email" },
@@ -757,6 +758,32 @@ function AddClientModal({
                 </div>
               ))}
 
+              <div>
+                <label style={{ display: "block", marginBottom: 6, fontFamily: FL, fontSize: 10, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" as const, color: BRAND.inkLt }}>
+                  Profil
+                </label>
+                <select
+                  value={form.childProfile}
+                  onChange={(e) => onFormChange({ ...form, childProfile: e.target.value })}
+                  style={{
+                    width: "100%",
+                    border: "1px solid rgba(45,45,58,0.12)",
+                    borderRadius: 6,
+                    padding: "10px 12px",
+                    fontFamily: FH,
+                    fontSize: 13,
+                    boxSizing: "border-box",
+                    background: "#fff",
+                  }}
+                >
+                  <option value="">Sélectionner le profil</option>
+                  <option value="Enfant typique">Typique</option>
+                  <option value="Enfant Dys">Dys</option>
+                  <option value="Enfant Autiste">Autiste</option>
+                  <option value="Enfant TDAH">TDAH</option>
+                </select>
+              </div>
+              
               <div style={{ gridColumn: "1 / -1", display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 6 }}>
                 <button
                   type="button"
@@ -919,6 +946,7 @@ function CrmDashboard() {
     phone1: "",
     phone2: "",
     niveau: "",
+    childProfile: "",
   });
   const { isMobile, isTablet } = useBreakpoint();
 
@@ -1019,7 +1047,8 @@ function CrmDashboard() {
           child_name: newClientForm.studentName,
           email: newClientForm.email1 || newClientForm.email2 || null,
           phone: newClientForm.phone1 || newClientForm.phone2 || null,
-          child_profile: newClientForm.niveau,
+          child_profile: newClientForm.childProfile,
+          niveau: newClientForm.niveau,
           crm_stage: "nouveau",
           monthly_fee: 0,
           payment_day: 1,
@@ -1041,6 +1070,7 @@ function CrmDashboard() {
         phone1: "",
         phone2: "",
         niveau: "",
+        childProfile: "",
       });
       await fetchDashboardStats();
       await fetchParentsForPayment();

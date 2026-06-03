@@ -20,7 +20,6 @@ import poster from "@/assets/inscriptions-poster.jpg";
 import activityArt from "@/assets/activity-art.jpg";
 import activityNature from "@/assets/activity-nature.jpg";
 import activityMontessori from "@/assets/activity-montessori.jpg";
-import activityMusic from "@/assets/activity-music.jpg";
 import blog1 from "@/assets/blog-1.jpg";
 import blog2 from "@/assets/blog-2.jpg";
 import blog3 from "@/assets/blog-3.jpg";
@@ -123,7 +122,7 @@ function Hero() {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
             className="mt-8 font-body font-medium text-lg md:text-xl text-ink-light max-w-xl leading-relaxed"
           >
-            Un enseignement sur mesure pour enfants typiques, atypiques, avec difficultés ou troubles d'apprentissage.
+            Un enseignement sur mesure pour enfants avec ou sans d'apprentissage.
           </motion.p>
 
           <motion.div
@@ -216,8 +215,8 @@ function Hero() {
 /* ---------- 2. MARQUEE STRIP ---------- */
 function MarqueeStrip() {
   const colors = ["text-magenta", "text-purple", "text-teal", "text-gold"];
-  const words1 = ["Montessori", "Freinet", "Steiner", "HPI", "TDAH", "DYS", "Art-thérapie"];
-  const words2 = ["Bienveillance", "Inclusivité", "Personnalisé", "Maternelle", "Primaire", "D.I.E.C", "Créativité", "Autonomie"];
+  const words1 = ["Montessori", "Freinet", "Steiner", "HPI", "TDAH", "DYS"];
+  const words2 = ["Bienveillance", "Inclusivité", "Personnalisé", "Maternelle", "Primaire", "Collège CNED", "D.I.E.C", "Créativité", "Autonomie"];
   return (
     <section className="bg-white py-10 border-y border-border overflow-hidden">
       <Marquee className="mb-3">
@@ -243,7 +242,7 @@ function StatsBand() {
   const stats = [
     { n: 6, suf: " ans", label: "d'expérience", color: "magenta", isInfinity: false },
     { n: 70, suf: "+", label: "familles accompagnées", color: "purple", isInfinity: false },
-    { n: 13, suf: "", label: "pédagogues experts", color: "teal", isInfinity: false },
+    { n: 13, suf: "", label: "experts pluridisciplinaires", color: "teal", isInfinity: false },
     { n: 0, suf: "", label: "méthodes pédagogiques", color: "gold", isInfinity: true },
   ];
   return (
@@ -267,8 +266,8 @@ function StatsBand() {
 /* ---------- 4. PILLARS  sticker cards ---------- */
 function Pillars() {
   const pillars = [
-    { icon: Sparkles, color: "magenta", title: "Inclusivité", desc: "Chaque enfant accueilli avec sa singularité  la diversité est notre richesse.", rot: -3 },
-    { icon: Heart, color: "purple", title: "Bienveillance", desc: "Un cadre chaleureux où l'enfant reprend goût à l'apprentissage.", rot: 2 },
+    { icon: Sparkles, color: "magenta", title: "Inclusivité", desc: "la diversité est notre richesse.", rot: -3 },
+    { icon: Heart, color: "purple", title: "Bienveillance", desc: "Un accompagnement cadré et chaleureux.", rot: 2 },
     { icon: Target, color: "teal", title: "Personnalisation", desc: "Plan d'Accompagnement Personnalisé (PAP) pour chaque élève.", rot: -2 },
     { icon: Brain, color: "gold", title: "Innovation", desc: "Module D.I.E.C alliant pédagogie moderne et art-thérapie.", rot: 3 },
   ];
@@ -467,8 +466,7 @@ function AboutSticky() {
 function ActivitiesExpand() {
   const acts = [
     { img: activityMontessori, title: "Pédagogie Montessori", tag: "Maternelle", color: "magenta", desc: "Apprentissage par la manipulation et l'autonomie." },
-    { img: activityArt, title: "Art-thérapie", tag: "Tout âge", color: "purple", desc: "Exprimer ses émotions à travers la création." },
-    { img: activityMusic, title: "Éveil musical", tag: "3  8 ans", color: "teal", desc: "Découverte du rythme, du chant et des instruments." },
+    /* { img: activityArt, title: "Art-thérapie", tag: "Tout âge", color: "purple", desc: "Exprimer ses émotions à travers la création." }, */
     { img: activityNature, title: "Découverte nature", tag: "Plein air", color: "gold", desc: "Apprendre dehors, observer, expérimenter." },
   ];
   return (
@@ -491,7 +489,9 @@ function ActivitiesExpand() {
           {acts.map((a) => (
             <motion.div
               key={a.title}
-              className={`group relative flex-1 hover:flex-[3] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer overflow-hidden bg-${a.color}`}
+              className={`group relative ${
+  a.title === "Pédagogie Montessori" ? "flex-[1.2]" : "flex-1"
+} hover:flex-[3] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer overflow-hidden bg-${a.color}`}
             >
               <img src={a.img} alt={a.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-90 transition-opacity duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
@@ -628,7 +628,7 @@ function InscriptionsCTA() {
             <span className="font-handwritten font-bold">Ouvertes !</span>
           </h2>
           <p className="mt-6 md:mt-8 font-handwritten text-2xl md:text-3xl text-white/90 max-w-lg">
-            Maternelle & Primaire  réservez la place de votre enfant.
+            Maternelle & Primaire et Collège réservez la place de votre enfant.
           </p>
           <div className="mt-8 md:mt-10 flex flex-wrap gap-4">
             <MagneticButton

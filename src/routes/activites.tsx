@@ -30,8 +30,8 @@ const fadeUp = {
 };
 
 const ACTIVITIES = [
-  { img: montessori, title: "Pédagogie Montessori", cat: "Maternelle", age: "3  6 ans", duration: "Hebdomadaire", desc: "Apprentissage par la manipulation et l'autonomie. Matériel sensoriel, vie pratique, langage et mathématiques.", color: "magenta", rot: -2 },
-  { img: art, title: "Art-thérapie", cat: "Bien-être", age: "Tout âge", duration: "1h30/semaine", desc: "Exprimer ses émotions à travers la peinture, l'argile et la création. Un espace de liberté et de découverte de soi.", color: "purple", rot: 2 },
+  { img: montessori, title: "Pédagogie Montessori", cat: "Maternelle", age: "Tout âge", duration: "Hebdomadaire", desc: "Pédagogie du monde par la manipulation et l'autonomie. Matériel sensoriel, vie pratique, langage et mathématiques.", color: "magenta", rot: -2 },
+  { img: art, title: "Art-thérapie", cat: "Bien-être", age: "Tout âge", duration: "1h30/semaine", desc: "exprimer ses émotions à travers l’art créatif", color: "purple", rot: 2 },
   { img: music, title: "Éveil musical", cat: "Créativité", age: "3  8 ans", duration: "1h/semaine", desc: "Découverte des instruments, du rythme et du chant. Stimuler la sensibilité musicale et la coordination.", color: "teal", rot: -1 },
   { img: nature, title: "Découverte nature", cat: "Plein air", age: "5  11 ans", duration: "Sortie mensuelle", desc: "Observer, expérimenter et comprendre le vivant. Un retour à l'essentiel par l'apprentissage en plein air.", color: "gold", rot: 1 },
 ];
