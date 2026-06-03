@@ -185,8 +185,8 @@ function SummerCampPage() {
       <div className="font-body">
         <PageHero
           eyebrow="Summer Camp 2026"
-          title={<>Rejoignez notre <span className="font-handwritten text-magenta">aventure</span> estivale</>}
-          subtitle="Activit├⌐s cr├⌐atives, apprentissage ludique et environnement inclusif pour enfants de 4-12 ans (23 juin - 25 juillet)."
+          title={<h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">Rejoignez notre <span className="font-handwritten text-magenta">aventure</span> estivale</h1>}
+          subtitle="Activités créatives, apprentissage ludique et environnement inclusif pour enfants de 4-12 ans (23 juin - 25 juillet)."
           accent="magenta"
         />
 
@@ -198,10 +198,10 @@ function SummerCampPage() {
           className="bg-magenta py-4 px-6"
         >
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-white">
+            <div className="flex flex-col sm:flex-row items-center gap-3 text-white">
               <Clock className="w-5 h-5 flex-shrink-0" />
-              <p className="font-label text-sm font-semibold">
-                <span className="font-bold">Places limit├⌐es!</span> ΓÇö Inscriptions ouvertes jusqu'au 15 juin 2026
+              <p className="font-label text-sm font-semibold text-center sm:text-left">
+                <span className="font-bold">Places limitées!</span> Inscriptions ouvertes jusqu'au 15 juin 2026
               </p>
             </div>
             <MagneticButton
@@ -221,8 +221,8 @@ function SummerCampPage() {
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <motion.div {...fadeInUp} className="text-center mb-16">
               <p className="section-num mx-auto justify-center mb-4">03  Pourquoi choisir notre camp?</p>
-              <h2 className="font-display font-bold text-5xl md:text-7xl leading-[1.02]">
-                Quatre <span className="font-handwritten text-magenta">atouts</span> pour l'├⌐t├⌐.
+              <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.05]">
+                Quatre <span className="font-handwritten text-magenta">atouts</span> pour l'été.
               </h2>
             </motion.div>
 
@@ -235,8 +235,8 @@ function SummerCampPage() {
                           <benefit.icon className="h-8 w-8" />
                         </div>
                       <p className={`font-label text-xs text-${benefit.color} mb-4`}>{benefit.num}</p>
-                      <h3 className="font-display font-bold text-3xl mb-3">{benefit.title}</h3>
-                      <p className="text-ink-light leading-relaxed">{benefit.desc}</p>
+                      <h3 className="font-display font-bold text-xl sm:text-2xl lg:text-3xl mb-3">{benefit.title}</h3>
+                      <p className="text-sm sm:text-base text-ink-light leading-relaxed">{benefit.desc}</p>
                       <Doodle kind="star" color={`var(--${benefit.color})`} className="mt-6 w-8 h-8 opacity-60" />
                     </div>
                   </TiltCard>
@@ -272,8 +272,8 @@ function SummerCampPage() {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <p className="section-num mx-auto justify-center mb-4">02 ΓÇö Le programme</p>
-               <h2 className="font-display font-bold text-5xl md:text-7xl leading-[1.02]">
+              <p className="section-num mx-auto justify-center mb-4">02 — Le programme</p>
+               <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.05]">
                 Quatre univers, mille<span className="font-handwritten text-magenta"> souvenirs.</span>
               </h2>
             </motion.div>
@@ -303,7 +303,7 @@ function SummerCampPage() {
                       {a.tag}
                     </span>
                   </div>
-                  <p className="absolute bottom-3 left-0 right-0 text-center font-label text-md">
+                  <p className="absolute bottom-3 left-0 right-0 text-center font-label text-sm sm:text-base">
                     {a.label}
                   </p>
                 </motion.div>
@@ -316,18 +316,18 @@ function SummerCampPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="mt-16 rounded-3xl bg-gradient-to-r from-ink to-purple p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+              className="mt-16 rounded-3xl bg-gradient-to-r from-ink to-purple p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
             >
               <div className="text-white text-center md:text-left">
                 <p className="font-label text-sm text-white/60 uppercase tracking-widest mb-1">Votre enfant va adorer</p>
-                <h3 className="font-display font-bold text-3xl md:text-4xl">Pr├¬t ├á vivre l'aventure?</h3>
-                <p className="text-white/70 mt-2 font-body">Inscrivez-le en quelques minutes. Places limit├⌐es ├á 20 enfants par groupe.</p>
+                <h3 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl">Prêt à vivre l'aventure?</h3>
+                <p className="text-sm sm:text-base text-white/70 mt-2 font-body">Inscrivez-le en quelques minutes. Places limitées à 20 enfants par groupe.</p>
               </div>
               <MagneticButton
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={scrollToForm}
-                className="flex-shrink-0 flex items-center gap-3 bg-magenta text-white font-bold px-8 py-4 rounded-full text-lg shadow-xl hover:bg-magenta/90 transition-all"
+                className="flex-shrink-0 flex items-center gap-3 bg-magenta text-white font-bold px-4 md:px-8 py-2 md:py-4 rounded-full sm:text-xl md:text-4xl shadow-xl hover:bg-magenta/90 transition-all"
               >
                 Je veux inscrire mon enfant <ArrowRight className="w-5 h-5" />
               </MagneticButton>
@@ -338,7 +338,7 @@ function SummerCampPage() {
         {/* Registration Form Section */}
         <motion.section {...fadeInUp} id="form-section" className="py-16 px-6 lg:px-10 bg-gradient-to-r from-ink to-purple">
           <div className="mx-auto max-w-4xl">
-            <h2 className="font-display font-bold text-5xl md:text-6xl text-center mb-2 text-white">
+            <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-center mb-2 text-white">
               Formulaire d'<span className="font-handwritten text-magenta">inscription</span>
             </h2>
             <p className="text-center font-body text-white/70 mb-10">
@@ -350,7 +350,7 @@ function SummerCampPage() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="relative mb-10 p-8 md:p-10 rounded-3xl bg-gradient-to-br from-purple-bg via-pink-100 to-teal-bg from-ink to-purple text-cream overflow-hidden"
+              className="relative mb-10 p-6 md:p-8 rounded-3xl bg-gradient-to-br from-purple-bg via-pink-100 to-teal-bg from-ink to-purple text-cream overflow-hidden"
             >
               <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-magenta/30 blur-3xl" />
               <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-gold/20 blur-3xl" />
@@ -359,12 +359,12 @@ function SummerCampPage() {
                   <span className="inline-block px-3 py-1 rounded-full bg-gold text-ink text-xs font-bold uppercase tracking-wider mb-4">
                     Offre 2026
                   </span>
-                  <h3 className="font-display text-3xl md:text-4xl text-ink font-black mb-2">
+                  <h3 className="font-display text-2xl sm:text-3xl md:text-4xl text-ink font-black mb-2">
                     Forfait Summer Camp
                   </h3>
                   <p className="text-ink/80 mb-6">Choisissez vos semaines, payez ├á la semaine.</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="font-display text-5xl md:text-6xl text-ink font-black">1 200</span>
+                    <span className="font-display text-4xl sm:text-5xl md:text-6xl text-ink font-black">1 200</span>
                     <span className="text-lg text-ink/80">MAD / semaine</span>
                   </div>
                   <p className="text-xs text-ink/60 mt-2">R├⌐duction famille d├¿s le 2e enfant</p>
@@ -407,7 +407,7 @@ function SummerCampPage() {
                 </p>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-8 bg-white rounded-3xl p-8 shadow-soft">
+              <form onSubmit={handleSubmit} className="space-y-8 bg-white rounded-3xl p-6 lg:p-8 shadow-soft">
                 {/* Parent/Guardian Section */}
                 <FormSection title="Informations du parent/tuteur">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -520,20 +520,6 @@ function SummerCampPage() {
                   </div>
                 </FormSection>
 
-                {/* Trust signal above submit */}
-                <div className="flex flex-wrap items-center justify-center gap-4 py-2 border-y border-border">
-                  {[
-                    { icon: Shield, text: "Donn├⌐es 100% s├⌐curis├⌐es" },
-                    { icon: Clock, text: "R├⌐ponse sous 24h" },
-                    { icon: Users, text: "Aucun paiement imm├⌐diat" },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-1.5 text-ink-light text-xs font-label">
-                      <item.icon className="w-3.5 h-3.5 text-teal" />
-                      {item.text}
-                    </div>
-                  ))}
-                </div>
-
                 {/* Submit Button */}
                 <motion.div
                   className="pt-2"
@@ -546,7 +532,7 @@ function SummerCampPage() {
                     disabled={loading}
                     whileHover={{ scale: loading ? 1 : 1.02, y: loading ? 0 : -2 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full flex-1 py-5 rounded-xl font-bold text-xl bg-gradient-to-r from-magenta to-purple text-white hover:shadow-xl disabled:opacity-50 transition-all flex items-center justify-center gap-3"
+                    className="w-full flex-1 py-5 rounded-xl font-bold text-base sm:text-lg md:text-xl bg-gradient-to-r from-magenta to-purple text-white hover:shadow-xl disabled:opacity-50 transition-all flex items-center justify-center gap-3"
                   >
                     {loading ? (
                       "Envoi en cours..."
@@ -567,10 +553,10 @@ function SummerCampPage() {
         </motion.section>
 
         {/* FAQ Section */}
-        <motion.section {...fadeInUp} className="relative py-28 bg-gradient-to-br from-lavender via-magenta-bg to-cream overflow-hidden">
+        <motion.section {...fadeInUp} className="relative py-28 px-6 lg:px-10 bg-gradient-to-br from-lavender via-magenta-bg to-cream overflow-hidden">
           <Doodle kind="circle" color="oklch(0.45 0.21 312 / 0.3)" className="absolute top-20 right-20 w-24 h-24" />
           <div className="mx-auto max-w-3xl">
-            <h2 className="font-display font-bold text-5xl md:text-6xl text-center mb-12 text-ink">Questions <span className="font-handwritten text-magenta">fr├⌐quentes</span></h2>
+            <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl mb-6 text-center mb-12 text-ink">Questions <span className="font-handwritten text-magenta">fréquentes</span></h2>
 
             <div className="space-y-4">
               {FAQ_DATA.map((faq, idx) => (
@@ -586,7 +572,7 @@ function SummerCampPage() {
                     onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
                     className="w-full p-6 text-left flex items-center justify-between bg-white hover:bg-cream transition-colors"
                   >
-                    <span className="font-display font-semibold text-lg text-ink pr-4">{faq.q}</span>
+                    <span className="font-display font-semibold text-base sm:text-lg md:text-xl text-ink pr-4">{faq.q}</span>
                     <motion.div animate={{ rotate: expandedFaq === idx ? 180 : 0 }} className="flex-shrink-0">
                       <ChevronDown className="w-5 h-5 text-magenta" />
                     </motion.div>
@@ -638,7 +624,7 @@ function SummerCampPage() {
             <Doodle kind="star" color="oklch(0.79 0.16 78 / 0.6)" className="absolute top-0 left-1/4 w-10 h-10 animate-float-soft" />
             <Doodle kind="heart" color="oklch(0.52 0.21 357 / 0.5)" className="absolute bottom-10 right-1/4 w-10 h-10 animate-float-soft" delay={0.4} />
             <div className="rounded-3xl bg-white p-12 text-center shadow-soft">
-              <h2 className="font-display font-bold text-4xl md:text-5xl mb-6 text-ink">Des <span className="font-handwritten text-magenta">questions?</span></h2>
+              <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl mb-6 text-ink">Des <span className="font-handwritten text-magenta">questions?</span></h2>
               <p className="font-body text-ink-light mb-8 max-w-2xl mx-auto text-lg">
                 Notre ├⌐quipe est disponible pour r├⌐pondre ├á toutes vos questions sur le Summer Camp EducazenKids.
               </p>
@@ -685,7 +671,7 @@ function SummerCampPage() {
 function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-      <h3 className="font-display font-bold text-2xl mb-6 pb-3 border-b-2 border-border text-ink">{title}</h3>
+      <h3 className="font-display font-bold text-xl sm:text-2xl mb-6 pb-3 border-b-2 border-border text-ink">{title}</h3>
       {children}
     </motion.div>
   );
@@ -710,7 +696,7 @@ function FormField({
 }) {
   return (
     <div className="flex flex-col">
-      <label className="font-label text-sm font-semibold mb-3 text-ink">
+      <label className="font-label text-xs sm:text-sm font-semibold mb-3 text-ink">
         {label}
         {required && <span className="text-magenta ml-1">*</span>}
       </label>
@@ -719,7 +705,7 @@ function FormField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`px-4 py-3 rounded-xl border-2 font-body transition-all focus:outline-none focus:ring-2 focus:ring-magenta/50 focus:border-magenta ${
+        className={`px-4 py-3 sm:py-3 text-sm sm:text-base rounded-xl border-2 font-body transition-all focus:outline-none focus:ring-2 focus:ring-magenta/50 focus:border-magenta ${
           error ? "border-red-400 bg-red-50" : "border-border hover:border-magenta/50"
         }`}
       />
@@ -731,4 +717,69 @@ function FormField({
   );
 }
 
+function FormTextarea({
+  label,
+  value,
+  onChange,
+  error,
+  placeholder = "",
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+  placeholder?: string;
+}) {
+  return (
+    <div className="flex flex-col">
+      <label className="font-label text-sm font-semibold mb-3 text-ink">{label}</label>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={4}
+        className={`px-4 py-3 sm:py-3 text-sm sm:text-base rounded-xl border-2 font-body transition-all focus:outline-none focus:ring-2 focus:ring-magenta/50 focus:border-magenta resize-none ${
+          error ? "border-red-400 bg-red-50" : "border-border hover:border-magenta/50"
+        }`}
+      />
+      {error && <p className="text-red-500 text-xs font-label mt-2 flex items-center gap-1">
+        <AlertCircle className="w-3 h-3" />
+        {error}
+      </p>}
+    </div>
+  );
+}
 
+function FormSelect({
+  label,
+  value,
+  onChange,
+  options,
+  required = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: Array<{ value: string; label: string }>;
+  required?: boolean;
+}) {
+  return (
+    <div className="flex flex-col">
+      <label className="font-label text-sm font-semibold mb-3 text-ink">
+        {label}
+        {required && <span className="text-magenta ml-1">*</span>}
+      </label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="px-4 py-3 sm:py-3 text-sm sm:text-base rounded-xl border-2 border-border hover:border-magenta/50 focus:outline-none focus:ring-2 focus:ring-magenta/50 focus:border-magenta transition-all bg-white appearance-none cursor-pointer font-body text-ink"
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
