@@ -1,7 +1,7 @@
 ﻿import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { ChevronDown, Check, AlertCircle, Mail, Phone, MapPin, ArrowRight, Users, Shield, Clock } from "lucide-react";
+import { ChevronDown, Check, AlertCircle, Mail, Phone, MapPin, ArrowRight, Clock } from "lucide-react";
 import { PageShell, PageHero } from "@/components/site/PageShell";
 import { TiltCard } from "@/components/site/motion/TiltCard";
 import { Doodle } from "@/components/site/motion/Doodle";
@@ -717,69 +717,4 @@ function FormField({
   );
 }
 
-function FormTextarea({
-  label,
-  value,
-  onChange,
-  error,
-  placeholder = "",
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  error?: string;
-  placeholder?: string;
-}) {
-  return (
-    <div className="flex flex-col">
-      <label className="font-label text-sm font-semibold mb-3 text-ink">{label}</label>
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        rows={4}
-        className={`px-4 py-3 sm:py-3 text-sm sm:text-base rounded-xl border-2 font-body transition-all focus:outline-none focus:ring-2 focus:ring-magenta/50 focus:border-magenta resize-none ${
-          error ? "border-red-400 bg-red-50" : "border-border hover:border-magenta/50"
-        }`}
-      />
-      {error && <p className="text-red-500 text-xs font-label mt-2 flex items-center gap-1">
-        <AlertCircle className="w-3 h-3" />
-        {error}
-      </p>}
-    </div>
-  );
-}
 
-function FormSelect({
-  label,
-  value,
-  onChange,
-  options,
-  required = false,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  options: Array<{ value: string; label: string }>;
-  required?: boolean;
-}) {
-  return (
-    <div className="flex flex-col">
-      <label className="font-label text-sm font-semibold mb-3 text-ink">
-        {label}
-        {required && <span className="text-magenta ml-1">*</span>}
-      </label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="px-4 py-3 sm:py-3 text-sm sm:text-base rounded-xl border-2 border-border hover:border-magenta/50 focus:outline-none focus:ring-2 focus:ring-magenta/50 focus:border-magenta transition-all bg-white appearance-none cursor-pointer font-body text-ink"
-      >
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
