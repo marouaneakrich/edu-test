@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring, type TargetAndTransition, type VariantLabels } from "framer-motion";
 import { useRef, type ReactNode, type MouseEvent } from "react";
 
 interface Props {
@@ -10,8 +10,8 @@ interface Props {
   onClick?: () => void;
   type?: "button" | "submit";
   disabled?: boolean;
-  whileHover?: object;
-  whileTap?: object;
+  whileHover?: TargetAndTransition | VariantLabels;
+  whileTap?: TargetAndTransition | VariantLabels;
 }
 
 export function MagneticButton({ 
