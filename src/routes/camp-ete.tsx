@@ -1,17 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { ChevronDown, Check, AlertCircle, Mail, Phone, MapPin, ArrowRight, Star, Users, Shield, Clock } from "lucide-react";
+import { ChevronDown, Check, AlertCircle, Mail, Phone, MapPin, ArrowRight, Users, Shield, Clock } from "lucide-react";
 import { PageShell, PageHero } from "@/components/site/PageShell";
 import { TiltCard } from "@/components/site/motion/TiltCard";
 import { Doodle } from "@/components/site/motion/Doodle";
 import { toast } from "sonner";
-import heroImg from "@/assets/camp-hero.jpg";
 import artImg from "@/assets/camp-art.jpg";
 import natureImg from "@/assets/camp-nature.jpg";
 import sportsImg from "@/assets/camp-sports.jpg";
 import musicImg from "@/assets/camp-music.jpg";
-import groupImg from "@/assets/camp-group.jpg";
 import {
   Sparkles, Heart, Target, Brain
 } from "lucide-react";
@@ -21,7 +19,7 @@ export const Route = createFileRoute("/camp-ete")({
   head: () => ({
     meta: [
       { title: "Summer Camp EducazenKids 2026 | Inscription" },
-      { name: "description", content: "Inscrivez votre enfant au Summer Camp EducazenKids 2026. Activités créatives, apprentissage en plein air et environnement sécurisé." },
+      { name: "description", content: "Inscrivez votre enfant au Summer Camp EducazenKids 2026. Activit├⌐s cr├⌐atives, apprentissage en plein air et environnement s├⌐curis├⌐." },
       { property: "og:title", content: "Summer Camp EducazenKids" },
       { property: "og:description", content: "Rejoignez notre Summer Camp inclusif pour enfants de 4-12 ans." },
     ],
@@ -54,52 +52,43 @@ interface FormData {
 interface FormErrors { [key: string]: string; }
 
 const BENEFITS = [
-  { icon: Sparkles, title: "Activités créatives", desc: "Art, musique, danse et expression artistique pour développer la créativité", color: "magenta", num: "01" },
-  { icon: Brain, title: "Apprentissage en plein air", desc: "Découverte de la nature, écologie et exploration en toute sécurité", color: "purple", num: "02" },
-  { icon: Target, title: "Approche personnalisée", desc: "Adaptation pour chaque enfant, y compris ceux avec besoins spéciaux", color: "teal", num: "03" },
-  { icon: Heart, title: "Environnement sécurisé", desc: "Encadrement professionnel, protocoles de santé stricts et bien-être prioritaire", color: "gold", num: "04" },
+  { icon: Sparkles, title: "Activit├⌐s cr├⌐atives", desc: "Art, musique, danse et expression artistique pour d├⌐velopper la cr├⌐ativit├⌐", color: "magenta", num: "01" },
+  { icon: Brain, title: "Apprentissage en plein air", desc: "D├⌐couverte de la nature, ├⌐cologie et exploration en toute s├⌐curit├⌐", color: "purple", num: "02" },
+  { icon: Target, title: "Approche personnalis├⌐e", desc: "Adaptation pour chaque enfant, y compris ceux avec besoins sp├⌐ciaux", color: "teal", num: "03" },
+  { icon: Heart, title: "Environnement s├⌐curis├⌐", desc: "Encadrement professionnel, protocoles de sant├⌐ stricts et bien-├¬tre prioritaire", color: "gold", num: "04" },
 ];
 
 const FAQ_DATA = [
   {
-    q: "Quel est l'âge minimum pour le camp?",
-    a: "Le camp accueille les enfants de 4 à 12 ans. Nous avons des groupes par tranche d'âge pour adapter les activités à chaque niveau de développement.",
+    q: "Quel est l'├óge minimum pour le camp?",
+    a: "Le camp accueille les enfants de 4 ├á 12 ans. Nous avons des groupes par tranche d'├óge pour adapter les activit├⌐s ├á chaque niveau de d├⌐veloppement.",
   },
   {
     q: "Votre camp peut-il accueillir les enfants en situation de handicap?",
-    a: "Oui! EducazenKids est un centre d'éducation inclusif. Nous accueillons les enfants HPI, TDAH, DYS, TSA et autres. Notre équipe est formée à l'accompagnement personnalisé.",
+    a: "Oui! EducazenKids est un centre d'├⌐ducation inclusif. Nous accueillons les enfants HPI, TDAH, DYS, TSA et autres. Notre ├⌐quipe est form├⌐e ├á l'accompagnement personnalis├⌐.",
   },
   {
-    q: "Que se passe-t-il en cas d'urgence médicale?",
-    a: "Nous avons un protocole strict de sécurité. L'équipe est formée aux premiers secours, et nous avons accès aux services d'urgence. Les numéros de contact parental sont toujours à portée de main.",
+    q: "Que se passe-t-il en cas d'urgence m├⌐dicale?",
+    a: "Nous avons un protocole strict de s├⌐curit├⌐. L'├⌐quipe est form├⌐e aux premiers secours, et nous avons acc├¿s aux services d'urgence. Les num├⌐ros de contact parental sont toujours ├á port├⌐e de main.",
   },
   {
-    q: "Comment gérez-vous les régimes alimentaires spéciaux?",
-    a: "Nous respectons tous les régimes spéciaux et allergies. Veuillez les indiquer dans le formulaire. Notre chef cuisine adapte les repas selon les besoins de chaque enfant.",
+    q: "Comment g├⌐rez-vous les r├⌐gimes alimentaires sp├⌐ciaux?",
+    a: "Nous respectons tous les r├⌐gimes sp├⌐ciaux et allergies. Veuillez les indiquer dans le formulaire. Notre chef cuisine adapte les repas selon les besoins de chaque enfant.",
   },
   {
-    q: "Peut-on faire une semaine partagée entre deux enfants?",
-    a: "Oui, bien sûr! Vous pouvez inscrire plusieurs enfants et choisir différentes semaines. Des réductions sont disponibles pour les familles avec plusieurs enfants.",
+    q: "Peut-on faire une semaine partag├⌐e entre deux enfants?",
+    a: "Oui, bien s├╗r! Vous pouvez inscrire plusieurs enfants et choisir diff├⌐rentes semaines. Des r├⌐ductions sont disponibles pour les familles avec plusieurs enfants.",
   },
   {
-    q: "Y a-t-il une flexibilité pour les arrivées/départs tardifs?",
-    a: "Oui, nous proposons une arrivée flexible de 8h30 à 9h et un départ jusqu'à 16h30. Des frais supplémentaires s'appliquent pour les services avant/après les horaires standards.",
+    q: "Y a-t-il une flexibilit├⌐ pour les arriv├⌐es/d├⌐parts tardifs?",
+    a: "Oui, nous proposons une arriv├⌐e flexible de 8h30 ├á 9h et un d├⌐part jusqu'├á 16h30. Des frais suppl├⌐mentaires s'appliquent pour les services avant/apr├¿s les horaires standards.",
   },
-];
-
-const SPECIAL_NEEDS_OPTIONS = [
-  { value: "typical", label: "Développement typique" },
-  { value: "hpi", label: "HPI (Haut potentiel intellectuel)" },
-  { value: "tdah", label: "TDAH" },
-  { value: "dys", label: "DYS (Dyslexie, Dysorthographie, etc.)" },
-  { value: "tsa", label: "TSA (Trouble du spectre autistique)" },
-  { value: "other", label: "Autre" },
 ];
 
 const ACTIVITIES_OPTIONS = [
-  { label: "Art & Peinture", img: artImg, tag: "Créativité" },
-  { label: "Nature & Écologie", img: natureImg, tag: "Aventure" },
-  { label: "Sport & Jeux", img: sportsImg, tag: "Énergie" },
+  { label: "Art & Peinture", img: artImg, tag: "Cr├⌐ativit├⌐" },
+  { label: "Nature & ├ëcologie", img: natureImg, tag: "Aventure" },
+  { label: "Sport & Jeux", img: sportsImg, tag: "├ënergie" },
   { label: "Musique & Chant", img: musicImg, tag: "Expression" },
 ];
 
@@ -118,45 +107,34 @@ const fadeInUp = {
   transition: { duration: 0.6 },
 };
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
 const scrollToForm = () => {
   document.getElementById("form-section")?.scrollIntoView({ behavior: "smooth" });
 };
 
+const INITIAL_FORM_DATA: FormData = {
+  parentName: "",
+  email: "",
+  phone: "",
+  address: "",
+  numberOfChildren: 1,
+  dateOfBirth: "",
+  specialNeeds: "typical",
+  allergies: "",
+  medicalConditions: "",
+  selectedWeeks: [],
+  campType: "fulltime",
+  activities: [],
+  specialRequests: "",
+  emergencyContactName: "",
+  emergencyPhone: "",
+  insurance: "",
+  medications: "",
+  photoConsent: false,
+  termsAccepted: false,
+};
+
 function SummerCampPage() {
-  const [formData, setFormData] = useState<FormData>({
-    parentName: "",
-    email: "",
-    phone: "",
-    address: "",
-    numberOfChildren: 1,
-    dateOfBirth: "",
-    specialNeeds: "typical",
-    allergies: "",
-    medicalConditions: "",
-    selectedWeeks: [],
-    campType: "fulltime",
-    activities: [],
-    specialRequests: "",
-    emergencyContactName: "",
-    emergencyPhone: "",
-    insurance: "",
-    medications: "",
-    photoConsent: false,
-    termsAccepted: false,
-  });
+  const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
@@ -168,13 +146,13 @@ function SummerCampPage() {
 
     if (!formData.parentName.trim()) newErrors.parentName = "Nom requis";
     if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Email valide requis";
-    if (!formData.phone.trim() || !/^[0-9+\s\-()]{8,}$/.test(formData.phone)) newErrors.phone = "Téléphone valide requis";
-    if (!formData.numberOfChildren || formData.numberOfChildren < 1) newErrors.numberOfChildren = "Spécifiez au moins 1 enfant";
+    if (!formData.phone.trim() || !/^[0-9+\s\-()]{8,}$/.test(formData.phone)) newErrors.phone = "T├⌐l├⌐phone valide requis";
+    if (!formData.numberOfChildren || formData.numberOfChildren < 1) newErrors.numberOfChildren = "Sp├⌐cifiez au moins 1 enfant";
     if (formData.numberOfChildren === 1 && !formData.dateOfBirth) newErrors.dateOfBirth = "Date de naissance requise pour l'enfant";
-    if (formData.selectedWeeks.length === 0) newErrors.selectedWeeks = "Sélectionnez au moins une semaine";
-    if (formData.activities.length === 0) newErrors.activities = "Sélectionnez au moins une activité";
+    if (formData.selectedWeeks.length === 0) newErrors.selectedWeeks = "S├⌐lectionnez au moins une semaine";
+    if (formData.activities.length === 0) newErrors.activities = "S├⌐lectionnez au moins une activit├⌐";
     if (!formData.emergencyContactName.trim()) newErrors.emergencyContactName = "Contact d'urgence requis";
-    if (!formData.emergencyPhone.trim()) newErrors.emergencyPhone = "Téléphone d'urgence requis";
+    if (!formData.emergencyPhone.trim()) newErrors.emergencyPhone = "T├⌐l├⌐phone d'urgence requis";
     if (!formData.termsAccepted) newErrors.termsAccepted = "Vous devez accepter les conditions";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -194,19 +172,10 @@ function SummerCampPage() {
 
     setSubmitted(true);
     setLoading(false);
-    toast.success("Inscription envoyée avec succès!");
+    toast.success("Inscription envoy├⌐e avec succ├¿s!");
 
     setTimeout(() => {
-      setFormData({
-        parentName: "",
-        email: "",
-        phone: "",
-        numberOfChildren: 1,
-        campType: "fulltime",
-        activities: [],
-        emergencyContactName: "",
-        emergencyPhone: "",
-      });
+      setFormData(INITIAL_FORM_DATA);
       setSubmitted(false);
     }, 3000);
   };
@@ -287,9 +256,9 @@ function SummerCampPage() {
                 onClick={scrollToForm}
                 className="inline-flex items-center gap-3 bg-gradient-to-r from-magenta to-purple text-white font-bold px-10 py-4 rounded-full text-lg shadow-xl hover:shadow-2xl transition-all"
               >
-                Réserver une place maintenant <ArrowRight className="w-5 h-5" />
+                R├⌐server une place maintenant <ArrowRight className="w-5 h-5" />
               </MagneticButton>
-              <p className="mt-3 text-sm text-ink-light font-label">Inscription en moins de 3 minutes · Aucun paiement immédiat</p>
+              <p className="mt-3 text-sm text-ink-light font-label">Inscription en moins de 3 minutes ┬╖ Aucun paiement imm├⌐diat</p>
             </motion.div>
           </div>
         </motion.section>
@@ -393,19 +362,19 @@ function SummerCampPage() {
                   <h3 className="font-display text-2xl sm:text-3xl md:text-4xl text-ink font-black mb-2">
                     Forfait Summer Camp
                   </h3>
-                  <p className="text-ink/80 mb-6">Choisissez vos semaines, payez à la semaine.</p>
+                  <p className="text-ink/80 mb-6">Choisissez vos semaines, payez ├á la semaine.</p>
                   <div className="flex items-baseline gap-2">
                     <span className="font-display text-4xl sm:text-5xl md:text-6xl text-ink font-black">1 200</span>
                     <span className="text-lg text-ink/80">MAD / semaine</span>
                   </div>
-                  <p className="text-xs text-ink/60 mt-2">Réduction famille dès le 2e enfant</p>
+                  <p className="text-xs text-ink/60 mt-2">R├⌐duction famille d├¿s le 2e enfant</p>
                 </div>
                 <ul className="space-y-3">
                   {[
-                    "5 jours d'activités encadrées",
-                    "Repas du midi et goûter inclus",
+                    "5 jours d'activit├⌐s encadr├⌐es",
+                    "Repas du midi et go├╗ter inclus",
                     "Encadrement inclusif (HPI/TDAH/DYS)",
-                    "Excursion éducative",
+                    "Excursion ├⌐ducative",
                     "Certificat de participation",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3">
@@ -427,14 +396,14 @@ function SummerCampPage() {
                     <Check className="w-12 h-12 text-teal" />
                   </div>
                 </motion.div>
-                <h3 className="font-display font-bold text-3xl md:text-4xl mb-3 text-teal">Inscription confirmée!</h3>
+                <h3 className="font-display font-bold text-3xl md:text-4xl mb-3 text-teal">Inscription confirm├⌐e!</h3>
                 <p className="font-body text-ink-light mb-6">
                   Merci d'avoir inscrit {formData.numberOfChildren} enfant{formData.numberOfChildren > 1 ? 's' : ''} au Summer Camp EducazenKids.
                   <br />
-                  Un email de confirmation a été envoyé à {formData.email}.
+                  Un email de confirmation a ├⌐t├⌐ envoy├⌐ ├á {formData.email}.
                 </p>
                 <p className="text-sm font-label text-ink-light">
-                  Notre équipe vous contactera sous peu pour finaliser les détails.
+                  Notre ├⌐quipe vous contactera sous peu pour finaliser les d├⌐tails.
                 </p>
               </motion.div>
             ) : (
@@ -451,7 +420,7 @@ function SummerCampPage() {
                       required
                     />
                     <FormField
-                      label="Téléphone"
+                      label="T├⌐l├⌐phone"
                       type="tel"
                       value={formData.phone}
                       onChange={(val) => setFormData({ ...formData, phone: val })}
@@ -476,9 +445,9 @@ function SummerCampPage() {
                           type="button"
                           onClick={() => setFormData({ ...formData, numberOfChildren: Math.max(1, formData.numberOfChildren - 1) })}
                           className="px-4 py-2 bg-white hover:bg-cream transition-colors flex items-center justify-center text-lg font-semibold text-ink"
-                          aria-label="Réduire"
+                          aria-label="R├⌐duire"
                         >
-                          −
+                          ΓêÆ
                         </button>
                         <div className="flex-1 text-center font-body text-lg bg-white px-2 text-ink">{formData.numberOfChildren}</div>
                         <button
@@ -496,10 +465,10 @@ function SummerCampPage() {
                 </FormSection>
 
                 {/* Camp Preferences Section */}
-                <FormSection title="Préférences du camp">
+                <FormSection title="Pr├⌐f├⌐rences du camp">
                   <div className="mb-6">
                     <label className="block font-label text-sm font-semibold mb-4 text-ink">
-                      Sélectionnez la/les semaine(s)
+                      S├⌐lectionnez la/les semaine(s)
                       <span className="text-magenta ml-1">*</span>
                     </label>
                     <div className="space-y-3">
@@ -530,7 +499,7 @@ function SummerCampPage() {
                 </FormSection>
 
                 {/* Health & Safety Section */}
-                <FormSection title="Informations supplémentaires & urgences">
+                <FormSection title="Informations suppl├⌐mentaires & urgences">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       label="Nom du contact d'urgence"
@@ -541,7 +510,7 @@ function SummerCampPage() {
                       required
                     />
                     <FormField
-                      label="Téléphone d'urgence"
+                      label="T├⌐l├⌐phone d'urgence"
                       type="tel"
                       value={formData.emergencyPhone}
                       onChange={(val) => setFormData({ ...formData, emergencyPhone: val })}
@@ -576,7 +545,7 @@ function SummerCampPage() {
                 </motion.div>
 
                 <p className="text-xs text-center text-ink-light mt-4">
-                  <span className="text-magenta">*</span> Champs obligatoires. Nous ne partagerons pas vos données avec des tiers.
+                  <span className="text-magenta">*</span> Champs obligatoires. Nous ne partagerons pas vos donn├⌐es avec des tiers.
                 </p>
               </form>
             )}
@@ -633,7 +602,7 @@ function SummerCampPage() {
               transition={{ delay: 0.3 }}
               className="mt-12 text-center"
             >
-              <p className="font-label text-ink-light mb-4 text-sm">Vous avez encore des questions? Nous sommes là pour vous.</p>
+              <p className="font-label text-ink-light mb-4 text-sm">Vous avez encore des questions? Nous sommes l├á pour vous.</p>
               <MagneticButton
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.97 }}
@@ -657,7 +626,7 @@ function SummerCampPage() {
             <div className="rounded-3xl bg-white p-12 text-center shadow-soft">
               <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl mb-6 text-ink">Des <span className="font-handwritten text-magenta">questions?</span></h2>
               <p className="font-body text-ink-light mb-8 max-w-2xl mx-auto text-lg">
-                Notre équipe est disponible pour répondre à toutes vos questions sur le Summer Camp EducazenKids.
+                Notre ├⌐quipe est disponible pour r├⌐pondre ├á toutes vos questions sur le Summer Camp EducazenKids.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-2xl mx-auto">
@@ -688,7 +657,7 @@ function SummerCampPage() {
 
               <div className="flex items-center justify-center gap-2 text-sm font-body text-ink-light">
                 <MapPin className="w-4 h-4" />
-                <span>EducazenKids • Agadir, Maroc</span>
+                <span>EducazenKids ΓÇó Agadir, Maroc</span>
               </div>
             </div>
           </div>
