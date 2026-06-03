@@ -10,6 +10,8 @@ interface Props {
   onClick?: () => void;
   type?: "button" | "submit";
   disabled?: boolean;
+  whileHover?: object;
+  whileTap?: object;
 }
 
 export function MagneticButton({ 
@@ -20,7 +22,9 @@ export function MagneticButton({
   href, 
   onClick, 
   type = "button", 
-  disabled = false 
+  disabled = false,
+  whileHover,
+  whileTap,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
@@ -44,7 +48,9 @@ export function MagneticButton({
       ref={ref}
       onMouseMove={disabled ? undefined : onMove}
       onMouseLeave={disabled ? undefined : onLeave}
-      style={{ x: sx, y: sy, display: "inline-block", }}
+      style={{ x: sx, y: sy, display: "inline-block" }}
+      whileHover={whileHover}
+      whileTap={whileTap}
     >
       <Tag 
         href={href} 
