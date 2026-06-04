@@ -149,12 +149,9 @@ function SummerCampPage() {
     if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Email valide requis";
     if (!formData.phone.trim() || !/^[0-9+\s\-()]{8,}$/.test(formData.phone)) newErrors.phone = "Téléphone valide requis";
     if (!formData.numberOfChildren || formData.numberOfChildren < 1) newErrors.numberOfChildren = "Spécifiez au moins 1 enfant";
-    if (formData.numberOfChildren === 1 && !formData.dateOfBirth) newErrors.dateOfBirth = "Date de naissance requise pour l'enfant";
     if (formData.selectedWeeks.length === 0) newErrors.selectedWeeks = "Sélectionnez au moins une semaine";
-    if (formData.activities.length === 0) newErrors.activities = "Sélectionnez au moins une activité";
     if (!formData.emergencyContactName.trim()) newErrors.emergencyContactName = "Contact d'urgence requis";
     if (!formData.emergencyPhone.trim()) newErrors.emergencyPhone = "Téléphone d'urgence requis";
-    if (!formData.termsAccepted) newErrors.termsAccepted = "Vous devez accepter les conditions";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -467,75 +464,56 @@ function SummerCampPage() {
               <form onSubmit={handleSubmit} className="space-y-8 bg-white rounded-3xl p-6 lg:p-8 shadow-soft">
                 {/* Parent/Guardian Section */}
                 <FormSection title="Informations du parent/tuteur">
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        label="Nom complet"
-                        type="text"
-                        value={formData.parentName}
-                        onChange={(val) => setFormData({ ...formData, parentName: val })}
-                        error={errors.parentName}
-                        required
-                      />
-                      <FormField
-                        label="Téléphone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(val) => setFormData({ ...formData, phone: val })}
-                        error={errors.phone}
-                        required
-                      />
-                      <FormField
-                        label="Email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(val) => setFormData({ ...formData, email: val })}
-                        error={errors.email}
-                        required
-                      />
-                      <div className="flex flex-col">
-                        <label className="font-label text-sm font-semibold mb-3 text-ink">
-                          Nombre d'enfants
-                          <span className="text-magenta ml-1">*</span>
-                        </label>
-                        <div className="inline-flex items-center w-28 rounded-xl overflow-hidden border-2 border-border bg-white">
-                          <button
-                            type="button"
-                            onClick={() => setFormData({ ...formData, numberOfChildren: Math.max(1, formData.numberOfChildren - 1) })}
-                            className="px-4 py-2 bg-white hover:bg-cream transition-colors flex items-center justify-center text-lg font-semibold text-ink"
-                            aria-label="Réduire"
-                          >
-                            −
-                          </button>
-                          <div className="flex-1 text-center font-body text-lg bg-white px-2 text-ink">{formData.numberOfChildren}</div>
-                          <button
-                            type="button"
-                            onClick={() => setFormData({ ...formData, numberOfChildren: formData.numberOfChildren + 1 })}
-                            className="px-4 py-2 bg-white hover:bg-cream transition-colors flex items-center justify-center text-lg font-semibold text-ink"
-                            aria-label="Augmenter"
-                          >
-                            +
-                          </button>
-                        </div>
-                        {errors.numberOfChildren && <p className="text-red-500 text-xs font-label mt-2">{errors.numberOfChildren}</p>}
-                      </div>
-                    </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
-                      label="Adresse"
+                      label="Nom complet"
                       type="text"
-                      value={formData.address}
-                      onChange={(val) => setFormData({ ...formData, address: val })}
-                      placeholder="Votre adresse complète"
+                      value={formData.parentName}
+                      onChange={(val) => setFormData({ ...formData, parentName: val })}
+                      error={errors.parentName}
+                      required
                     />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        label="Date de naissance de l'enfant"
-                        type="date"
-                        value={formData.dateOfBirth}
-                        onChange={(val) => setFormData({ ...formData, dateOfBirth: val })}
-                        error={errors.dateOfBirth}
-                        required
-                      />
+                    <FormField
+                      label="Téléphone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(val) => setFormData({ ...formData, phone: val })}
+                      error={errors.phone}
+                      required
+                    />
+                    <FormField
+                      label="Email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(val) => setFormData({ ...formData, email: val })}
+                      error={errors.email}
+                      required
+                    />
+                    <div className="flex flex-col">
+                      <label className="font-label text-sm font-semibold mb-3 text-ink">
+                        Nombre d'enfants
+                        <span className="text-magenta ml-1">*</span>
+                      </label>
+                      <div className="inline-flex items-center w-28 rounded-xl overflow-hidden border-2 border-border bg-white">
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, numberOfChildren: Math.max(1, formData.numberOfChildren - 1) })}
+                          className="px-4 py-2 bg-white hover:bg-cream transition-colors flex items-center justify-center text-lg font-semibold text-ink"
+                          aria-label="Réduire"
+                        >
+                          −
+                        </button>
+                        <div className="flex-1 text-center font-body text-lg bg-white px-2 text-ink">{formData.numberOfChildren}</div>
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, numberOfChildren: formData.numberOfChildren + 1 })}
+                          className="px-4 py-2 bg-white hover:bg-cream transition-colors flex items-center justify-center text-lg font-semibold text-ink"
+                          aria-label="Augmenter"
+                        >
+                          +
+                        </button>
+                      </div>
+                      {errors.numberOfChildren && <p className="text-red-500 text-xs font-label mt-2">{errors.numberOfChildren}</p>}
                     </div>
                   </div>
                 </FormSection>
@@ -572,218 +550,55 @@ function SummerCampPage() {
                       {errors.selectedWeeks}
                     </p>}
                   </div>
-
-                  <div className="mb-6">
-                    <label className="block font-label text-sm font-semibold mb-4 text-ink">
-                      Activités souhaitées
-                      <span className="text-magenta ml-1">*</span>
-                    </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {ACTIVITIES_OPTIONS.map((act) => (
-                        <label key={act.label} className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border-2 border-border hover:border-magenta/50 transition-colors">
-                          <input
-                            type="checkbox"
-                            checked={formData.activities.includes(act.label)}
-                            onChange={(e) => {
-                              const updated = e.target.checked
-                                ? [...formData.activities, act.label]
-                                : formData.activities.filter((a) => a !== act.label);
-                              setFormData({ ...formData, activities: updated });
-                            }}
-                            className="w-5 h-5 rounded border-2 border-border accent-magenta cursor-pointer"
-                          />
-                          <span className="font-body text-ink-light group-hover:text-magenta transition-colors text-sm">{act.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                    {errors.activities && <p className="text-red-500 text-sm mt-2 flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4" />
-                      {errors.activities}
-                    </p>}
-                  </div>
-
-                  <div>
-                    <label className="block font-label text-sm font-semibold mb-4 text-ink">
-                      Type de participation
-                      <span className="text-magenta ml-1">*</span>
-                    </label>
-                    <div className="flex flex-wrap gap-4">
-                      <label className="flex items-center gap-3 cursor-pointer group">
-                        <input
-                          type="radio"
-                          name="campType"
-                          value="fulltime"
-                          checked={formData.campType === "fulltime"}
-                          onChange={() => setFormData({ ...formData, campType: "fulltime" })}
-                          className="w-5 h-5 border-2 border-border accent-magenta cursor-pointer"
-                        />
-                        <span className="font-body text-ink-light group-hover:text-magenta transition-colors text-sm">Temps plein (9h-16h30)</span>
-                      </label>
-                      <label className="flex items-center gap-3 cursor-pointer group">
-                        <input
-                          type="radio"
-                          name="campType"
-                          value="parttime"
-                          checked={formData.campType === "parttime"}
-                          onChange={() => setFormData({ ...formData, campType: "parttime" })}
-                          className="w-5 h-5 border-2 border-border accent-magenta cursor-pointer"
-                        />
-                        <span className="font-body text-ink-light group-hover:text-magenta transition-colors text-sm">Temps partiel (9h-13h)</span>
-                      </label>
-                    </div>
-                  </div>
                 </FormSection>
 
-                {/* Health & Medical Section */}
-                <FormSection title="Informations médicales & santé">
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block font-label text-sm font-semibold mb-4 text-ink">
-                        Situation de l'enfant
-                      </label>
-                      <div className="flex flex-wrap gap-4">
-                        {[
-                          { value: "typical", label: "Typique" },
-                          { value: "dys", label: "DYS" },
-                          { value: "hpi", label: "HPI" },
-                          { value: "tdah", label: "TDAH" },
-                          { value: "tsa", label: "TSA" },
-                          { value: "other", label: "Autre" },
-                        ].map((opt) => (
-                          <label key={opt.value} className="flex items-center gap-3 cursor-pointer group">
-                            <input
-                              type="radio"
-                              name="specialNeeds"
-                              value={opt.value}
-                              checked={formData.specialNeeds === opt.value}
-                              onChange={() => setFormData({ ...formData, specialNeeds: opt.value })}
-                              className="w-5 h-5 border-2 border-border accent-magenta cursor-pointer"
-                            />
-                            <span className="font-body text-ink-light group-hover:text-magenta transition-colors text-sm">{opt.label}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        label="Allergies"
-                        type="text"
-                        value={formData.allergies}
-                        onChange={(val) => setFormData({ ...formData, allergies: val })}
-                        placeholder="Aucune"
-                      />
-                      <FormField
-                        label="Conditions médicales"
-                        type="text"
-                        value={formData.medicalConditions}
-                        onChange={(val) => setFormData({ ...formData, medicalConditions: val })}
-                        placeholder="Aucune"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        label="Assurance médicale"
-                        type="text"
-                        value={formData.insurance}
-                        onChange={(val) => setFormData({ ...formData, insurance: val })}
-                        placeholder="Nom de l'assurance"
-                      />
-                      <FormField
-                        label="Médicaments (si applicable)"
-                        type="text"
-                        value={formData.medications}
-                        onChange={(val) => setFormData({ ...formData, medications: val })}
-                        placeholder="Aucun"
-                      />
-                    </div>
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={formData.photoConsent}
-                        onChange={(e) => setFormData({ ...formData, photoConsent: e.target.checked })}
-                        className="w-5 h-5 rounded border-2 border-border accent-magenta cursor-pointer"
-                      />
-                      <span className="font-body text-ink-light group-hover:text-magenta transition-colors text-sm">
-                        J'autorise la prise de photos/vidéos de mon enfant à des fins promotionnelles
-                      </span>
-                    </label>
-                  </div>
-                </FormSection>
-
-                {/* Emergency Contact Section */}
-                <FormSection title="Contact d'urgence">
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        label="Nom du contact d'urgence"
-                        type="text"
-                        value={formData.emergencyContactName}
-                        onChange={(val) => setFormData({ ...formData, emergencyContactName: val })}
-                        error={errors.emergencyContactName}
-                        required
-                      />
-                      <FormField
-                        label="Téléphone d'urgence"
-                        type="tel"
-                        value={formData.emergencyPhone}
-                        onChange={(val) => setFormData({ ...formData, emergencyPhone: val })}
-                        error={errors.emergencyPhone}
-                        required
-                      />
-                    </div>
+                {/* Health & Safety Section */}
+                <FormSection title="Informations supplémentaires & urgences">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
-                      label="Demandes spéciales"
+                      label="Nom du contact d'urgence"
                       type="text"
-                      value={formData.specialRequests}
-                      onChange={(val) => setFormData({ ...formData, specialRequests: val })}
-                      placeholder="Régime alimentaire, besoins particuliers, etc."
+                      value={formData.emergencyContactName}
+                      onChange={(val) => setFormData({ ...formData, emergencyContactName: val })}
+                      error={errors.emergencyContactName}
+                      required
+                    />
+                    <FormField
+                      label="Téléphone d'urgence"
+                      type="tel"
+                      value={formData.emergencyPhone}
+                      onChange={(val) => setFormData({ ...formData, emergencyPhone: val })}
+                      error={errors.emergencyPhone}
+                      required
                     />
                   </div>
                 </FormSection>
 
-                {/* Terms & Submit */}
-                <div className="space-y-6">
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={formData.termsAccepted}
-                      onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })}
-                      className="w-5 h-5 rounded border-2 border-border accent-magenta cursor-pointer mt-0.5"
-                    />
-                    <span className="font-body text-ink-light group-hover:text-magenta transition-colors text-sm">
-                      J'accepte les conditions d'inscription et la politique de confidentialité
-                      <span className="text-magenta ml-1">*</span>
-                    </span>
-                  </label>
-                  {errors.termsAccepted && <p className="text-red-500 text-xs font-label flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" />
-                    {errors.termsAccepted}
-                  </p>}
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
+                {/* Submit Button */}
+                <motion.div
+                  className="pt-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <motion.button
+                    type="submit"
+                    disabled={loading}
+                    whileHover={{ scale: loading ? 1 : 1.02, y: loading ? 0 : -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full flex-1 py-5 rounded-xl font-bold text-base sm:text-lg md:text-xl bg-gradient-to-r from-magenta to-purple text-white hover:shadow-xl disabled:opacity-50 transition-all flex items-center justify-center gap-3"
                   >
-                    <motion.button
-                      type="submit"
-                      disabled={loading}
-                      whileHover={{ scale: loading ? 1 : 1.02, y: loading ? 0 : -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full py-5 rounded-xl font-bold text-base sm:text-lg md:text-xl bg-gradient-to-r from-magenta to-purple text-white hover:shadow-xl disabled:opacity-50 transition-all flex items-center justify-center gap-3"
-                    >
-                      {loading ? (
-                        "Envoi en cours..."
-                      ) : (
-                        <>
-                          Confirmer l'inscription <ArrowRight/>
-                        </>
-                      )}
-                    </motion.button>
-                  </motion.div>
-                </div>
+                    {loading ? (
+                      "Envoi en cours..."
+                    ) : (
+                      <>
+                        Confirmer l'inscription <ArrowRight/>
+                      </>
+                    )}
+                  </motion.button>
+                </motion.div>
 
-                <p className="text-xs text-center text-ink-light -mt-4">
+                <p className="text-xs text-center text-ink-light mt-4">
                   <span className="text-magenta">*</span> Champs obligatoires. Nous ne partagerons pas vos données avec des tiers.
                 </p>
               </form>
