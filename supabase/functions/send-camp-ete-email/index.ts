@@ -100,7 +100,7 @@ function renderEmailShell(params: {
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="font-size:12px; letter-spacing:4px; color:#d11f8b; font-weight:700; text-transform:uppercase;">${escapeHtml(topLabel)}</td>
-                  <td align="right" style="font-size:12px; color:#8a3a73; font-weight:700; background:#fff2fa; border:1px solid #f4d3e3; padding:8px 12px; border-radius:999px;">${escapeHtml(badge)}</td>
+                  <td align="right" style="width:1%; white-space:nowrap; font-size:12px; color:#8a3a73; font-weight:700; background:#fff2fa; border:1px solid #f4d3e3; padding:8px 12px; border-radius:999px;">${escapeHtml(badge)}</td>
                 </tr>
               </table>
 
