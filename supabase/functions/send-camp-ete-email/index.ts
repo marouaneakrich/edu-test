@@ -343,45 +343,39 @@ Deno.serve(async (req: Request) => {
       <div style="font-size:12px; letter-spacing:3px; color:#6d6475; text-transform:uppercase; font-weight:700; margin-bottom:14px;">Récapitulatif de votre inscription</div>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px; line-height:1.7; color:#2d2634;">
         <tr>
-          <td style="padding:10px 10px 10px 0; vertical-align:top;">
-            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Parent</div>
+          <td style="width:50%; padding:10px 10px 10px 0; vertical-align:top;">
+            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Nom complet</div>
             <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(submission.last_name)}</div>
           </td>
-          <td style="padding:10px 0 10px 10px; vertical-align:top;">
-            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Email</div>
-            <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(submission.email)}</div>
+          <td style="width:50%; padding:10px 0 10px 10px; vertical-align:top;">
+            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Téléphone</div>
+            <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(phoneValue)}</div>
           </td>
         </tr>
         <tr>
-          <td style="padding:10px 10px 10px 0; vertical-align:top;">
-            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Date de naissance</div>
-            <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.dateOfBirth || "Non spécifié")}</div>
+          <td style="width:50%; padding:10px 10px 10px 0; vertical-align:top;">
+            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Email</div>
+            <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(submission.email)}</div>
           </td>
-          <td style="padding:10px 0 10px 10px; vertical-align:top;">
+          <td style="width:50%; padding:10px 0 10px 10px; vertical-align:top;">
             <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Nombre d'enfants</div>
             <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${fd.numberOfChildren ?? "1"}</div>
           </td>
         </tr>
         <tr>
-          <td style="padding:10px 10px 10px 0; vertical-align:top;">
+          <td colspan="2" style="padding:10px 0 0; vertical-align:top;">
             <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Semaines choisies</div>
             <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(weeksList || "Non spécifié")}</div>
           </td>
-          <td style="padding:10px 0 10px 10px; vertical-align:top;">
-            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Activités</div>
-            <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(activitiesList || "Non spécifié")}</div>
-          </td>
         </tr>
         <tr>
-          <td colspan="2" style="padding:10px 0 0; vertical-align:top;">
-            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Type de camp</div>
-            <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${fd.campType === "fulltime" ? "Temps plein" : "Temps partiel"}</div>
+          <td style="width:50%; padding:10px 10px 10px 0; vertical-align:top;">
+            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Nom du contact d'urgence</div>
+            <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.emergencyContactName || "Non spécifié")}</div>
           </td>
-        </tr>
-        <tr>
-          <td colspan="2" style="padding:10px 0 0; vertical-align:top;">
-            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Demandes spéciales</div>
-            <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:16px 15px; min-height:48px; white-space:pre-line; color:#463d4e; line-height:1.8;">${safeSpecialRequests}</div>
+          <td style="width:50%; padding:10px 0 10px 10px; vertical-align:top;">
+            <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Téléphone d'urgence</div>
+            <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.emergencyPhone || "Non spécifié")}</div>
           </td>
         </tr>
       </table>
