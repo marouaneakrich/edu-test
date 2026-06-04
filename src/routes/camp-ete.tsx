@@ -203,7 +203,7 @@ function SummerCampPage() {
       if (error) throw error;
 
       try {
-        const emailResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-submission-email`, {
+        const emailResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-camp-ete-email`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
