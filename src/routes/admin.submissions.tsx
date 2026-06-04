@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import type { EzSubmission } from "@/lib/supabase";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Download, Eye, Reply, CheckCircle, X, ChevronDown, Send } from "lucide-react";
+import { Search, Download, Eye, Reply, CheckCircle, X, ChevronDown, Send, CalendarDays } from "lucide-react";
 
 export const Route = createFileRoute("/admin/submissions")({
   component: AdminSubmissions,
@@ -175,7 +175,7 @@ function InfoTile({ label, value }: { label: string; value?: string | null }) {
 }
 
 /* ─── Detail modal ─── */
-function DetailModal({ sub, onClose, onConvert }: { sub: EzSubmission; onClose: () => void; onConvert: () => void }) {
+function DetailModal({ sub, onClose, onConvert, onCampConvert }: { sub: EzSubmission; onClose: () => void; onConvert: () => void; onCampConvert?: () => void }) {
   const ft = FORM_TYPE[sub.form_type as keyof typeof FORM_TYPE] ?? FORM_TYPE.contact;
   const st = STATUS[sub.status as StatusKey] ?? STATUS.new;
   const isCampEte = sub.form_type === "camp_ete";
@@ -243,7 +243,43 @@ function DetailModal({ sub, onClose, onConvert }: { sub: EzSubmission; onClose: 
           </>
         )}
 
-        {sub.status === "converted" && !isCampEte && (
+        {isCampEte && sub.status !== "converted" && (
+          <motion.button
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => { onClose(); onCampConvert?.(); }}
+            style={{
+              width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              padding: "12px 20px", borderRadius: 100,
+              background: "linear-gradient(135deg,#D11F8B,#8d1fb0)",
+              color: "white", border: "none", cursor: "pointer",
+              fontFamily: FH, fontWeight: 800, fontSize: 13.5,
+              boxShadow: "0 4px 16px rgba(209,31,139,0.25)", marginTop: 4,
+            }}
+          >
+            <CheckCircle size={15} strokeWidth={2.5} />
+            Confirmer la conversion CRM
+          </motion.button>
+        )}
+        {isCampEte && sub.status === "converted" && (
+          <motion.button
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => { onClose(); window.open("/crm/camps", "_blank"); }}
+            style={{
+              width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              padding: "12px 20px", borderRadius: 100,
+              background: "linear-gradient(135deg,#00897B,#00695C)",
+              color: "white", border: "none", cursor: "pointer",
+              fontFamily: FH, fontWeight: 800, fontSize: 13.5,
+              boxShadow: "0 4px 16px rgba(0,137,123,0.25)", marginTop: 4,
+            }}
+          >
+            <CalendarDays size={15} strokeWidth={2.5} />
+            Voir dans le CRM Camps
+          </motion.button>
+        )}
+        {!isCampEte && sub.status === "converted" && (
           <motion.button
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.98 }}
@@ -505,6 +541,16 @@ function AdminSubmissions() {
       toast.success("Statut mis à jour");
       fetchSubmissions();
     } catch { toast.error("Erreur lors de la mise à jour"); }
+  };
+
+  const handleCampConversion = async (sub: EzSubmission) => {
+    try {
+      const { error } = await supabase.from("ez_submissions").update({ status: "converted" }).eq("id", sub.id);
+      if (error) throw error;
+      toast.success("Inscription convertie");
+      window.open("/crm/camps", "_blank");
+      fetchSubmissions();
+    } catch { toast.error("Erreur lors de la conversion"); }
   };
 
   const handleConfirmConversion = async (paid: boolean) => {
@@ -869,6 +915,7 @@ function AdminSubmissions() {
             sub={detailSub}
             onClose={() => setDetailSub(null)}
             onConvert={() => setConvSub(detailSub)}
+            onCampConvert={() => handleCampConversion(detailSub)}
           />
         )}
         {replySub && (

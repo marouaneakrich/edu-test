@@ -9,11 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SummerCampRouteImport } from './routes/summer-camp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CampsVacancesRouteImport } from './routes/camps-vacances'
-import { Route as CampEteRouteImport } from './routes/camp-ete'
 import { Route as BoutiqueRouteImport } from './routes/boutique'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AdminChoiceRouteImport } from './routes/admin-choice'
@@ -25,11 +25,17 @@ import { Route as CrmSettingsRouteImport } from './routes/crm.settings'
 import { Route as CrmPaymentsRouteImport } from './routes/crm.payments'
 import { Route as CrmDashboardRouteImport } from './routes/crm.dashboard'
 import { Route as CrmCustomersRouteImport } from './routes/crm.customers'
+import { Route as CrmCampsRouteImport } from './routes/crm.camps'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as CrmCustomersIdRouteImport } from './routes/crm.customers.$id'
 
+const SummerCampRoute = SummerCampRouteImport.update({
+  id: '/summer-camp',
+  path: '/summer-camp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -48,11 +54,6 @@ const ContactRoute = ContactRouteImport.update({
 const CampsVacancesRoute = CampsVacancesRouteImport.update({
   id: '/camps-vacances',
   path: '/camps-vacances',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CampEteRoute = CampEteRouteImport.update({
-  id: '/camp-ete',
-  path: '/camp-ete',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BoutiqueRoute = BoutiqueRouteImport.update({
@@ -110,6 +111,11 @@ const CrmCustomersRoute = CrmCustomersRouteImport.update({
   path: '/customers',
   getParentRoute: () => CrmRoute,
 } as any)
+const CrmCampsRoute = CrmCampsRouteImport.update({
+  id: '/camps',
+  path: '/camps',
+  getParentRoute: () => CrmRoute,
+} as any)
 const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
   id: '/submissions',
   path: '/submissions',
@@ -139,14 +145,15 @@ export interface FileRoutesByFullPath {
   '/admin-choice': typeof AdminChoiceRoute
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
-  '/camp-ete': typeof CampEteRoute
   '/camps-vacances': typeof CampsVacancesRoute
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRouteWithChildren
   '/login': typeof LoginRoute
+  '/summer-camp': typeof SummerCampRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/crm/camps': typeof CrmCampsRoute
   '/crm/customers': typeof CrmCustomersRouteWithChildren
   '/crm/dashboard': typeof CrmDashboardRoute
   '/crm/payments': typeof CrmPaymentsRoute
@@ -161,14 +168,15 @@ export interface FileRoutesByTo {
   '/admin-choice': typeof AdminChoiceRoute
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
-  '/camp-ete': typeof CampEteRoute
   '/camps-vacances': typeof CampsVacancesRoute
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRouteWithChildren
   '/login': typeof LoginRoute
+  '/summer-camp': typeof SummerCampRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/crm/camps': typeof CrmCampsRoute
   '/crm/customers': typeof CrmCustomersRouteWithChildren
   '/crm/dashboard': typeof CrmDashboardRoute
   '/crm/payments': typeof CrmPaymentsRoute
@@ -184,14 +192,15 @@ export interface FileRoutesById {
   '/admin-choice': typeof AdminChoiceRoute
   '/blog': typeof BlogRoute
   '/boutique': typeof BoutiqueRoute
-  '/camp-ete': typeof CampEteRoute
   '/camps-vacances': typeof CampsVacancesRoute
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRouteWithChildren
   '/login': typeof LoginRoute
+  '/summer-camp': typeof SummerCampRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/crm/camps': typeof CrmCampsRoute
   '/crm/customers': typeof CrmCustomersRouteWithChildren
   '/crm/dashboard': typeof CrmDashboardRoute
   '/crm/payments': typeof CrmPaymentsRoute
@@ -208,14 +217,15 @@ export interface FileRouteTypes {
     | '/admin-choice'
     | '/blog'
     | '/boutique'
-    | '/camp-ete'
     | '/camps-vacances'
     | '/contact'
     | '/crm'
     | '/login'
+    | '/summer-camp'
     | '/admin/dashboard'
     | '/admin/orders'
     | '/admin/submissions'
+    | '/crm/camps'
     | '/crm/customers'
     | '/crm/dashboard'
     | '/crm/payments'
@@ -230,14 +240,15 @@ export interface FileRouteTypes {
     | '/admin-choice'
     | '/blog'
     | '/boutique'
-    | '/camp-ete'
     | '/camps-vacances'
     | '/contact'
     | '/crm'
     | '/login'
+    | '/summer-camp'
     | '/admin/dashboard'
     | '/admin/orders'
     | '/admin/submissions'
+    | '/crm/camps'
     | '/crm/customers'
     | '/crm/dashboard'
     | '/crm/payments'
@@ -252,14 +263,15 @@ export interface FileRouteTypes {
     | '/admin-choice'
     | '/blog'
     | '/boutique'
-    | '/camp-ete'
     | '/camps-vacances'
     | '/contact'
     | '/crm'
     | '/login'
+    | '/summer-camp'
     | '/admin/dashboard'
     | '/admin/orders'
     | '/admin/submissions'
+    | '/crm/camps'
     | '/crm/customers'
     | '/crm/dashboard'
     | '/crm/payments'
@@ -275,15 +287,22 @@ export interface RootRouteChildren {
   AdminChoiceRoute: typeof AdminChoiceRoute
   BlogRoute: typeof BlogRoute
   BoutiqueRoute: typeof BoutiqueRoute
-  CampEteRoute: typeof CampEteRoute
   CampsVacancesRoute: typeof CampsVacancesRoute
   ContactRoute: typeof ContactRoute
   CrmRoute: typeof CrmRouteWithChildren
   LoginRoute: typeof LoginRoute
+  SummerCampRoute: typeof SummerCampRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/summer-camp': {
+      id: '/summer-camp'
+      path: '/summer-camp'
+      fullPath: '/summer-camp'
+      preLoaderRoute: typeof SummerCampRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -310,13 +329,6 @@ declare module '@tanstack/react-router' {
       path: '/camps-vacances'
       fullPath: '/camps-vacances'
       preLoaderRoute: typeof CampsVacancesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/camp-ete': {
-      id: '/camp-ete'
-      path: '/camp-ete'
-      fullPath: '/camp-ete'
-      preLoaderRoute: typeof CampEteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/boutique': {
@@ -396,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmCustomersRouteImport
       parentRoute: typeof CrmRoute
     }
+    '/crm/camps': {
+      id: '/crm/camps'
+      path: '/camps'
+      fullPath: '/crm/camps'
+      preLoaderRoute: typeof CrmCampsRouteImport
+      parentRoute: typeof CrmRoute
+    }
     '/admin/submissions': {
       id: '/admin/submissions'
       path: '/submissions'
@@ -454,6 +473,7 @@ const CrmCustomersRouteWithChildren = CrmCustomersRoute._addFileChildren(
 )
 
 interface CrmRouteChildren {
+  CrmCampsRoute: typeof CrmCampsRoute
   CrmCustomersRoute: typeof CrmCustomersRouteWithChildren
   CrmDashboardRoute: typeof CrmDashboardRoute
   CrmPaymentsRoute: typeof CrmPaymentsRoute
@@ -461,6 +481,7 @@ interface CrmRouteChildren {
 }
 
 const CrmRouteChildren: CrmRouteChildren = {
+  CrmCampsRoute: CrmCampsRoute,
   CrmCustomersRoute: CrmCustomersRouteWithChildren,
   CrmDashboardRoute: CrmDashboardRoute,
   CrmPaymentsRoute: CrmPaymentsRoute,
@@ -477,11 +498,11 @@ const rootRouteChildren: RootRouteChildren = {
   AdminChoiceRoute: AdminChoiceRoute,
   BlogRoute: BlogRoute,
   BoutiqueRoute: BoutiqueRoute,
-  CampEteRoute: CampEteRoute,
   CampsVacancesRoute: CampsVacancesRoute,
   ContactRoute: ContactRoute,
   CrmRoute: CrmRouteWithChildren,
   LoginRoute: LoginRoute,
+  SummerCampRoute: SummerCampRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

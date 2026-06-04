@@ -16,7 +16,7 @@ import {
 import { MagneticButton } from "@/components/site/motion/MagneticButton";
 import { supabase } from "@/lib/supabase";
 
-export const Route = createFileRoute("/camp-ete")({
+export const Route = createFileRoute("/summer-camp")({
   head: () => ({
     meta: [
       { title: "Summer Camp EducazenKids 2026 | Inscription" },
