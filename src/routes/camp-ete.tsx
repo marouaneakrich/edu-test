@@ -11,7 +11,7 @@ import natureImg from "@/assets/camp-nature.jpg";
 import sportsImg from "@/assets/camp-sports.jpg";
 import musicImg from "@/assets/camp-music.jpg";
 import {
-  Sparkles, Heart, Target, Brain
+  Sparkles, Heart, Brain
 } from "lucide-react";
 import { MagneticButton } from "@/components/site/motion/MagneticButton";
 
