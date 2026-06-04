@@ -14,6 +14,7 @@ import {
   Sparkles, Heart, Brain
 } from "lucide-react";
 import { MagneticButton } from "@/components/site/motion/MagneticButton";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/camp-ete")({
   head: () => ({
@@ -168,16 +169,72 @@ function SummerCampPage() {
 
     setLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const data = {
+      form_type: "camp_ete" as const,
+      last_name: formData.parentName,
+      first_name: "",
+      email: formData.email,
+      phone: formData.phone,
+      message: formData.specialRequests,
+      form_data: {
+        address: formData.address,
+        numberOfChildren: formData.numberOfChildren,
+        dateOfBirth: formData.dateOfBirth,
+        specialNeeds: formData.specialNeeds,
+        allergies: formData.allergies,
+        medicalConditions: formData.medicalConditions,
+        selectedWeeks: formData.selectedWeeks,
+        campType: formData.campType,
+        activities: formData.activities,
+        specialRequests: formData.specialRequests,
+        emergencyContactName: formData.emergencyContactName,
+        emergencyPhone: formData.emergencyPhone,
+        insurance: formData.insurance,
+        medications: formData.medications,
+        photoConsent: formData.photoConsent,
+        termsAccepted: formData.termsAccepted,
+      },
+    };
 
-    setSubmitted(true);
-    setLoading(false);
-    toast.success("Inscription envoyée avec succès!");
+    try {
+      const { data: submission, error } = await supabase
+        .from("ez_submissions")
+        .insert(data as never)
+        .select()
+        .single();
 
-    setTimeout(() => {
-      setFormData(INITIAL_FORM_DATA);
-      setSubmitted(false);
-    }, 3000);
+      if (error) throw error;
+
+      try {
+        const emailResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-submission-email`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify(submission),
+        });
+        const emailResult = await emailResponse.json();
+        if (!emailResponse.ok) {
+          console.error("Email sending failed:", emailResult);
+        }
+      } catch (emailError) {
+        console.error("Email notification failed:", emailError);
+      }
+
+      setSubmitted(true);
+      setLoading(false);
+      toast.success("Inscription envoyée avec succès! Un email de confirmation vous a été envoyé.");
+
+      setTimeout(() => {
+        setFormData(INITIAL_FORM_DATA);
+        setSubmitted(false);
+      }, 3000);
+    } catch (error) {
+      setLoading(false);
+      toast.error("Une erreur est survenue. Veuillez réessayer.");
+      console.error("Submission error:", error);
+    }
   };
 
   return (

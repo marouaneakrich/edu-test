@@ -45,10 +45,12 @@ export interface EzOrderItem {
   created_at: string;
 }
 
+export type FormType = 'contact' | 'appointment' | 'camp_ete';
+
 export interface EzSubmission {
   id: string;
   org_id: string;
-  form_type: 'contact' | 'appointment';
+  form_type: FormType;
   first_name: string;
   last_name: string;
   email: string;
@@ -57,6 +59,7 @@ export interface EzSubmission {
   message?: string;
   child_age?: number;
   child_profile?: string;
+  form_data?: Record<string, unknown>;
   status: 'new' | 'contacted' | 'converted';
   created_at: string;
 }

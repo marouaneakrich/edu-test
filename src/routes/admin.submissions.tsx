@@ -35,6 +35,7 @@ type StatusKey = keyof typeof STATUS;
 const FORM_TYPE = {
   contact:     { label: "Contact",     color: "#7B1FA2", bg: "#F8F0FF", rgb: "123,31,162" },
   appointment: { label: "Rendez-vous", color: "#00897B", bg: "#E8F8F5", rgb: "0,137,123"  },
+  camp_ete:    { label: "Summer Camp", color: "#D11F8B", bg: "#FFF0F8", rgb: "209,31,139" },
 } as const;
 
 
@@ -177,40 +178,72 @@ function InfoTile({ label, value }: { label: string; value?: string | null }) {
 function DetailModal({ sub, onClose, onConvert }: { sub: EzSubmission; onClose: () => void; onConvert: () => void }) {
   const ft = FORM_TYPE[sub.form_type as keyof typeof FORM_TYPE] ?? FORM_TYPE.contact;
   const st = STATUS[sub.status as StatusKey] ?? STATUS.new;
+  const isCampEte = sub.form_type === "camp_ete";
+  const fd = sub.form_data as Record<string, unknown> | undefined;
 
   return (
     <Modal onClose={onClose}>
       <ModalHeader
-        chapter="Détail — Rendez-vous"
-        title={`${sub.first_name} ${sub.last_name}`}
+        chapter={isCampEte ? "Détail — Summer Camp" : "Détail — Rendez-vous"}
+        title={sub.last_name}
         badge={<div style={{ display: "flex", gap: 6 }}><Chip {...ft} /><Chip {...st} /></div>}
         onClose={onClose}
       />
       <div style={{ overflowY: "auto", padding: "20px 24px 24px", display: "flex", flexDirection: "column", gap: 14 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-          <InfoTile label="Email" value={sub.email} />
-          <InfoTile label="Téléphone" value={sub.phone} />
-          <InfoTile label="Type" value={ft.label} />
-          <InfoTile label="Date" value={new Date(sub.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
-          {sub.child_age && <InfoTile label="Âge de l'enfant" value={`${sub.child_age} ans`} />}
-          {sub.child_profile && <InfoTile label="Profil de l'enfant" value={sub.child_profile} />}
-        </div>
-
-        {sub.subject && (
-          <div style={{ padding: "11px 13px", background: "#F7F6FC", borderRadius: 4, border: "1px solid rgba(45,45,58,0.07)" }}>
-            <div style={{ fontFamily: FL, fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 600, marginBottom: 4 }}>Sujet</div>
-            <div style={{ fontFamily: FH, fontWeight: 700, fontSize: 13.5, color: BRAND.ink }}>{sub.subject}</div>
-          </div>
+        {isCampEte ? (
+          <>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <InfoTile label="Parent" value={sub.last_name} />
+              <InfoTile label="Email" value={sub.email} />
+              <InfoTile label="Téléphone" value={sub.phone} />
+              <InfoTile label="Adresse" value={fd?.address as string || "-"} />
+              <InfoTile label="Date de naissance" value={fd?.dateOfBirth as string || "-"} />
+              <InfoTile label="Nombre d'enfants" value={String(fd?.numberOfChildren ?? "1")} />
+              <InfoTile label="Semaines" value={Array.isArray(fd?.selectedWeeks) ? (fd.selectedWeeks as string[]).join(", ") : "-"} />
+              <InfoTile label="Activités" value={Array.isArray(fd?.activities) ? (fd.activities as string[]).join(", ") : "-"} />
+              <InfoTile label="Type de camp" value={fd?.campType === "fulltime" ? "Temps plein" : "Temps partiel"} />
+              <InfoTile label="Besoins spéciaux" value={fd?.specialNeeds as string || "-"} />
+              <InfoTile label="Allergies" value={fd?.allergies as string || "-"} />
+              <InfoTile label="Conditions médicales" value={fd?.medicalConditions as string || "-"} />
+              <InfoTile label="Médicaments" value={fd?.medications as string || "-"} />
+              <InfoTile label="Assurance" value={fd?.insurance as string || "-"} />
+              <InfoTile label="Contact urgence" value={fd?.emergencyContactName as string || "-"} />
+              <InfoTile label="Tél urgence" value={fd?.emergencyPhone as string || "-"} />
+              <InfoTile label="Photo" value={fd?.photoConsent ? "Oui" : "Non"} />
+            </div>
+            {fd?.specialRequests && (
+              <div style={{ padding: "13px 14px", background: "white", borderRadius: 4, border: "1px solid rgba(45,45,58,0.09)" }}>
+                <div style={{ fontFamily: FL, fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 600, marginBottom: 8 }}>Demandes spéciales</div>
+                <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: 13.5, color: BRAND.ink, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap" }}>{fd.specialRequests as string}</p>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <InfoTile label="Email" value={sub.email} />
+              <InfoTile label="Téléphone" value={sub.phone} />
+              <InfoTile label="Type" value={ft.label} />
+              <InfoTile label="Date" value={new Date(sub.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
+              {sub.child_age && <InfoTile label="Âge de l'enfant" value={`${sub.child_age} ans`} />}
+              {sub.child_profile && <InfoTile label="Profil de l'enfant" value={sub.child_profile} />}
+            </div>
+            {sub.subject && (
+              <div style={{ padding: "11px 13px", background: "#F7F6FC", borderRadius: 4, border: "1px solid rgba(45,45,58,0.07)" }}>
+                <div style={{ fontFamily: FL, fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 600, marginBottom: 4 }}>Sujet</div>
+                <div style={{ fontFamily: FH, fontWeight: 700, fontSize: 13.5, color: BRAND.ink }}>{sub.subject}</div>
+              </div>
+            )}
+            {sub.message && (
+              <div style={{ padding: "13px 14px", background: "white", borderRadius: 4, border: "1px solid rgba(45,45,58,0.09)" }}>
+                <div style={{ fontFamily: FL, fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 600, marginBottom: 8 }}>Message</div>
+                <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: 13.5, color: BRAND.ink, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap" }}>{sub.message}</p>
+              </div>
+            )}
+          </>
         )}
 
-        {sub.message && (
-          <div style={{ padding: "13px 14px", background: "white", borderRadius: 4, border: "1px solid rgba(45,45,58,0.09)" }}>
-            <div style={{ fontFamily: FL, fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "rgba(45,45,58,0.35)", fontWeight: 600, marginBottom: 8 }}>Message</div>
-            <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: 13.5, color: BRAND.ink, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap" }}>{sub.message}</p>
-          </div>
-        )}
-
-        {sub.status === "converted" && (
+        {sub.status === "converted" && !isCampEte && (
           <motion.button
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.98 }}
@@ -529,13 +562,14 @@ function AdminSubmissions() {
   };
 
   const exportToCSV = () => {
+    const typeLabel = (s: EzSubmission) => s.form_type === "camp_ete" ? "Summer Camp" : s.form_type === "contact" ? "Contact" : "Rendez-vous";
     const headers = ["ID", "Type", "Nom", "Email", "Sujet", "Statut", "Date"];
-    const rows = filteredSubmissions.map(s => [s.id, s.form_type === "contact" ? "Contact" : "Rendez-vous", `${s.first_name} ${s.last_name}`, s.email, s.subject || "-", s.status, new Date(s.created_at).toLocaleDateString("fr-FR")]);
+    const rows = filteredSubmissions.map(s => [s.id, typeLabel(s), `${s.first_name} ${s.last_name}`, s.email, s.subject || "-", s.status, new Date(s.created_at).toLocaleDateString("fr-FR")]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `rendez_vous_${new Date().toISOString().split("T")[0]}.csv`;
+    link.download = `submissions_${new Date().toISOString().split("T")[0]}.csv`;
     link.click();
   };
 
@@ -612,6 +646,7 @@ function AdminSubmissions() {
               { key: "all",         label: "Tous",         color: BRAND.ink, bg: "white",   rgb: "45,45,58" },
               { key: "contact",     label: "Contact",      color: "#7B1FA2",       bg: "#F8F0FF", rgb: "123,31,162" },
               { key: "appointment", label: "Rendez-vous",  color: "#00897B",       bg: "#E8F8F5", rgb: "0,137,123" },
+              { key: "camp_ete",    label: "Summer Camp",  color: "#D11F8B",       bg: "#FFF0F8", rgb: "209,31,139" },
             ].map(f => (
               <button key={f.key} onClick={() => setTypeFilter(f.key)} style={{ fontFamily: FH, fontWeight: 700, fontSize: 11, color: typeFilter === f.key ? f.color : "rgba(45,45,58,0.4)", background: typeFilter === f.key ? f.bg : "transparent", border: `1px solid ${typeFilter === f.key ? `rgba(${f.rgb},0.3)` : "rgba(45,45,58,0.1)"}`, padding: "5px 12px", borderRadius: 100, cursor: "pointer", transition: "all 0.18s", letterSpacing: 0.3 }}>
                 {f.label}

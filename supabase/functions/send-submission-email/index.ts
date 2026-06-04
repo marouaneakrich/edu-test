@@ -1,9 +1,28 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import nodemailer from "npm:nodemailer@6.9.16";
 
+interface CampEteFormData {
+  address?: string;
+  numberOfChildren?: number;
+  dateOfBirth?: string;
+  specialNeeds?: string;
+  allergies?: string;
+  medicalConditions?: string;
+  selectedWeeks?: string[];
+  campType?: string;
+  activities?: string[];
+  specialRequests?: string;
+  emergencyContactName?: string;
+  emergencyPhone?: string;
+  insurance?: string;
+  medications?: string;
+  photoConsent?: boolean;
+  termsAccepted?: boolean;
+}
+
 interface SubmissionPayload {
   id: string;
-  form_type: "contact" | "appointment";
+  form_type: "contact" | "appointment" | "camp_ete";
   first_name: string;
   last_name: string;
   email: string;
@@ -12,6 +31,7 @@ interface SubmissionPayload {
   message?: string;
   child_age?: number;
   child_profile?: string;
+  form_data?: CampEteFormData;
   created_at: string;
 }
 
@@ -195,6 +215,7 @@ Deno.serve(async (req: Request) => {
     const transporter = createTransporter();
     const fullName = `${submission.first_name} ${submission.last_name}`;
     const isAppointment = submission.form_type === "appointment";
+    const isCampEte = submission.form_type === "camp_ete";
 
     const ctaHref = "https://tanstack-start-app.educazenkid.workers.dev/";
     const ctaText = "Découvrir EducazenKids";
@@ -208,15 +229,116 @@ Deno.serve(async (req: Request) => {
 
     // Admin notification email
     const adminSummaryHtml = (() => {
+      if (isCampEte) {
+        const fd = submission.form_data || {};
+        const weeksList = Array.isArray(fd.selectedWeeks) ? fd.selectedWeeks.join(", ") : "";
+        const activitiesList = Array.isArray(fd.activities) ? fd.activities.join(", ") : "";
+        return `
+                    <div style="font-size:12px; letter-spacing:3px; color:#6d6475; text-transform:uppercase; font-weight:700; margin-bottom:14px;">Inscription Summer Camp</div>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px; line-height:1.7; color:#2d2634;">
+                      <tr>
+                        <td style="width:50%; padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Parent</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(submission.last_name)}</div>
+                        </td>
+                        <td style="width:50%; padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Téléphone</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(phoneValue)}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width:50%; padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Email</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(submission.email)}</div>
+                        </td>
+                        <td style="width:50%; padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Adresse</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.address || "Non spécifié")}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Date de naissance de l'enfant</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.dateOfBirth || "Non spécifié")}</div>
+                        </td>
+                        <td style="padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Nombre d'enfants</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${fd.numberOfChildren ?? "1"}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Semaines choisies</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(weeksList || "Non spécifié")}</div>
+                        </td>
+                        <td style="padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Activités</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(activitiesList || "Non spécifié")}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Type de camp</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.campType === "fulltime" ? "Temps plein" : "Temps partiel")}</div>
+                        </td>
+                        <td style="padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Besoins spéciaux</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.specialNeeds || "Aucun")}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Allergies</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.allergies || "Aucune")}</div>
+                        </td>
+                        <td style="padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Conditions médicales</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.medicalConditions || "Aucune")}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Médicaments</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.medications || "Aucun")}</div>
+                        </td>
+                        <td style="padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Assurance</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.insurance || "Non spécifié")}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Contact urgence</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.emergencyContactName || "Non spécifié")}</div>
+                        </td>
+                        <td style="padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Tél urgence</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.emergencyPhone || "Non spécifié")}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="padding:10px 0 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Demandes spéciales</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:16px 15px; min-height:48px; white-space:pre-line; color:#463d4e; line-height:1.8;">${escapeHtml(fd.specialRequests || "Aucune")}</div>
+                        </td>
+                      </tr>
+                    </table>
+                    <div style="margin-top:16px; font-size:12px; color:#7a7080; line-height:1.7;">
+                      <div><strong>Photo:</strong> ${fd.photoConsent ? "Consentement donné" : "Pas de consentement"}</div>
+                      <div><strong>ID:</strong> ${escapeHtml(submission.id)}</div>
+                      <div><strong>Soumis le:</strong> ${escapeHtml(new Date(submission.created_at).toLocaleString("fr-FR"))}</div>
+                    </div>
+`;
+      }
       const recapRows = isAppointment
         ? `
                       <tr>
                         <td style="width:50%; padding:10px 10px 10px 0; vertical-align:top;">
-                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Âge de l’enfant</div>
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Âge de l'enfant</div>
                           <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${childAgeValue === null ? "Non spécifié" : escapeHtml(String(childAgeValue))}</div>
                         </td>
                         <td style="width:50%; padding:10px 0 10px 10px; vertical-align:top;">
-                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Profil de l’enfant</div>
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Profil de l'enfant</div>
                           <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(childProfileValue)}</div>
                         </td>
                       </tr>
@@ -231,7 +353,7 @@ Deno.serve(async (req: Request) => {
 `;
 
       const messageLabel = isAppointment
-        ? "Informations à connaître sur l’enfant"
+        ? "Informations à connaître sur l'enfant"
         : "Message";
 
       return `
@@ -278,21 +400,183 @@ Deno.serve(async (req: Request) => {
     })();
 
     const adminHtml = renderEmailShell({
-      preheader: isAppointment
+      preheader: isCampEte
+        ? "Nouvelle inscription au Summer Camp reçue."
+        : isAppointment
         ? "Nouvelle demande de visite reçue."
         : "Nouveau message de contact reçu.",
-      topLabel: isAppointment ? "Inscriptions 2026 2027" : "Contact",
-      badge: isAppointment ? "NOUVELLE DEMANDE" : "NOUVEAU MESSAGE",
-      titleHtml: isAppointment
+      topLabel: isCampEte ? "Summer Camp" : isAppointment ? "Inscriptions 2026 2027" : "Contact",
+      badge: isCampEte ? "NOUVELLE INSCRIPTION" : isAppointment ? "NOUVELLE DEMANDE" : "NOUVEAU MESSAGE",
+      titleHtml: isCampEte
+        ? "Nouvelle <span style=\"color:#d11f8b;\">inscription au Summer Camp</span> reçue"
+        : isAppointment
         ? "Nouvelle <span style=\"color:#d11f8b;\">demande de visite</span> reçue"
         : "Nouveau <span style=\"color:#d11f8b;\">message</span> reçu",
-      introHtml: isAppointment
+      introHtml: isCampEte
+        ? `Une nouvelle inscription au Summer Camp a été soumise par <strong>${escapeHtml(fullName)}</strong>.`
+        : isAppointment
         ? `Une nouvelle demande de visite a été soumise par <strong>${escapeHtml(fullName)}</strong>.`
         : `Un nouveau message de contact a été soumis par <strong>${escapeHtml(fullName)}</strong>.`,
       summaryHtml: adminSummaryHtml,
       ctaHref,
       ctaText,
       footerPill: "Traitement recommandé sous 24h.",
+    });
+
+    await transporter.sendMail({
+      from: SMTP_FROM,
+      to: ADMIN_EMAIL,
+      subject: isCampEte
+        ? `Nouvelle inscription au Summer Camp de ${fullName}`
+        : isAppointment
+        ? `Nouvelle demande de visite de ${fullName}`
+        : `Nouveau message de ${fullName}`,
+      html: adminHtml,
+    });
+
+    // Customer confirmation email
+    const customerSummaryHtml = (() => {
+      if (isCampEte) {
+        const fd = submission.form_data || {};
+        const weeksList = Array.isArray(fd.selectedWeeks) ? fd.selectedWeeks.join(", ") : "";
+        const activitiesList = Array.isArray(fd.activities) ? fd.activities.join(", ") : "";
+        return `
+                    <div style="font-size:12px; letter-spacing:3px; color:#6d6475; text-transform:uppercase; font-weight:700; margin-bottom:14px;">Récapitulatif de votre inscription</div>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px; line-height:1.7; color:#2d2634;">
+                      <tr>
+                        <td style="padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Parent</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(submission.last_name)}</div>
+                        </td>
+                        <td style="padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Email</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(submission.email)}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Date de naissance</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(fd.dateOfBirth || "Non spécifié")}</div>
+                        </td>
+                        <td style="padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Nombre d'enfants</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${fd.numberOfChildren ?? "1"}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Semaines choisies</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(weeksList || "Non spécifié")}</div>
+                        </td>
+                        <td style="padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Activités</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(activitiesList || "Non spécifié")}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="padding:10px 0 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Type de camp</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${fd.campType === "fulltime" ? "Temps plein" : "Temps partiel"}</div>
+                        </td>
+                      </tr>
+                    </table>
+`;
+      }
+      const recapRows = isAppointment
+        ? `
+                      <tr>
+                        <td style="width:50%; padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Âge de l'enfant</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${childAgeValue === null ? "Non spécifié" : escapeHtml(String(childAgeValue))}</div>
+                        </td>
+                        <td style="width:50%; padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Profil de l'enfant</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(childProfileValue)}</div>
+                        </td>
+                      </tr>
+`
+        : `
+                      <tr>
+                        <td colspan="2" style="padding:10px 0 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Sujet</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(subjectValue)}</div>
+                        </td>
+                      </tr>
+`;
+
+      const messageLabel = isAppointment
+        ? "Informations à connaître sur l'enfant"
+        : "Votre message";
+
+      return `
+                    <div style="font-size:12px; letter-spacing:3px; color:#6d6475; text-transform:uppercase; font-weight:700; margin-bottom:14px;">Récapitulatif de votre demande</div>
+
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px; line-height:1.7; color:#2d2634;">
+                      <tr>
+                        <td style="width:50%; padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Nom du tuteur</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(submission.last_name)}</div>
+                        </td>
+                        <td style="width:50%; padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Prénom du tuteur</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(submission.first_name)}</div>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td style="width:50%; padding:10px 10px 10px 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Tél WhatsApp</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(phoneValue)}</div>
+                        </td>
+                        <td style="width:50%; padding:10px 0 10px 10px; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">Email</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:13px 15px; font-weight:700;">${escapeHtml(submission.email)}</div>
+                        </td>
+                      </tr>
+
+                      ${recapRows}
+
+                      <tr>
+                        <td colspan="2" style="padding:10px 0 0; vertical-align:top;">
+                          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#7f7585; margin-bottom:6px;">${escapeHtml(messageLabel)}</div>
+                          <div style="background:#fbf7f9; border:1px solid #f3e6ee; border-radius:18px; padding:16px 15px; min-height:96px; white-space:pre-line; color:#463d4e; line-height:1.8;">${safeMessage}</div>
+                        </td>
+                      </tr>
+                    </table>
+`;
+    })();
+
+    const customerHtml = renderEmailShell({
+      preheader: isCampEte
+        ? "Merci pour votre inscription au Summer Camp. Notre équipe vous contactera sous 24h."
+        : isAppointment
+        ? "Merci pour votre demande de visite. Notre équipe vous contactera sous 24h."
+        : "Merci pour votre message. Notre équipe vous contactera sous 24h.",
+      topLabel: isCampEte ? "Summer Camp" : isAppointment ? "Inscriptions 2026 2027" : "Contact",
+      badge: isCampEte ? "INSCRIPTION REÇUE" : isAppointment ? "DEMANDE REÇUE" : "MESSAGE REÇU",
+      titleHtml: isCampEte
+        ? "Confirmation de votre <span style=\"color:#d11f8b;\">inscription au Summer Camp</span>"
+        : isAppointment
+        ? "Confirmation de votre <span style=\"color:#d11f8b;\">demande de visite</span>"
+        : "Confirmation de votre <span style=\"color:#d11f8b;\">message</span>",
+      introHtml: isCampEte
+        ? `Bonjour ${escapeHtml(submission.last_name)}, merci pour votre inscription au Summer Camp EducazenKids. Nous avons bien reçu votre demande et notre équipe vous contactera sous 24h pour finaliser les détails.`
+        : `Bonjour ${escapeHtml(submission.first_name)}, merci pour votre message. Nous avons bien reçu votre demande et notre équipe vous recontactera sous 24h.`,
+      summaryHtml: customerSummaryHtml,
+      ctaHref,
+      ctaText,
+      footerPill: "Nous vous recontactons sous 24h.",
+    });
+
+    await transporter.sendMail({
+      from: SMTP_FROM,
+      to: submission.email,
+      subject: isCampEte
+        ? "Confirmation de votre inscription au Summer Camp"
+        : isAppointment
+        ? "Confirmation de votre demande de visite"
+        : "Confirmation de votre message",
+      html: customerHtml,
     });
 
     await transporter.sendMail({
