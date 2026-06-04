@@ -1,17 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { ChevronDown, Check, AlertCircle, Mail, Phone, MapPin, ArrowRight, Star, Users, Shield, Clock } from "lucide-react";
+import { ChevronDown, Check, AlertCircle, Mail, Phone, MapPin, ArrowRight, Clock } from "lucide-react";
 import { PageShell, PageHero } from "@/components/site/PageShell";
 import { TiltCard } from "@/components/site/motion/TiltCard";
 import { Doodle } from "@/components/site/motion/Doodle";
 import { toast } from "sonner";
-import heroImg from "@/assets/camp-hero.jpg";
 import artImg from "@/assets/camp-art.jpg";
 import natureImg from "@/assets/camp-nature.jpg";
 import sportsImg from "@/assets/camp-sports.jpg";
 import musicImg from "@/assets/camp-music.jpg";
-import groupImg from "@/assets/camp-group.jpg";
 import {
   Sparkles, Heart, Target, Brain
 } from "lucide-react";
@@ -86,15 +84,6 @@ const FAQ_DATA = [
   },
 ];
 
-const SPECIAL_NEEDS_OPTIONS = [
-  { value: "typical", label: "Développement typique" },
-  { value: "hpi", label: "HPI (Haut potentiel intellectuel)" },
-  { value: "tdah", label: "TDAH" },
-  { value: "dys", label: "DYS (Dyslexie, Dysorthographie, etc.)" },
-  { value: "tsa", label: "TSA (Trouble du spectre autistique)" },
-  { value: "other", label: "Autre" },
-];
-
 const ACTIVITIES_OPTIONS = [
   { label: "Art & Peinture", img: artImg, tag: "Créativité" },
   { label: "Nature & Écologie", img: natureImg, tag: "Aventure" },
@@ -118,45 +107,34 @@ const fadeInUp = {
   transition: { duration: 0.6 },
 };
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
 const scrollToForm = () => {
   document.getElementById("form-section")?.scrollIntoView({ behavior: "smooth" });
 };
 
+const INITIAL_FORM_DATA: FormData = {
+  parentName: "",
+  email: "",
+  phone: "",
+  address: "",
+  numberOfChildren: 1,
+  dateOfBirth: "",
+  specialNeeds: "typical",
+  allergies: "",
+  medicalConditions: "",
+  selectedWeeks: [],
+  campType: "fulltime",
+  activities: [],
+  specialRequests: "",
+  emergencyContactName: "",
+  emergencyPhone: "",
+  insurance: "",
+  medications: "",
+  photoConsent: false,
+  termsAccepted: false,
+};
+
 function SummerCampPage() {
-  const [formData, setFormData] = useState<FormData>({
-    parentName: "",
-    email: "",
-    phone: "",
-    address: "",
-    numberOfChildren: 1,
-    dateOfBirth: "",
-    specialNeeds: "typical",
-    allergies: "",
-    medicalConditions: "",
-    selectedWeeks: [],
-    campType: "fulltime",
-    activities: [],
-    specialRequests: "",
-    emergencyContactName: "",
-    emergencyPhone: "",
-    insurance: "",
-    medications: "",
-    photoConsent: false,
-    termsAccepted: false,
-  });
+  const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
@@ -197,16 +175,7 @@ function SummerCampPage() {
     toast.success("Inscription envoyée avec succès!");
 
     setTimeout(() => {
-      setFormData({
-        parentName: "",
-        email: "",
-        phone: "",
-        numberOfChildren: 1,
-        campType: "fulltime",
-        activities: [],
-        emergencyContactName: "",
-        emergencyPhone: "",
-      });
+      setFormData(INITIAL_FORM_DATA);
       setSubmitted(false);
     }, 3000);
   };
@@ -216,7 +185,7 @@ function SummerCampPage() {
       <div className="font-body">
         <PageHero
           eyebrow="Summer Camp 2026"
-          title={<h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">Rejoignez notre <span className="font-handwritten text-magenta">aventure</span> estivale</h1>}
+          title={<span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">Rejoignez notre <span className="font-handwritten text-magenta">aventure</span> estivale</span>}
           subtitle="Activités créatives, apprentissage ludique et environnement inclusif pour enfants de 4-12 ans (23 juin - 25 juillet)."
           accent="magenta"
         />
@@ -347,20 +316,20 @@ function SummerCampPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="mt-16 rounded-3xl bg-gradient-to-r from-ink to-purple p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+              className="mt-16 bg-gradient-to-r from-ink to-purple flex flex-col md:flex-row items-center justify-between rounded-[1.5em] p-[2em] gap-[1.5em] text-[clamp(0.7rem,1.2vw,1rem)]"
             >
               <div className="text-white text-center md:text-left">
-                <p className="font-label text-sm text-white/60 uppercase tracking-widest mb-1">Votre enfant va adorer</p>
-                <h3 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl">Prêt à vivre l'aventure?</h3>
-                <p className="text-sm sm:text-base text-white/70 mt-2 font-body">Inscrivez-le en quelques minutes. Places limitées à 20 enfants par groupe.</p>
+                <p className="font-label text-white/60 uppercase tracking-widest mb-[0.5em] text-[0.7em]">Votre enfant va adorer</p>
+                <h3 className="font-display font-bold text-[2.5em]">Prêt à vivre l'aventure?</h3>
+                <p className="text-white/70 mt-[0.5em] font-body text-[0.85em]">Inscrivez-le en quelques minutes. Places limitées à 20 enfants par groupe.</p>
               </div>
               <MagneticButton
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={scrollToForm}
-                className="flex-shrink-0 flex items-center gap-3 bg-magenta text-white font-bold px-4 md:px-8 py-2 md:py-4 rounded-full sm:text-xl md:text-4xl shadow-xl hover:bg-magenta/90 transition-all"
+                className="flex-shrink-0 flex items-center gap-[0.75em] bg-magenta text-white font-bold px-[1.5em] py-[0.7em] rounded-full text-[1.1em] shadow-xl hover:bg-magenta/90 transition-all"
               >
-                Je veux inscrire mon enfant <ArrowRight className="w-5 h-5" />
+                Je veux inscrire mon enfant <ArrowRight className="w-[1em] h-[1em]" />
               </MagneticButton>
             </motion.div>
           </div>
@@ -748,69 +717,4 @@ function FormField({
   );
 }
 
-function FormTextarea({
-  label,
-  value,
-  onChange,
-  error,
-  placeholder = "",
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  error?: string;
-  placeholder?: string;
-}) {
-  return (
-    <div className="flex flex-col">
-      <label className="font-label text-sm font-semibold mb-3 text-ink">{label}</label>
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        rows={4}
-        className={`px-4 py-3 sm:py-3 text-sm sm:text-base rounded-xl border-2 font-body transition-all focus:outline-none focus:ring-2 focus:ring-magenta/50 focus:border-magenta resize-none ${
-          error ? "border-red-400 bg-red-50" : "border-border hover:border-magenta/50"
-        }`}
-      />
-      {error && <p className="text-red-500 text-xs font-label mt-2 flex items-center gap-1">
-        <AlertCircle className="w-3 h-3" />
-        {error}
-      </p>}
-    </div>
-  );
-}
 
-function FormSelect({
-  label,
-  value,
-  onChange,
-  options,
-  required = false,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  options: Array<{ value: string; label: string }>;
-  required?: boolean;
-}) {
-  return (
-    <div className="flex flex-col">
-      <label className="font-label text-sm font-semibold mb-3 text-ink">
-        {label}
-        {required && <span className="text-magenta ml-1">*</span>}
-      </label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="px-4 py-3 sm:py-3 text-sm sm:text-base rounded-xl border-2 border-border hover:border-magenta/50 focus:outline-none focus:ring-2 focus:ring-magenta/50 focus:border-magenta transition-all bg-white appearance-none cursor-pointer font-body text-ink"
-      >
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}

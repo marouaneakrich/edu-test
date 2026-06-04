@@ -45,86 +45,88 @@ export function Header() {
   }, []);
 
   return (
-    <motion.header
-      initial={{ y: -80 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-white/85 backdrop-blur-xl border-b border-border shadow-soft"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-        <Link to="/" className="flex items-center gap-2 group relative">
-          <motion.div style={{ rotate: sparkRotate }} className="absolute -top-2 -left-3 h-4 w-4 text-magenta">
-            <Doodle kind="spark" color="currentColor" className="w-full h-full" />
-          </motion.div>
-<span className="logo-style text-2xl flex items-center justify-end">
-  <img
-    src={logoIcon}
-    className="object-contain mr-2"
-    alt="Educazen Kids"
-    style={{ width: "40px" }}
-  />
+    <>
+      <motion.header
+        initial={{ y: -80 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? "bg-white/85 backdrop-blur-xl border-b border-border shadow-soft"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
+          <Link to="/" className="flex items-center gap-2 group relative">
+            <motion.div style={{ rotate: sparkRotate }} className="absolute -top-2 -left-3 h-4 w-4 text-magenta">
+              <Doodle kind="spark" color="currentColor" className="w-full h-full" />
+            </motion.div>
+  <span className="logo-style text-2xl flex items-center justify-end">
+    <img
+      src={logoIcon}
+      className="object-contain mr-2"
+      alt="Educazen Kids"
+      style={{ width: "40px" }}
+    />
 
-  <span className="text-magenta">educa</span>
-  <span className="text-purple">zen</span>
-  <span className="text-teal">kids</span>
-</span>
-        </Link>
+    <span className="text-magenta">educa</span>
+    <span className="text-purple">zen</span>
+    <span className="text-teal">kids</span>
+  </span>
+          </Link>
 
-        <nav className="hidden lg:flex items-center gap-1">
-          {visibleNav.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              activeOptions={{ exact: item.to === "/" }}
-              className="relative px-4 py-2 text-sm font-bold text-ink transition-colors hover:text-magenta data-[status=active]:text-magenta"
-            >
-              {({ isActive }) => (
-                <>
-                  {item.label}
-                  {isActive && (
-                    <motion.svg
-                      layoutId="nav-underline"
-                      viewBox="0 0 80 8"
-                      preserveAspectRatio="none"
-                      className="absolute left-2 right-2 -bottom-1 w-[calc(100%-1rem)] h-2 text-magenta"
-                    >
-                      <path d="M2 5 Q 20 -1 40 4 T 78 5" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke" fill="none" strokeLinecap="round" />
-                    </motion.svg>
-                  )}
-                </>
-              )}
-            </Link>
-          ))}
-        </nav>
+          <nav className="hidden lg:flex items-center gap-1">
+            {visibleNav.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                activeOptions={{ exact: item.to === "/" }}
+                className="relative px-4 py-2 text-sm font-bold text-ink transition-colors hover:text-magenta data-[status=active]:text-magenta"
+              >
+                {({ isActive }) => (
+                  <>
+                    {item.label}
+                    {isActive && (
+                      <motion.svg
+                        layoutId="nav-underline"
+                        viewBox="0 0 80 8"
+                        preserveAspectRatio="none"
+                        className="absolute left-2 right-2 -bottom-1 w-[calc(100%-1rem)] h-2 text-magenta"
+                      >
+                        <path d="M2 5 Q 20 -1 40 4 T 78 5" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke" fill="none" strokeLinecap="round" />
+                      </motion.svg>
+                    )}
+                  </>
+                )}
+              </Link>
+            ))}
+          </nav>
 
-         <div className="flex items-center gap-3">
-          {boutiqueVisible && (
+           <div className="flex items-center gap-3">
+            {boutiqueVisible && (
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative inline-flex items-center gap-2 rounded-full bg-gradient-hero px-4 py-2.5 text-sm font-bold text-white shadow-soft transition-transform hover:scale-105"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                <span className="hidden sm:inline">Panier</span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-gold text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                    {cartCount > 9 ? '9+' : cartCount}
+                  </span>
+                )}
+              </button>
+            )}
             <button
-              onClick={() => setCartOpen(true)}
-              className="relative inline-flex items-center gap-2 rounded-full bg-gradient-hero px-4 py-2.5 text-sm font-bold text-white shadow-soft transition-transform hover:scale-105"
+              onClick={() => setOpen(!open)}
+              className="lg:hidden rounded-full bg-magenta-bg p-2.5 text-magenta hover:scale-110 transition-transform"
+              aria-label="Menu"
             >
-              <ShoppingCart className="h-4 w-4" />
-              <span className="hidden sm:inline">Panier</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gold text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartCount > 9 ? '9+' : cartCount}
-                </span>
-              )}
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
-          )}
-          <button
-            onClick={() => setOpen(!open)}
-            className="lg:hidden rounded-full bg-magenta-bg p-2.5 text-magenta hover:scale-110 transition-transform"
-            aria-label="Menu"
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          </div>
         </div>
-      </div> 
+      </motion.header>
 
       <AnimatePresence>
         {open && (
@@ -159,6 +161,6 @@ export function Header() {
         )}
       </AnimatePresence>
       <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
-    </motion.header>
+    </>
   );
 }
