@@ -55,9 +55,8 @@ interface FormErrors { [key: string]: string; }
 
 const BENEFITS = [
   { icon: Sparkles, title: "Activités créatives", desc: "Art, musique, danse et expression artistique pour développer la créativité", color: "magenta", num: "01" },
-  { icon: Brain, title: "Apprentissage en plein air", desc: "Découverte de la nature, écologie et exploration en toute sécurité", color: "purple", num: "02" },
-  { icon: Target, title: "Approche personnalisée", desc: "Adaptation pour chaque enfant, y compris ceux avec besoins spéciaux", color: "teal", num: "03" },
-  { icon: Heart, title: "Environnement sécurisé", desc: "Encadrement professionnel, protocoles de santé stricts et bien-être prioritaire", color: "gold", num: "04" },
+  { icon: Brain, title: "Approche personnalisée", desc: "Adaptation pour chaque enfant, y compris ceux avec besoins spéciaux", color: "teal", num: "02" },
+  { icon: Heart, title: "Environnement sécurisé", desc: "Encadrement professionnel, protocoles de santé stricts et bien-être prioritaire", color: "gold", num: "03" },
 ];
 
 const FAQ_DATA = [
@@ -109,6 +108,7 @@ const CAMP_WEEKS = [
   { value: "week3", label: "Semaine 3: 7-11 juillet" },
   { value: "week4", label: "Semaine 4: 14-18 juillet" },
   { value: "week5", label: "Semaine 5: 21-25 juillet" },
+  { value: "tous", label: "Tous" },
 ];
 
 const fadeInUp = {
@@ -257,7 +257,7 @@ function SummerCampPage() {
               </h2>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {BENEFITS.map((benefit, i) => (
                 <motion.div key={benefit.title} {...fadeInUp} transition={{ ...fadeInUp.transition, delay: i * 0.1 }}>
                   <TiltCard className="h-full">
