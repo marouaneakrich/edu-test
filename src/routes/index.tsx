@@ -42,7 +42,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Centre éducatif et psychosocial à Agadir. Accompagnement personnalisé pour enfants typiques, atypiques, HPI, TDAH, DYS, TSA. Inscriptions ouvertes 2026-2027.",
+          "Centre éducatif et psychosocial à Agadir. Accompagnement personnalisé pour enfants typiques, atypiques, HPI, TDAH, DYS, TSA. Inscriptions ouvertes (06 Rentrée 2026 2027).",
       },
       { property: "og:title", content: "EducazenKids  L'enseignement sur mesure" },
       {
@@ -147,7 +147,9 @@ function Hero() {
             className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sticker mb-8"
           >
             <span className="h-2 w-2 rounded-full bg-magenta animate-pulse" />
-            <span className="font-label text-[10px] text-ink">Inscriptions Ouvertes 2026 2027</span>
+            <span className="font-label text-[10px] text-ink">
+              Inscriptions Ouvertes (06 Rentrée 2026 2027)
+            </span>
           </motion.div>
 
           <motion.h1
@@ -518,7 +520,7 @@ function AboutSticky() {
           Une équipe <span className="text-teal">pluridisciplinaire</span>
         </>
       ),
-      text: "Enseignants spécialisés, psychologues, art-thérapeutes et paramédicaux unis autour de chaque enfant.",
+      text: "une équipe experts pour accompagnement sans mesure.",
     },
   ];
 
