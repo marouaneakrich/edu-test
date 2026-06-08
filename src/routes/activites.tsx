@@ -46,7 +46,7 @@ const ACTIVITIES = [
   },
   {
     img: art,
-    title: "Dés",
+    title: "D.I.E.C",
     cat: "Bien-être",
     age: "Tout âge",
     duration: "1h30/semaine",
@@ -68,7 +68,7 @@ const ACTIVITIES = [
     img: nature,
     title: "Formation codage",
     cat: "Plein air",
-    age: "5  11 ans",
+    age: "collège",
     duration: "Sortie mensuelle",
     desc: "Observer, expérimenter et comprendre le vivant. Un retour à l'essentiel par l'apprentissage en plein air.",
     color: "gold",

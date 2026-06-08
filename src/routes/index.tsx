@@ -29,7 +29,6 @@ import hero from "@/assets/hero-children.jpg";
 import classroom from "@/assets/about-classroom.jpg";
 import poster from "@/assets/inscriptions-poster.jpg";
 import activityArt from "@/assets/activity-art.jpg";
-import activityNature from "@/assets/activity-nature.jpg";
 import activityMontessori from "@/assets/activity-montessori.jpg";
 import blog1 from "@/assets/blog-1.jpg";
 import blog2 from "@/assets/blog-2.jpg";
@@ -695,13 +694,12 @@ function ActivitiesExpand() {
       color: "magenta",
       desc: "Apprentissage par la manipulation et l'autonomie.",
     },
-    /* { img: activityArt, title: "Art-thérapie", tag: "Tout âge", color: "purple", desc: "Exprimer ses émotions à travers la création." }, */
     {
-      img: activityNature,
-      title: "Découverte nature",
-      tag: "Plein air",
-      color: "gold",
-      desc: "Apprendre dehors, observer, expérimenter.",
+      img: activityArt,
+      title: "D.I.E.C",
+      tag: "Bien-être",
+      color: "purple",
+      desc: "Exprimer ses émotions à travers l'art créatif",
     },
   ];
   return (

@@ -69,7 +69,7 @@ export function Header() {
       style={{ width: "40px" }}
     />
 
-    <span className="text-magenta">educa</span>
+    <span className="text-magenta">Educa</span>
     <span className="text-purple">zen</span>
     <span className="text-teal">kids</span>
   </span>
