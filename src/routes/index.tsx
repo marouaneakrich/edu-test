@@ -969,16 +969,16 @@ function InscriptionsCTA() {
             <MagneticButton
               as="a"
               href="tel:0660686993"
-              className="inline-flex items-center gap-2 rounded-full border-2 border-white/40 px-7 md:px-8 py-3.5 md:py-4 font-display font-bold text-white hover:bg-white/10 transition-colors"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-white/40 px-7 md:px-8 py-3.5 md:py-4 font-display font-bold text-white hover:bg-white/10 transition-colors whitespace-nowrap"
             >
-              <Phone className="h-4 w-4" /> (AR)
+              <Phone className="h-4 w-4" /> (AR) 06 60 68 69 93
             </MagneticButton>
             <MagneticButton
               as="a"
               href="tel:0766682725"
-              className="inline-flex items-center gap-2 rounded-full border-2 border-white/40 px-7 md:px-8 py-3.5 md:py-4 font-display font-bold text-white hover:bg-white/10 transition-colors"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-white/40 px-7 md:px-8 py-3.5 md:py-4 font-display font-bold text-white hover:bg-white/10 transition-colors whitespace-nowrap"
             >
-              <Phone className="h-4 w-4" /> (FR)
+              <Phone className="h-4 w-4" /> (FR) 07 66 68 27 25
             </MagneticButton>
           </div>
         </motion.div>
