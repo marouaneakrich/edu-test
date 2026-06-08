@@ -119,7 +119,7 @@ export function Footer() {
             <h4 className="font-label text-xs text-magenta-light mb-5">Suivez-nous</h4>
             <div className="flex flex-wrap gap-3">
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/profile.php?id=61563794544686&_rdc=2&_rdr#"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
@@ -130,7 +130,7 @@ export function Footer() {
                 </svg>
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/educazenkids/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -152,7 +152,7 @@ export function Footer() {
                 </svg>
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/company/educazenkids/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
