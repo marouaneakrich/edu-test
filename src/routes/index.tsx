@@ -520,7 +520,7 @@ function AboutSticky() {
           Une équipe <span className="text-teal">pluridisciplinaire</span>
         </>
       ),
-      text: "une équipe experts pour accompagnement sans mesure.",
+      text: "Une équipe experts pour accompagnement sans mesure.",
     },
   ];
 

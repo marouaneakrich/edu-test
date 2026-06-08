@@ -46,7 +46,7 @@ const ACTIVITIES = [
   },
   {
     img: art,
-    title: "Dies",
+    title: "Dés",
     cat: "Bien-être",
     age: "Tout âge",
     duration: "1h30/semaine",
