@@ -509,7 +509,7 @@ function AboutSticky() {
           La <span className="text-purple">référence</span> de l'éducation inclusive
         </>
       ),
-      text: "devenir le model au Maroc ou chaque enfant est accueilli et accompagné vers son épanouissement.",
+      text: "Devenir le model au Maroc ou chaque enfant est accueilli et accompagné vers son épanouissement.",
     },
     {
       image: activityArt,
