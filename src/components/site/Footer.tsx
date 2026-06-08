@@ -93,14 +93,30 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <Phone className="h-4 w-4 mt-1 text-magenta-light" />
                 <span>
-                  (AR) 06 60 68 69 93
+                  <a
+                    href="tel:+212660686993"
+                    className="hover:text-magenta-light transition-colors"
+                  >
+                    (AR) 06 60 68 69 93
+                  </a>
                   <br />
-                  (FR) 07 66 68 27 25
+                  <a
+                    href="tel:+212766682725"
+                    className="hover:text-magenta-light transition-colors"
+                  >
+                    (FR) 07 66 68 27 25
+                  </a>
                 </span>
               </li>
+
               <li className="flex items-start gap-3">
                 <Mail className="h-4 w-4 mt-0.5 text-magenta-light" />
-                <span>contact@educazenkids.ma</span>
+                <a
+                  href="mailto:contact@educazenkids.ma"
+                  className="hover:text-magenta-light transition-colors"
+                >
+                  contact@educazenkids.ma
+                </a>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 mt-0.5 text-magenta-light" />
