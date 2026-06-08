@@ -6,7 +6,7 @@ import { TiltCard } from "@/components/site/motion/TiltCard";
 import { MagneticButton } from "@/components/site/motion/MagneticButton";
 import { Doodle } from "@/components/site/motion/Doodle";
 import art from "@/assets/activity-art.jpg";
-import nature from "@/assets/activity-nature.jpg";
+import classroom from "@/assets/aboutclassroom.jpg";
 import montessori from "@/assets/activity-montessori.jpg";
 import music from "@/assets/activity-music.jpg";
 
@@ -65,10 +65,10 @@ const ACTIVITIES = [
     rot: -1,
   },
   {
-    img: nature,
+    img: classroom,
     title: "Formation codage",
     cat: "Plein air",
-    age: "collège",
+    age: "Collège",
     duration: "Sortie mensuelle",
     desc: "Observer, expérimenter et comprendre le vivant. Un retour à l'essentiel par l'apprentissage en plein air.",
     color: "gold",
