@@ -288,7 +288,7 @@ function SummerCampPage() {
               estivale
             </span>
           }
-          subtitle="Activités créatives, apprentissage ludique et environnement inclusif pour enfants de 3-14 ans (23 juin - 25 juillet)."
+          subtitle="Activités créatives, apprentissage ludique et environnement inclusif pour enfants de 3-14 ans (29 juin - 29 juillet)."
           accent="magenta"
         />
 
