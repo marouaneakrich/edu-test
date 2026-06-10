@@ -508,7 +508,7 @@ function AboutSticky() {
           La <span className="text-purple">référence</span> de l'éducation inclusive
         </>
       ),
-      text: "Devenir le model au Maroc ou chaque enfant est accueilli et accompagné vers son épanouissement.",
+      text: "Devenir le modèle au Maroc où chaque enfant est accueilli et accompagné vers son épanouissement.",
     },
     {
       image: activityArt,
@@ -519,7 +519,7 @@ function AboutSticky() {
           Une équipe <span className="text-teal">pluridisciplinaire</span>
         </>
       ),
-      text: "Une équipe experts pour accompagnement sans mesure.",
+      text: "Une équipe d’experts pour un accompagnement sur mesure.",
     },
   ];
 

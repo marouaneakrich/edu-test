@@ -72,7 +72,7 @@ const BENEFITS = [
   {
     icon: Sparkles,
     title: "Activités créatives",
-    desc: "Art, musique, danse et expression artistique pour développer la créativité",
+    desc: "Arts créatifs, art oratoire, théâtre, peinture, musique, danse et expression artistique pour développer la créativité",
     color: "magenta",
     num: "01",
   },
@@ -105,32 +105,32 @@ const FAQ_DATA = [
     q: "Que se passe-t-il en cas d'urgence médicale?",
     a: "Nous avons un protocole strict de sécurité. L'équipe est formée aux premiers secours, et nous avons accès aux services d'urgence. Les numéros de contact parental sont toujours à portée de main.",
   },
-  {
-    q: "Comment gérez-vous les régimes alimentaires spéciaux?",
-    a: "Nous respectons tous les régimes spéciaux et allergies. Veuillez les indiquer dans le formulaire. Notre chef cuisine adapte les repas selon les besoins de chaque enfant.",
-  },
+  // {
+  //   q: "Comment gérez-vous les régimes alimentaires spéciaux?",
+  //   a: "Nous respectons tous les régimes spéciaux et allergies. Veuillez les indiquer dans le formulaire. Notre chef cuisine adapte les repas selon les besoins de chaque enfant.",
+  // },
   {
     q: "Peut-on faire une semaine partagée entre deux enfants?",
     a: "Oui, bien sûr! Vous pouvez inscrire plusieurs enfants et choisir différentes semaines. Des réductions sont disponibles pour les familles avec plusieurs enfants.",
   },
   {
     q: "Y a-t-il une flexibilité pour les arrivées/départs tardifs?",
-    a: "Oui, nous proposons une arrivée flexible de 8h30 à 9h et un départ jusqu'à 16h30. Des frais supplémentaires s'appliquent pour les services avant/après les horaires standards.",
+    a: "Les horaires du summer camp sont de 10h à 16h. Il est possible de bénéficier d’une flexibilité de 30 minutes avant ou après ces horaires, avec des frais de garde supplémentaires.",
   },
 ];
 
 const ACTIVITIES_OPTIONS = [
   { label: "Art & Peinture", img: artImg, tag: "Créativité" },
   { label: "Sport & Jeux", img: sportsImg, tag: "Énergie" },
-  { label: "Apprentissage L'educ", img: musicImg, tag: "THÉÂTRE" },
+  { label: "Apprentissage Ludique", img: musicImg, tag: "THÉÂTRE" },
 ];
 
 const CAMP_WEEKS = [
-  { value: "week1", label: "Semaine 1: 23-27 juin" },
-  { value: "week2", label: "Semaine 2: 31 juin - 4 juillet" },
-  { value: "week3", label: "Semaine 3: 7-11 juillet" },
-  { value: "week4", label: "Semaine 4: 14-18 juillet" },
-  { value: "week5", label: "Semaine 5: 21-25 juillet" },
+  { value: "week1", label: "Semaine 1: 29 juin - 4 juillet" },
+  { value: "week2", label: "Semaine 2: 5 - 10 juillet" },
+  { value: "week3", label: "Semaine 3: 11 - 16 juillet" },
+  { value: "week4", label: "Semaine 4: 17 - 22 juillet" },
+  { value: "week5", label: "Semaine 5: 23 - 29 juillet" },
   { value: "tous", label: "Tous" },
 ];
 

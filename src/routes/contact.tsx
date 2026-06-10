@@ -175,8 +175,8 @@ function ContactPage() {
               <Clock className="h-8 w-8 mb-5" />
               <h3 className="font-display font-bold text-2xl mb-5">Horaires d'ouverture</h3>
               <ul className="space-y-3 font-handwritten text-xl text-white/90">
-                <li className="flex justify-between"><span>Lundi  Vendredi</span><strong className="font-display font-bold">8h  18h</strong></li>
-                <li className="flex justify-between"><span>Samedi</span><strong className="font-display font-bold">9h  13h</strong></li>
+                <li className="flex justify-between"><span>Lundi  Vendredi</span><strong className="font-display font-bold">08h30  17h</strong></li>
+                <li className="flex justify-between"><span>Samedi</span><strong className="font-display font-bold">Sur rendez-vous</strong></li>
                 <li className="flex justify-between"><span>Dimanche</span><strong className="font-display font-bold">Fermé</strong></li>
               </ul>
             </div>
