@@ -17,7 +17,7 @@ export const Route = createFileRoute("/activites")({
       {
         name: "description",
         content:
-          "Découvrez nos activités : Montessori, Dies, Éveil sensorielle, Formation codage, formation parents et bien plus.",
+          "Découvrez nos activités : Montessori, Dies, Éveil sensorielle, Formation développement WEB et IA, formation parents et bien plus.",
       },
       { property: "og:title", content: "Activités EducazenKids" },
       { property: "og:description", content: "Une palette d'ateliers pensés pour chaque enfant." },
@@ -66,7 +66,7 @@ const ACTIVITIES = [
   },
   {
     img: classroom,
-    title: "Formation codage",
+    title: "Formation développement Web et IA",
     cat: "Plein air",
     age: "Collège",
     duration: "Sortie mensuelle",
