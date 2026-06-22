@@ -86,7 +86,7 @@ const BENEFITS = [
   {
     icon: Heart,
     title: "Environnement sécurisé",
-    desc: "Encadrement professionnel, protocoles de santé stricts et bien-être prioritaire",
+    desc: "Un encadrement bienveillant, une hygiène soignée et le bien-être des enfants avant tout.",
     color: "gold",
     num: "03",
   },
@@ -503,7 +503,7 @@ function SummerCampPage() {
                   <p className="text-ink/80 mb-6">Choisissez vos semaines, payez à la semaine.</p>
                   <div className="flex items-baseline gap-2">
                     <span className="font-display text-4xl sm:text-5xl md:text-6xl text-ink font-black">
-                      600
+                      450
                     </span>
                     <span className="text-lg text-ink/80">MAD / semaine</span>
                   </div>

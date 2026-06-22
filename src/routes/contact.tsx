@@ -105,7 +105,8 @@ function ContactPage() {
           {[
             { icon: Phone, title: "Téléphone", lines: ["(AR) 06 60 68 69 93", "(FR) 07 66 68 27 25"], color: "magenta", href: "tel:0660686993", rot: -2 },
             { icon: Mail, title: "Email", lines: ["contact@educazenkids.ma"], color: "purple", href: "mailto:contact@educazenkids.ma", rot: 2 },
-            { icon: MapPin, title: "Adresse", lines: ["Immeuble MOUHIB, 4 avenue Alfarabi, Quartier el Houda 80000 AGADIR"], color: "teal", href: "#map", rot: -1 },
+            { icon: Clock, title: "Dispos", lines: ["Lundi au Vendredi de 9 à 11h"], color: "teal", href: "#contact", rot: 1, onClick: () => window.scrollTo({ left: 0, top: document.getElementById("contact")?.offsetTop || 0, behavior: "smooth" }) },
+            { icon: MapPin, title: "Adresse", lines: ["Immeuble MOUHIB, 4 avenue Alfarabi, Quartier el Houda 80000 AGADIR"], color: "teal", href: "https://maps.app.goo.gl/BW9UFH5GiXhYAFTA9", target: "_blank", rel: "noopener noreferrer", rot: -1 },
           ].map((c, i) => (
             <motion.a
               key={c.title}

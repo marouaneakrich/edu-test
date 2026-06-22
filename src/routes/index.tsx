@@ -147,7 +147,7 @@ function Hero() {
           >
             <span className="h-2 w-2 rounded-full bg-magenta animate-pulse" />
             <span className="font-label text-[10px] text-ink">
-              Inscriptions Ouvertes (06 Rentrée 2026 2027)
+              Inscriptions Ouvertes (Rentrée 2026 2027)
             </span>
           </motion.div>
 
