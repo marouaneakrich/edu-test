@@ -101,11 +101,11 @@ function ContactPage() {
 
       {/* Cards contact  sticker */}
       <section className="py-20 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 grid md:grid-cols-3 gap-6">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             { icon: Phone, title: "Téléphone", lines: ["(AR) 06 60 68 69 93", "(FR) 07 66 68 27 25"], color: "magenta", href: "tel:0660686993", rot: -2 },
             { icon: Mail, title: "Email", lines: ["contact@educazenkids.ma"], color: "purple", href: "mailto:contact@educazenkids.ma", rot: 2 },
-            { icon: Clock, title: "Dispos", lines: ["Lundi au Vendredi de 9 à 11h"], color: "teal", href: "#contact", rot: 1, onClick: () => window.scrollTo({ left: 0, top: document.getElementById("contact")?.offsetTop || 0, behavior: "smooth" }) },
+            { icon: Clock, title: "Prendre rendez-vous", lines: ["Du lundi au vendredi le matin de 9h a 11h"], color: "teal", href: "#contact", rot: 1, onClick: (e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); } },
             { icon: MapPin, title: "Adresse", lines: ["Immeuble MOUHIB, 4 avenue Alfarabi, Quartier el Houda 80000 AGADIR"], color: "teal", href: "https://maps.app.goo.gl/BW9UFH5GiXhYAFTA9", target: "_blank", rel: "noopener noreferrer", rot: -1 },
           ].map((c, i) => (
             <motion.a
@@ -131,7 +131,7 @@ function ContactPage() {
       </section>
 
       {/* Form + Hours */}
-      <section className="relative py-20 bg-canvas overflow-hidden paper-grain">
+      <section id="contact" className="relative py-20 bg-canvas overflow-hidden paper-grain">
         <Doodle kind="star" color="oklch(0.52 0.21 357 / 0.3)" className="absolute top-10 right-10 w-12 h-12" />
         <Doodle kind="squiggle" color="oklch(0.45 0.21 312 / 0.3)" className="absolute bottom-20 left-10 w-32 h-6" />
         <div className="mx-auto max-w-7xl px-6 lg:px-10 grid lg:grid-cols-5 gap-12">
