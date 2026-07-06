@@ -1,8 +1,7 @@
 ﻿import { createFileRoute } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import {
-  ChevronDown,
   Check,
   AlertCircle,
   Mail,
@@ -92,33 +91,6 @@ const BENEFITS = [
   },
 ];
 
-const FAQ_DATA = [
-  {
-    q: "Quel est l'âge minimum pour le camp?",
-    a: "Le camp accueille les enfants de 4 à 12 ans. Nous avons des groupes par tranche d'âge pour adapter les activités à chaque niveau de développement.",
-  },
-  {
-    q: "Votre camp peut-il accueillir les enfants en situation de handicap?",
-    a: "Oui! EducazenKids est un centre d'éducation inclusif. Nous accueillons les enfants HPI, TDAH, DYS, TSA et autres. Notre équipe est formée à l'accompagnement personnalisé.",
-  },
-  {
-    q: "Que se passe-t-il en cas d'urgence médicale?",
-    a: "Nous avons un protocole strict de sécurité. L'équipe est formée aux premiers secours, et nous avons accès aux services d'urgence. Les numéros de contact parental sont toujours à portée de main.",
-  },
-  // {
-  //   q: "Comment gérez-vous les régimes alimentaires spéciaux?",
-  //   a: "Nous respectons tous les régimes spéciaux et allergies. Veuillez les indiquer dans le formulaire. Notre chef cuisine adapte les repas selon les besoins de chaque enfant.",
-  // },
-  {
-    q: "Peut-on faire une semaine partagée entre deux enfants?",
-    a: "Oui, bien sûr! Vous pouvez inscrire plusieurs enfants et choisir différentes semaines. Des réductions sont disponibles pour les familles avec plusieurs enfants.",
-  },
-  {
-    q: "Y a-t-il une flexibilité pour les arrivées/départs tardifs?",
-    a: "Les horaires du summer camp sont de 10h à 16h. Il est possible de bénéficier d’une flexibilité de 30 minutes avant ou après ces horaires, avec des frais de garde supplémentaires.",
-  },
-];
-
 const ACTIVITIES_OPTIONS = [
   { label: "Art & Peinture", img: artImg, tag: "Créativité" },
   { label: "Sport & Jeux", img: sportsImg, tag: "Énergie" },
@@ -174,7 +146,6 @@ function SummerCampPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -513,7 +484,6 @@ function SummerCampPage() {
                   {[
                     "5 jours d'activités encadrées",
                     "Encadrement inclusif (HPI/TDAH/DYS)",
-                    "Certificat de participation",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-gold flex items-center justify-center shrink-0">
@@ -734,85 +704,6 @@ function SummerCampPage() {
                 </p>
               </form>
             )}
-          </div>
-        </motion.section>
-
-        {/* FAQ Section */}
-        <motion.section
-          {...fadeInUp}
-          className="relative py-28 px-6 lg:px-10 bg-gradient-to-br from-lavender via-magenta-bg to-cream overflow-hidden"
-        >
-          <Doodle
-            kind="circle"
-            color="oklch(0.45 0.21 312 / 0.3)"
-            className="absolute top-20 right-20 w-24 h-24"
-          />
-          <div className="mx-auto max-w-3xl">
-            <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl mb-6 text-center mb-12 text-ink">
-              Questions <span className="font-handwritten text-magenta">fréquentes</span>
-            </h2>
-
-            <div className="space-y-4">
-              {FAQ_DATA.map((faq, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="border-2 border-border rounded-xl overflow-hidden hover:border-magenta transition-colors"
-                >
-                  <button
-                    onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
-                    className="w-full p-6 text-left flex items-center justify-between bg-white hover:bg-cream transition-colors"
-                  >
-                    <span className="font-display font-semibold text-base sm:text-lg md:text-xl text-ink pr-4">
-                      {faq.q}
-                    </span>
-                    <motion.div
-                      animate={{ rotate: expandedFaq === idx ? 180 : 0 }}
-                      className="flex-shrink-0"
-                    >
-                      <ChevronDown className="w-5 h-5 text-magenta" />
-                    </motion.div>
-                  </button>
-
-                  <AnimatePresence>
-                    {expandedFaq === idx && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="px-6 py-4 bg-gradient-to-r from-cream to-white border-t border-border text-muted-foreground"
-                      >
-                        {faq.a}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* CTA after FAQ */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="mt-12 text-center"
-            >
-              <p className="font-label text-ink-light mb-4 text-sm">
-                Vous avez encore des questions? Nous sommes là pour vous.
-              </p>
-              <MagneticButton
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={scrollToForm}
-                className="inline-flex items-center gap-2 bg-ink text-white font-bold px-8 py-3.5 rounded-full hover:bg-ink/80 transition-all shadow"
-              >
-                Inscrire mon enfant maintenant <ArrowRight className="w-4 h-4" />
-              </MagneticButton>
-            </motion.div>
           </div>
         </motion.section>
 

@@ -69,7 +69,7 @@ const ACTIVITIES = [
     title: "Formation codage et IA",
     cat: "Plein air",
     age: "Collège",
-    duration: "Sortie mensuelle",
+    duration: "",
     desc: "Développe la logique, la créativité et les compétences numériques essentielles pour les futurs métiers de demain.",
     color: "gold",
     rot: 1,
@@ -171,9 +171,11 @@ function ActivitiesPage() {
                         <span className="text-xs text-ink-light flex items-center gap-1">
                           <Users className="h-3 w-3" /> {a.age}
                         </span>
-                        <span className="text-xs text-ink-light flex items-center gap-1">
-                          <Clock className="h-3 w-3" /> {a.duration}
-                        </span>
+                        {a.duration && (
+                          <span className="text-xs text-ink-light flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {a.duration}
+                          </span>
+                        )}
                       </div>
                       <h3 className="font-display font-bold text-3xl mb-3">{a.title}</h3>
                       <p className="text-ink-light leading-relaxed">{a.desc}</p>

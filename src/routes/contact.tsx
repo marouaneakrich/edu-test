@@ -101,11 +101,10 @@ function ContactPage() {
 
       {/* Cards contact  sticker */}
       <section className="py-20 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mx-auto max-w-5xl px-6 lg:px-10 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
             { icon: Phone, title: "Téléphone", lines: ["(AR) 06 60 68 69 93", "(FR) 07 66 68 27 25"], color: "magenta", href: "tel:0660686993", rot: -2 },
             { icon: Mail, title: "Email", lines: ["contact@educazenkids.ma"], color: "purple", href: "mailto:contact@educazenkids.ma", rot: 2 },
-            { icon: Clock, title: "Prendre rendez-vous", lines: ["Du lundi au vendredi le matin de 9h a 11h"], color: "teal", href: "#contact", rot: 1, onClick: (e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); } },
             { icon: MapPin, title: "Adresse", lines: ["Immeuble MOUHIB, 4 avenue Alfarabi, Quartier el Houda 80000 AGADIR"], color: "teal", href: "https://maps.app.goo.gl/BW9UFH5GiXhYAFTA9", target: "_blank", rel: "noopener noreferrer", rot: -1 },
           ].map((c, i) => (
             <motion.a
