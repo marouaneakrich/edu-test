@@ -3,7 +3,10 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import appCss from "../styles.css?url";
 import { CartProvider } from "../hooks/useCart";
 import { AdminToaster } from "../components/admin/AdminToaster";
+import { ComingSoon } from "../components/site/ComingSoon";
 import iconUrl from "../assets/icon.png";
+
+const COMING_SOON = import.meta.env.VITE_COMING_SOON === "true";
 
 function NotFoundComponent() {
   return (
@@ -74,6 +77,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  if (COMING_SOON) {
+    return <ComingSoon />;
+  }
+
   return (
     <CartProvider>
       <Outlet />
