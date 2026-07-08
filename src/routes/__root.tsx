@@ -1,12 +1,12 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 
 import appCss from "../styles.css?url";
 import { CartProvider } from "../hooks/useCart";
 import { AdminToaster } from "../components/admin/AdminToaster";
 import { ComingSoon } from "../components/site/ComingSoon";
+import { supabase } from "../lib/supabase";
 import iconUrl from "../assets/icon.png";
-
-const COMING_SOON = import.meta.env.VITE_COMING_SOON === "true";
 
 function NotFoundComponent() {
   return (
@@ -77,7 +77,20 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  if (COMING_SOON) {
+  const [comingSoon, setComingSoon] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("ez_settings")
+        .select("value")
+        .eq("key", "coming_soon")
+        .maybeSingle();
+      if (data) setComingSoon(data.value === "true");
+    })();
+  }, []);
+
+  if (comingSoon) {
     return <ComingSoon />;
   }
 

@@ -48,6 +48,7 @@ function CrmSettings() {
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [navVisibility, setNavVisibility] = useState<NavVisibility>({});
   const [navSaving, setNavSaving] = useState(false);
+  const [comingSoon, setComingSoon] = useState(false);
 
   useEffect(() => {
     if (roleLoading) return;
@@ -67,7 +68,7 @@ function CrmSettings() {
       const { data, error } = await supabase
         .from("ez_settings")
         .select("key, value")
-        .in("key", ["monthly_fee_typique", "monthly_fee_dys", "monthly_fee_autiste", "monthly_fee_tdah", "nav_visibility"]);
+        .in("key", ["monthly_fee_typique", "monthly_fee_dys", "monthly_fee_autiste", "monthly_fee_tdah", "nav_visibility", "coming_soon"]);
 
       if (error) throw error;
 
@@ -81,6 +82,9 @@ function CrmSettings() {
           try {
             setNavVisibility(JSON.parse(setting.value));
           } catch {}
+        }
+        if (setting.key === "coming_soon") {
+          setComingSoon(setting.value === "true");
         }
       });
 
@@ -313,6 +317,57 @@ function CrmSettings() {
           <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: 13, color: BRAND.inkLt }}>
             Cette fonctionnalité sera disponible dans une prochaine mise à jour.
           </p>
+        </div>
+
+        <div style={{ background: "#fff", border: `1px solid ${BRAND.border}`, borderRadius: 6, padding: 16, boxShadow: "0 10px 28px -24px rgba(45,45,58,0.4)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+            <div style={{ width: 16, height: 1.5, background: BRAND.mg.hex }} />
+            <span style={{ fontFamily: FL, fontSize: 9, fontWeight: 600, letterSpacing: 2.5, textTransform: "uppercase", color: BRAND.mg.hex }}>
+              Mode maintenance
+            </span>
+          </div>
+          <p style={{ fontFamily: FE, fontStyle: "italic", fontSize: 13, color: BRAND.inkLt, marginBottom: 14 }}>
+            Activer le mode "Coming Soon" — tout le site affichera une page d'attente
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button
+              type="button"
+              onClick={async () => {
+                const next = !comingSoon;
+                setComingSoon(next);
+                try {
+                  const { error } = await supabase
+                    .from("ez_settings")
+                    .upsert({ key: "coming_soon", value: next ? "true" : "false" }, { onConflict: "key" });
+                  if (error) throw error;
+                  toast.success(next ? "Mode maintenance activé" : "Mode maintenance désactivé");
+                } catch (err) {
+                  console.error("Error saving coming_soon:", err);
+                  toast.error("Erreur lors de l'enregistrement");
+                  setComingSoon(!next);
+                }
+              }}
+              style={{
+                position: "relative",
+                width: 48, height: 26, borderRadius: 13,
+                border: "none", cursor: "pointer",
+                background: comingSoon
+                  ? `linear-gradient(135deg, ${BRAND.mg.hex}, ${BRAND.pp.hex})`
+                  : "rgba(45,45,58,0.15)",
+                transition: "background 0.25s",
+              }}
+            >
+              <span style={{
+                position: "absolute", top: 3, left: comingSoon ? 24 : 3,
+                width: 20, height: 20, borderRadius: "50%",
+                background: "#fff", boxShadow: "0 1px 4px rgba(0,0,0,0.15)",
+                transition: "left 0.25s",
+              }} />
+            </button>
+            <span style={{ fontFamily: FH, fontWeight: 700, fontSize: 14, color: comingSoon ? BRAND.mg.hex : BRAND.inkLt }}>
+              {comingSoon ? "Activé" : "Désactivé"}
+            </span>
+          </div>
         </div>
 
         <div style={{ background: "#fff", border: `1px solid ${BRAND.border}`, borderRadius: 6, padding: 16, boxShadow: "0 10px 28px -24px rgba(45,45,58,0.4)" }}>
