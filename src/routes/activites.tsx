@@ -38,7 +38,7 @@ const ACTIVITIES = [
     img: montessori,
     title: "Pédagogie Montessori",
     cat: "Maternelle",
-    age: "Tout âge",
+    age: "2-5 ans",
     duration: "Quotidien",
     desc: "Pédagogie du monde par la manipulation et l'autonomie. Matériel sensoriel, vie pratique, langage et mathématiques.",
     color: "magenta",
@@ -58,7 +58,7 @@ const ACTIVITIES = [
     img: music,
     title: "Éveil sensorielle",
     cat: "Créativité",
-    age: "3  8 ans",
+    age: "3 ans",
     duration: "1h/semaine",
     desc: "Découvrir le monde à travers ses cinq sens. Il favorise le développement cognitif, moteur, émotionnel et stimule la curiosité naturelle de chaque enfant.",
     color: "teal",
@@ -67,7 +67,7 @@ const ACTIVITIES = [
   {
     img: classroom,
     title: "Formation codage et IA",
-    cat: "Plein air",
+    cat: "",
     age: "Collège",
     duration: "",
     desc: "Développe la logique, la créativité et les compétences numériques essentielles pour les futurs métiers de demain.",
@@ -163,11 +163,13 @@ function ActivitiesPage() {
                     </div>
                     <div className="p-8">
                       <div className="flex items-center gap-3 mb-4 flex-wrap">
-                        <span
-                          className={`font-label text-[10px] px-3 py-1 rounded-full bg-${a.color}-bg text-${a.color}`}
-                        >
-                          {a.cat}
-                        </span>
+                        {a.cat && (
+                          <span
+                            className={`font-label text-[10px] px-3 py-1 rounded-full bg-${a.color}-bg text-${a.color}`}
+                          >
+                            {a.cat}
+                          </span>
+                        )}
                         <span className="text-xs text-ink-light flex items-center gap-1">
                           <Users className="h-3 w-3" /> {a.age}
                         </span>
