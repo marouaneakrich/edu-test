@@ -1,4 +1,4 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useLocation } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 
 import appCss from "../styles.css?url";
@@ -78,6 +78,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const [comingSoon, setComingSoon] = useState(false);
+  const pathname = useLocation().pathname;
 
   useEffect(() => {
     (async () => {
@@ -90,7 +91,9 @@ function RootComponent() {
     })();
   }, []);
 
-  if (comingSoon) {
+  const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/crm");
+
+  if (comingSoon && !isAdminRoute) {
     return <ComingSoon />;
   }
 
