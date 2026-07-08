@@ -14,6 +14,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [navVisibility, setNavVisibility] = useState<NavVisibility | null>(null);
+  const [navLoaded, setNavLoaded] = useState(false);
 
   useEffect(() => {
     supabase
@@ -27,6 +28,7 @@ export function Header() {
             setNavVisibility(JSON.parse(data.value));
           } catch {}
         }
+        setNavLoaded(true);
       });
   }, []);
 
@@ -75,8 +77,13 @@ export function Header() {
   </span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1">
-            {visibleNav.map((item) => (
+          <nav
+            className={`hidden lg:flex items-center gap-1 transition-opacity duration-300 ${
+              navLoaded ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {navLoaded &&
+              visibleNav.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
@@ -103,7 +110,7 @@ export function Header() {
           </nav>
 
            <div className="flex items-center gap-3">
-            {boutiqueVisible && (
+            {navLoaded && boutiqueVisible && (
               <button
                 onClick={() => setCartOpen(true)}
                 className="relative inline-flex items-center gap-2 rounded-full bg-gradient-hero px-4 py-2.5 text-sm font-bold text-white shadow-soft transition-transform hover:scale-105"
