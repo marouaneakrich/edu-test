@@ -497,7 +497,7 @@ function AboutSticky() {
           Reprendre goût à <span className="text-magenta">l'apprentissage</span>
         </>
       ),
-      text: "Chaque enfant mérite un espace où il peut grandir à son rythme, avec un accompagnement pensé pour sa singularité.",
+      text: "Chaque enfant mérite un espace où il peut évoluer à son rythme, avec un accompagnement pensé pour sa singularité.",
     },
     {
       image: activityMontessori,
