@@ -91,7 +91,7 @@ function RootComponent() {
     })();
   }, []);
 
-  const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/crm");
+  const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/crm") || pathname.startsWith("/login");
 
   if (comingSoon && !isAdminRoute) {
     return <ComingSoon />;
