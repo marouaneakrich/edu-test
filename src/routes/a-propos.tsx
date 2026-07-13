@@ -6,9 +6,10 @@ import { TiltCard } from "@/components/site/motion/TiltCard";
 import { CountUp } from "@/components/site/motion/CountUp";
 import { Doodle } from "@/components/site/motion/Doodle";
 import classroom from "@/assets/about-classroom.jpg";
-import team1 from "@/assets/team-1.jpg";
-import team2 from "@/assets/team-2.jpg";
-import team3 from "@/assets/team-3.jpg";
+// Section "Notre équipe" temporarily hidden — keep imports for when it returns
+// import team1 from "@/assets/team-1.jpg";
+// import team2 from "@/assets/team-2.jpg";
+// import team3 from "@/assets/team-3.jpg";
 
 export const Route = createFileRoute("/a-propos")({
   head: () => ({
@@ -229,7 +230,7 @@ function AboutPage() {
         </div>
       </section>
 
-      {/* Équipe  polaroids */}
+      {/* Équipe  polaroids  temporairement masquée
       <section className="py-24 bg-white">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-16">
@@ -278,6 +279,7 @@ function AboutPage() {
           </div>
         </div>
       </section>
+      */}
 
       {/* Stats */}
       <section className="py-24 bg-gradient-hero text-white relative overflow-hidden">
